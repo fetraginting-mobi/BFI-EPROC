@@ -1,0 +1,104 @@
+﻿using System;
+using System.Collections;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+using iProc.DataAccessLayer;
+
+public partial class module_finance_fireceivedrequestlist : BasePageList
+{
+    private static string TABLE_NAME = "FI_RECEIVED_REQUEST";
+    private static string TABLE_NAME_FI_RV_HEADER = "FI_RV_HEADER";
+
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        PAGE_LIST = "FI_RECEIVED_REQUEST";
+        NEXT_PAGE = "fireceivedrequest.aspx";
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        LoadInit();
+
+        if (!Page.IsPostBack)
+        {
+            btnProcess.OnClientClick = "return confirm('Pocess selected data ?');";
+            BindData();
+        }
+    }
+
+    private void BindData()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = txtSearch.Text;
+            _ht["p_branch"] = Shared.CurrentEmployeeBranchCode;
+
+            gvwList.DataSource = _dal.GetRows(TABLE_NAME, _ht);
+            gvwList.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwList.PageIndex = e.NewPageIndex;
+        BindData();
+    }
+
+    protected override void SelectedIndexChanged(object sender, EventArgs e)
+    {
+        base.SelectedIndexChanged(sender, e);
+        Response.Redirect("fireceivedrequest.aspx?action=edit&rrno=" + gvwList.SelectedDataKey[0].ToString());
+    }
+
+    protected void btnProcess_Click(object sender, EventArgs e)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        _dal = new GeneralDAL();
+        _ht = new Hashtable();
+
+        MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
+
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            try
+            {
+                CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
+                if (chb.Checked)
+                {
+                    _ht["p_rr_no"] = gvwList.DataKeys[row.RowIndex][0].ToString();
+
+                    Shared.ApplyDefaultProp(_ht);
+
+                    _dal.ExecRawSP("xsp_fi_received_request_process", _ht);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Shared.ShowErrorDialog(this, ex);
+            }
+        }
+
+        BindData();
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        BindData();
+    }
+}

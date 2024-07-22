@@ -1,0 +1,150 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/iproc.master" AutoEventWireup="true" CodeFile="rptfaassetdisposallist.aspx.cs" Inherits="module_report_rptfaassetdisposallist" %>
+
+<%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
+    <section class="panel">
+        <header class="panel-heading">
+          <span>FA Asset Disposal List Report</span>
+        </header>
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12 ">
+                    <asp:LinkButton ID="btnPrintExcel" runat="server" CssClass="btn btn-primary" OnClick="btnPrintExcel_Click" CausesValidation="false"><i class="icon-print"></i>  Print Excel</asp:LinkButton>
+                    <cc1:XUILinkButton ID="btnCancel" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i class="icon-arrow-left"></i>  Back</cc1:XUILinkButton>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal">
+            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                <ContentTemplate>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">From Date</label>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="*" ControlToValidate="txtStartDate" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-6">
+                                    <cc1:XUITextBox ID="txtStartDate" runat="server" CssClass="form-control default-date-picker-all" placeholder="From Date" SPParameterName="p_start_date" MaxLength="10" DataType="DateTime" BindType="UItoDBOnly" Format = "dd/MM/yyyy"></cc1:XUITextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">To Date</label>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="*" ControlToValidate="txtEndDate" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-6">
+                                    <cc1:XUITextBox ID="txtEndDate" runat="server" CssClass="form-control default-date-picker-all" placeholder="To Date" SPParameterName="p_end_date" MaxLength="10" DataType="DateTime" BindType="UItoDBOnly" Format = "dd/MM/yyyy"></cc1:XUITextBox>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="row">
+                      <div class="col-sm-6">
+                         <div class="form-group">
+                           <label class="col-sm-3">Branch</label>
+                           <div class="col-sm-6">
+                              <asp:UpdatePanel ID="UpB" runat="server">
+                                     <ContentTemplate>
+                                 <cc1:XUIDropDownList ID="ddlBranch" runat="server" CssClass="form-control" SPParameterName="p_branch_code" DataType="String" OnSelectedIndexChanged= "ddlLocation_SelectedIndexChanged" AutoPostBack= "true" BindType="UIToDBOnly" ></cc1:XUIDropDownList>
+                                 <cc1:XUILabel ID="lblbranch" runat="server"  DBColumnName="BRANCH_CODE" DataType="String" BindType="DBToUIOnly" Text="--" style="display:none;"></cc1:XUILabel>
+                                 </ContentTemplate>
+                               </asp:UpdatePanel>
+                            </div>
+                         </div>
+                       </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                            <label runat="server" id="Category" class="col-sm-3">Category</label>
+                                <div class="col-sm-6">
+                                    <cc1:XUIDropDownList ID="ddlCategory" runat="server" CssClass="form-control" SPParameterName="p_category" BindType="Both" DataType="String"></cc1:XUIDropDownList>
+                                    <asp:RequiredFieldValidator ID="rfvCategory" runat="server" ErrorMessage="Required Field!" ControlToValidate="ddlCategory" Display="Dynamic" InitialValue="0"></asp:RequiredFieldValidator>
+                                </div>
+                            </div>                            
+                        </div>
+                     </div>
+                     <div class="row">   
+                        <div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-sm-3">Location</label>
+								<div class="col-sm-6">
+										<asp:UpdatePanel ID="updUn" runat="server">
+											<ContentTemplate>
+												<cc1:XUIDropDownList ID="ddlLocation" runat="server" CssClass="form-control" SPParameterName="p_location"  DataType="String" BindType="UIToDBOnly"></cc1:XUIDropDownList>
+											</ContentTemplate>
+												<Triggers>
+												<asp:AsyncPostBackTrigger ControlID="ddlBranch" EventName="SelectedIndexChanged" />
+											</Triggers>
+										</asp:UpdatePanel>
+									</div>                        
+								</div>
+							</div>
+                           <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">Owner</label>
+                                <asp:RequiredFieldValidator ID="rfvddlOwner" runat="server" ErrorMessage="*" ControlToValidate="ddlOwner" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-6">
+                                    <cc1:XUIDropDownList ID="ddlOwner" runat="server" CssClass="form-control" SPParameterName="p_owner" BindType="Both" DataType="String" ></cc1:XUIDropDownList>  
+                                </div>
+                            </div>
+                        </div> 
+                    </div> 
+                    <div class="row">
+                        <div class="col-sm-6">
+                         <div class="form-group">
+                             <label class="col-sm-3">Reason</label>
+                                <div class="col-sm-6">
+                                 <cc1:XUIDropDownList ID="ddlReason" runat="server" CssClass="form-control" SPParameterName="p_reason" BindType="Both"  DataType="String">
+                                 </cc1:XUIDropDownList>
+                                 <asp:RequiredFieldValidator ID="rfvRating" runat="server" ErrorMessage="Required Field!" ControlToValidate="ddlReason" InitialValue="0" Display="Dynamic"></asp:RequiredFieldValidator>  
+                             </div>
+                         </div>                           
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">Status</label>
+                                <asp:RequiredFieldValidator ID="rfvddlStatus" runat="server" ErrorMessage="*" ControlToValidate="ddlStatus" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-6">
+                                    <cc1:XUIDropDownList ID="ddlStatus" runat="server" CssClass="form-control" SPParameterName="p_status" BindType="Both" DataType="String" >
+                                        <asp:ListItem Selected Value="ALL">ALL</asp:ListItem>
+                                        <asp:ListItem Value="POST">POST</asp:ListItem>
+                                        <asp:ListItem Value="ONPROGRESS">ON PROGRESS</asp:ListItem>
+                                        <asp:ListItem Value="NEW">NEW</asp:ListItem>
+                                        <asp:ListItem Value="REJECTED">REJECTED</asp:ListItem>
+                                        <asp:ListItem Value="CANCEL">CANCEL</asp:ListItem>
+                                    </cc1:XUIDropDownList>  
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <label class="col-sm-2">Search By</label>
+                                <div class="col-sm-3">
+                                    <cc1:XUIDropDownList ID="ddlSearchBy" Width="200px" runat="server" CssClass="form-control" SPParameterName="p_search_by" DataType="String" BindType="Both">
+                                        <asp:ListItem Value="ITEM NAME">ITEM NAME</asp:ListItem>
+                                        <asp:ListItem Value="BARCODE">BARCODE</asp:ListItem>
+                                        <asp:ListItem Value="SERIAL NUMBER">SERIAL NUMBER</asp:ListItem>
+                                        <asp:ListItem Value="NOMOR POLISI">NOMOR POLISI</asp:ListItem>
+                                    </cc1:XUIDropDownList>
+                                </div>
+                                <div class="col-sm-5">
+                                    <cc1:XUITextBox ID="txtKeywords" runat="server"  CssClass="form-control" placeholder="Keywords" SPParameterName="p_keywords" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                </div>                                    
+                            </div>
+                        </div>
+                    </div>
+                </ContentTemplate>
+                <Triggers>
+                    <asp:AsyncPostBackTrigger ControlID="btnPrintExcel" EventName="Click" />
+                </Triggers>
+            </asp:UpdatePanel>
+        </div>
+    </section>
+</asp:Content>
+
+
+
+
