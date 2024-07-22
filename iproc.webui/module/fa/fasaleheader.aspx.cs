@@ -5,15 +5,20 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Newtonsoft.Json;
 
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
+using System.Collections.Generic;
 
 public partial class module_fa_fasaleheader : BasePage
 {
     private static string TABLE_NAME_HEADER = "FA_SALE_HEADER";
     private static string TABLE_NAME_DETAIL = "FA_SALE_DETAIL";
     private static string GET_MULTIPLE_BRANCH = "GET_IS_AGAS"; // (+) Ari 30-12-2022 ket : enhancement 2022
+    private readonly String UserNameAPI = System.Configuration.ConfigurationManager.AppSettings["UserNameAPI"];
+    private readonly String PasswordAPI = System.Configuration.ConfigurationManager.AppSettings["PasswordAPI"];
+    private readonly BfiApiService.WSProcurementSoapClient _BfiApiService = new BfiApiService.WSProcurementSoapClient();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -204,7 +209,6 @@ public partial class module_fa_fasaleheader : BasePage
         GeneralDAL _dal = null;
         Hashtable _ht = null;
 
-
         try
         {
             _dal = new GeneralDAL();
@@ -324,7 +328,14 @@ public partial class module_fa_fasaleheader : BasePage
 
     protected void btnReject_Click(object sender, EventArgs e)
     {
-        RejectData();
+        if (lblTransFlagCode.Text == "POST")
+        {
+            RejectDataHitWebService();
+        }
+        else
+        {
+            RejectData();
+        }
     }
 
     protected void btnCancel_Click(object sender, EventArgs e)
@@ -516,6 +527,66 @@ public partial class module_fa_fasaleheader : BasePage
 
     #endregion
 
+    private void RejectDataHitWebService()
+    {
+        string JurnalID;
+        string IsUsed;
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+        try
+        {
+            _ht["p_code_barcode"] = Request.Params["codebarcode"];
+            Shared.ApplyDefaultProp(_ht);
+            DataTable _dt = _dal.GetRows("", "xsp_fa_sale_detail_reconcile_direct_cancel_getrows", _ht);
+            if (_dt != null)
+            {
+                foreach (DataRow _dr in _dt.Rows)
+                {
+                    JurnalID = _dr["Jurnal_ID"].ToString();
+                    IsUsed = _dr["Is_Used"].ToString();
+                    string response = _BfiApiService.CancelFASaleDisposal(UserNameAPI, PasswordAPI, JurnalID, IsUsed);
+                    List<ResultAPI> results = JsonConvert.DeserializeObject(response, typeof(List<ResultAPI>)) as List<ResultAPI>;
+                    if (results[0].StatusAPI.Equals("00"))
+                    {
+                        _ht.Clear();
+                        _ht["Jurnal_ID"] = JurnalID;
+                        try
+                        {
+                            _dal.Update("", "xsp_fa_sale_detail_direct_cancel_api_update", _ht);
+                        }
+                        catch (Exception exn)
+                        {
+                            Shared.ShowErrorDialog(this, exn);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
 
+    public class ResultAPI
+    {
+        [JsonProperty("StatusAPI")]
+        public String StatusAPI { get; set; }
+
+        [JsonProperty("NotesAPI")]
+        public String NotesAPI { get; set; }
+
+        [JsonProperty("Status")]
+        public String Status { get; set; }
+
+        [JsonProperty("AccountPayableNo")]
+        public String AccountPayableNo { get; set; }
+
+        [JsonProperty("Tr_Nomor")]
+        public String Tr_Nomor { get; set; }
+
+        [JsonProperty("IsUsed")]
+        public String IsUsed { get; set; }
+    }
 }
 
