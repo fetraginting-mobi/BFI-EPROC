@@ -1,0 +1,102 @@
+﻿using System;
+using System.Data;
+using System.Collections;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+using iProc.DataAccessLayer;
+using MPF23.Shared.Mapper;
+
+public partial class module_commonmst_mastercreditortypelinkacc : BasePage
+{
+    private static string TABLE_NAME = "MASTER_CREDITOR_TYPE_LINK_ACC";
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        btnLookUpCapyCOA.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtCapyAcc.ClientID, lblCapyAcc.ClientID, lblNameCapyAcc.ClientID, txtCapyPad.ClientID ,ddlCurrency.ClientID);
+        btnLookUpAdvanceAcc.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtAdvanceAcc.ClientID, lblAdvanceAcc.ClientID, lblNameAdvanceAcc.ClientID, txtAdvancePad ,ddlCurrency.ClientID);
+        btnLookUpAccruedAcc.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtAccruedAcc.ClientID, lblAccruedAcc.ClientID, lblNameAccruedAcc.ClientID, txtAccruedPad ,ddlCurrency.ClientID);
+        btnLookUpDepositAcc.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtDepositAcc.ClientID, lblDepositAcc.ClientID, lblNameDepositAcc.ClientID, txtDepositPad ,ddlCurrency.ClientID);
+        LoadInit();
+
+        if (!Page.IsPostBack)
+        {
+            lblID.Text = Request.Params["id"];
+
+            Shared.BindCurrencyCode(ddlCurrency);
+
+            lblCreditorTypeCode.Text = Request.Params["creditortypecode"];
+
+            if (Request.Params["action"].Equals("edit"))
+            {
+                LoadData();
+
+                btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
+                btnCancel.CssClass = "btn btn-custome";
+            }
+        } LoadAfterInit();
+    }
+
+    private void LoadData()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_id"] = Request.Params["id"];
+            DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
+
+            DBToUI.Map(this.Controls, _dr);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void SaveData()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        int iNextID = 0;
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
+            Shared.ApplyDefaultProp(_ht);
+
+            if (Request.Params["action"].Equals("add"))
+            {
+                _dal.Insert(TABLE_NAME, _ht, ref iNextID);
+                lblID.Text = iNextID.ToString();
+            }
+            else
+                _dal.Update(TABLE_NAME, _ht);
+
+            Shared.ShowSuccessGritter(this, string.Format("mastercreditortype.aspx?action=edit&id={0}&code={1}", lblID.Text, Request.Params["creditortypecode"]));
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    protected void btnSave_Click(object sender, EventArgs e)
+    {
+        SaveData();
+    }
+
+    protected void btnCancel_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("mastercreditortype.aspx?action=edit&id=" + Request.Params["idheader"] + "&code=" + Request.Params["creditortypecode"]);
+    }
+}

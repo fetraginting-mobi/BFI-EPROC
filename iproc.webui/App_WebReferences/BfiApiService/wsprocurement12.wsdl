@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://matel/WSProcurement" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://matel/WSProcurement" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://matel/WSProcurement">
+      <s:element name="Login">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BranchID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoginResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getBranch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getBranchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getBranchResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getBank">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getBankResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getBankResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getDivisi">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getDivisiResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getDivisiResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getDepartment">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getDepartmentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getDepartmentResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getSubDepartment">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getSubDepartmentResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getSubDepartmentResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getUnit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getUnitResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getUnitResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getStaff">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getStaffResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getStaffResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getJabatan">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getJabatanResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getJabatanResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="inputBS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="RegisterDate" type="s:dateTime" />
+            <s:element minOccurs="0" maxOccurs="1" name="VendorName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="VendorID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="FirstBSNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="LastBSNo" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="IsActive" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="Stock" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="LoginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="inputBSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inputBSResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="APRekonsiliasi">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="APNo" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="APRekonsiliasiResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="APRekonsiliasiResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="inputPaymentRequestDanAP">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BranchID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PONo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="RequestDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Currency" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="POTotal" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DescriptionRFF" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BankTransferTo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ReferenceNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DueDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CurrencyRate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="APAmount" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="APTo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AccountNameTo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AccountNoTo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BankNameTo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BankBranchTo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PaymentLocation" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="InvoiceNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="InvoiceDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BuktiPotongNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="isTax" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="TaxType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DetailData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="inputPaymentRequestDanAPResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inputPaymentRequestDanAPResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InputTransaksiFixedAsset">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BranchReffNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="TransactionID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="RefferenceNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BusinessDate1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="RefferenceDesc" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AmountToBePaid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CurrencyID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CurrencyRate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DetailData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InputTransaksiFixedAssetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InputTransaksiFixedAssetResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBankAccount">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBankAccountResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBankAccountResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestFASaleDisposal">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DataPaymentID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="JurnalID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Tanggal" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AmountHeader" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="BranchID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="TransactionID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsUsed" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestFASaleDisposalResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestFASaleDisposalResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="APIReconcileFASaleDisposal">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="JurnalID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="APIReconcileFASaleDisposalResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="APIReconcileFASaleDisposalResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelFASaleDisposal">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNameAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PasswordAPI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="JurnalID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsUsed" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelFASaleDisposalResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CancelFASaleDisposalResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="LoginSoapIn">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapOut">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="getBranchSoapIn">
+    <wsdl:part name="parameters" element="tns:getBranch" />
+  </wsdl:message>
+  <wsdl:message name="getBranchSoapOut">
+    <wsdl:part name="parameters" element="tns:getBranchResponse" />
+  </wsdl:message>
+  <wsdl:message name="getBankSoapIn">
+    <wsdl:part name="parameters" element="tns:getBank" />
+  </wsdl:message>
+  <wsdl:message name="getBankSoapOut">
+    <wsdl:part name="parameters" element="tns:getBankResponse" />
+  </wsdl:message>
+  <wsdl:message name="getDivisiSoapIn">
+    <wsdl:part name="parameters" element="tns:getDivisi" />
+  </wsdl:message>
+  <wsdl:message name="getDivisiSoapOut">
+    <wsdl:part name="parameters" element="tns:getDivisiResponse" />
+  </wsdl:message>
+  <wsdl:message name="getDepartmentSoapIn">
+    <wsdl:part name="parameters" element="tns:getDepartment" />
+  </wsdl:message>
+  <wsdl:message name="getDepartmentSoapOut">
+    <wsdl:part name="parameters" element="tns:getDepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="getSubDepartmentSoapIn">
+    <wsdl:part name="parameters" element="tns:getSubDepartment" />
+  </wsdl:message>
+  <wsdl:message name="getSubDepartmentSoapOut">
+    <wsdl:part name="parameters" element="tns:getSubDepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="getUnitSoapIn">
+    <wsdl:part name="parameters" element="tns:getUnit" />
+  </wsdl:message>
+  <wsdl:message name="getUnitSoapOut">
+    <wsdl:part name="parameters" element="tns:getUnitResponse" />
+  </wsdl:message>
+  <wsdl:message name="getStaffSoapIn">
+    <wsdl:part name="parameters" element="tns:getStaff" />
+  </wsdl:message>
+  <wsdl:message name="getStaffSoapOut">
+    <wsdl:part name="parameters" element="tns:getStaffResponse" />
+  </wsdl:message>
+  <wsdl:message name="getJabatanSoapIn">
+    <wsdl:part name="parameters" element="tns:getJabatan" />
+  </wsdl:message>
+  <wsdl:message name="getJabatanSoapOut">
+    <wsdl:part name="parameters" element="tns:getJabatanResponse" />
+  </wsdl:message>
+  <wsdl:message name="inputBSSoapIn">
+    <wsdl:part name="parameters" element="tns:inputBS" />
+  </wsdl:message>
+  <wsdl:message name="inputBSSoapOut">
+    <wsdl:part name="parameters" element="tns:inputBSResponse" />
+  </wsdl:message>
+  <wsdl:message name="APRekonsiliasiSoapIn">
+    <wsdl:part name="parameters" element="tns:APRekonsiliasi" />
+  </wsdl:message>
+  <wsdl:message name="APRekonsiliasiSoapOut">
+    <wsdl:part name="parameters" element="tns:APRekonsiliasiResponse" />
+  </wsdl:message>
+  <wsdl:message name="inputPaymentRequestDanAPSoapIn">
+    <wsdl:part name="parameters" element="tns:inputPaymentRequestDanAP" />
+  </wsdl:message>
+  <wsdl:message name="inputPaymentRequestDanAPSoapOut">
+    <wsdl:part name="parameters" element="tns:inputPaymentRequestDanAPResponse" />
+  </wsdl:message>
+  <wsdl:message name="InputTransaksiFixedAssetSoapIn">
+    <wsdl:part name="parameters" element="tns:InputTransaksiFixedAsset" />
+  </wsdl:message>
+  <wsdl:message name="InputTransaksiFixedAssetSoapOut">
+    <wsdl:part name="parameters" element="tns:InputTransaksiFixedAssetResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBankAccountSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBankAccount" />
+  </wsdl:message>
+  <wsdl:message name="GetBankAccountSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBankAccountResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestFASaleDisposalSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestFASaleDisposal" />
+  </wsdl:message>
+  <wsdl:message name="RequestFASaleDisposalSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestFASaleDisposalResponse" />
+  </wsdl:message>
+  <wsdl:message name="APIReconcileFASaleDisposalSoapIn">
+    <wsdl:part name="parameters" element="tns:APIReconcileFASaleDisposal" />
+  </wsdl:message>
+  <wsdl:message name="APIReconcileFASaleDisposalSoapOut">
+    <wsdl:part name="parameters" element="tns:APIReconcileFASaleDisposalResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelFASaleDisposalSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelFASaleDisposal" />
+  </wsdl:message>
+  <wsdl:message name="CancelFASaleDisposalSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelFASaleDisposalResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WSProcurementSoap">
+    <wsdl:operation name="Login">
+      <wsdl:input message="tns:LoginSoapIn" />
+      <wsdl:output message="tns:LoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getBranch">
+      <wsdl:input message="tns:getBranchSoapIn" />
+      <wsdl:output message="tns:getBranchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getBank">
+      <wsdl:input message="tns:getBankSoapIn" />
+      <wsdl:output message="tns:getBankSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getDivisi">
+      <wsdl:input message="tns:getDivisiSoapIn" />
+      <wsdl:output message="tns:getDivisiSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getDepartment">
+      <wsdl:input message="tns:getDepartmentSoapIn" />
+      <wsdl:output message="tns:getDepartmentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getSubDepartment">
+      <wsdl:input message="tns:getSubDepartmentSoapIn" />
+      <wsdl:output message="tns:getSubDepartmentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getUnit">
+      <wsdl:input message="tns:getUnitSoapIn" />
+      <wsdl:output message="tns:getUnitSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getStaff">
+      <wsdl:input message="tns:getStaffSoapIn" />
+      <wsdl:output message="tns:getStaffSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getJabatan">
+      <wsdl:input message="tns:getJabatanSoapIn" />
+      <wsdl:output message="tns:getJabatanSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="inputBS">
+      <wsdl:input message="tns:inputBSSoapIn" />
+      <wsdl:output message="tns:inputBSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="APRekonsiliasi">
+      <wsdl:input message="tns:APRekonsiliasiSoapIn" />
+      <wsdl:output message="tns:APRekonsiliasiSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="inputPaymentRequestDanAP">
+      <wsdl:input message="tns:inputPaymentRequestDanAPSoapIn" />
+      <wsdl:output message="tns:inputPaymentRequestDanAPSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InputTransaksiFixedAsset">
+      <wsdl:input message="tns:InputTransaksiFixedAssetSoapIn" />
+      <wsdl:output message="tns:InputTransaksiFixedAssetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBankAccount">
+      <wsdl:input message="tns:GetBankAccountSoapIn" />
+      <wsdl:output message="tns:GetBankAccountSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestFASaleDisposal">
+      <wsdl:input message="tns:RequestFASaleDisposalSoapIn" />
+      <wsdl:output message="tns:RequestFASaleDisposalSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="APIReconcileFASaleDisposal">
+      <wsdl:input message="tns:APIReconcileFASaleDisposalSoapIn" />
+      <wsdl:output message="tns:APIReconcileFASaleDisposalSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelFASaleDisposal">
+      <wsdl:input message="tns:CancelFASaleDisposalSoapIn" />
+      <wsdl:output message="tns:CancelFASaleDisposalSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSProcurementSoap" type="tns:WSProcurementSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Login">
+      <soap:operation soapAction="http://matel/WSProcurement/Login" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBranch">
+      <soap:operation soapAction="http://matel/WSProcurement/getBranch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBank">
+      <soap:operation soapAction="http://matel/WSProcurement/getBank" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDivisi">
+      <soap:operation soapAction="http://matel/WSProcurement/getDivisi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDepartment">
+      <soap:operation soapAction="http://matel/WSProcurement/getDepartment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSubDepartment">
+      <soap:operation soapAction="http://matel/WSProcurement/getSubDepartment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getUnit">
+      <soap:operation soapAction="http://matel/WSProcurement/getUnit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStaff">
+      <soap:operation soapAction="http://matel/WSProcurement/getStaff" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getJabatan">
+      <soap:operation soapAction="http://matel/WSProcurement/getJabatan" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inputBS">
+      <soap:operation soapAction="http://matel/WSProcurement/inputBS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="APRekonsiliasi">
+      <soap:operation soapAction="http://matel/WSProcurement/APRekonsiliasi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inputPaymentRequestDanAP">
+      <soap:operation soapAction="http://matel/WSProcurement/inputPaymentRequestDanAP" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InputTransaksiFixedAsset">
+      <soap:operation soapAction="http://matel/WSProcurement/InputTransaksiFixedAsset" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBankAccount">
+      <soap:operation soapAction="http://matel/WSProcurement/GetBankAccount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestFASaleDisposal">
+      <soap:operation soapAction="http://matel/WSProcurement/RequestFASaleDisposal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="APIReconcileFASaleDisposal">
+      <soap:operation soapAction="http://matel/WSProcurement/APIReconcileFASaleDisposal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelFASaleDisposal">
+      <soap:operation soapAction="http://matel/WSProcurement/CancelFASaleDisposal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WSProcurementSoap12" type="tns:WSProcurementSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Login">
+      <soap12:operation soapAction="http://matel/WSProcurement/Login" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBranch">
+      <soap12:operation soapAction="http://matel/WSProcurement/getBranch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBank">
+      <soap12:operation soapAction="http://matel/WSProcurement/getBank" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDivisi">
+      <soap12:operation soapAction="http://matel/WSProcurement/getDivisi" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDepartment">
+      <soap12:operation soapAction="http://matel/WSProcurement/getDepartment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSubDepartment">
+      <soap12:operation soapAction="http://matel/WSProcurement/getSubDepartment" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getUnit">
+      <soap12:operation soapAction="http://matel/WSProcurement/getUnit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStaff">
+      <soap12:operation soapAction="http://matel/WSProcurement/getStaff" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getJabatan">
+      <soap12:operation soapAction="http://matel/WSProcurement/getJabatan" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inputBS">
+      <soap12:operation soapAction="http://matel/WSProcurement/inputBS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="APRekonsiliasi">
+      <soap12:operation soapAction="http://matel/WSProcurement/APRekonsiliasi" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inputPaymentRequestDanAP">
+      <soap12:operation soapAction="http://matel/WSProcurement/inputPaymentRequestDanAP" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InputTransaksiFixedAsset">
+      <soap12:operation soapAction="http://matel/WSProcurement/InputTransaksiFixedAsset" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBankAccount">
+      <soap12:operation soapAction="http://matel/WSProcurement/GetBankAccount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestFASaleDisposal">
+      <soap12:operation soapAction="http://matel/WSProcurement/RequestFASaleDisposal" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="APIReconcileFASaleDisposal">
+      <soap12:operation soapAction="http://matel/WSProcurement/APIReconcileFASaleDisposal" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelFASaleDisposal">
+      <soap12:operation soapAction="http://matel/WSProcurement/CancelFASaleDisposal" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSProcurement">
+    <wsdl:port name="WSProcurementSoap" binding="tns:WSProcurementSoap">
+      <soap:address location="http://app.bfi.co.id/webserverservice/procurement/wsprocurement.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WSProcurementSoap12" binding="tns:WSProcurementSoap12">
+      <soap12:address location="http://app.bfi.co.id/webserverservice/procurement/wsprocurement.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

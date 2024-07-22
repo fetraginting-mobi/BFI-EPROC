@@ -1,0 +1,112 @@
+﻿<%@ Page Language="C#" MasterPageFile="~/iproc.master" AutoEventWireup="true" CodeFile="rpttaskdocpackagelist.aspx.cs" Inherits="module_report_rpttaskdocpackagelist" Title="Untitled Page" %>
+
+<%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
+    <section class="panel">
+        <header class="panel-heading">
+          <span>Task Document and Package List Report</span>
+        </header>
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12 ">
+                    <asp:LinkButton ID="btnPrint" runat="server" CssClass="btn btn-primary" OnClick="btnPrint_Click" CausesValidation="false"><i class="icon-print"></i>  Print</asp:LinkButton>
+                    <cc1:XUILinkButton ID="btnCancel" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i class="icon-arrow-left"></i>  Back</cc1:XUILinkButton>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal" style="height:350px">
+            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                <ContentTemplate>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">Branch</label>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="*" ControlToValidate="txtStartDate" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-5">
+                                    <cc1:XUIDropDownList ID="ddlBranch" runat="server" CssClass="form-control" SPParameterName="p_branch_code" BindType="Both" DataType="String" ></cc1:XUIDropDownList>  
+                                </div>
+                            </div>
+                        </div>
+                     </div> 
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">From Date</label>
+                                <asp:RequiredFieldValidator ID="rfvStartDate" runat="server" ErrorMessage="*" ControlToValidate="txtStartDate" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-4">
+                                    <cc1:XUITextBox ID="txtStartDate" runat="server" CssClass="form-control default-date-picker-all" placeholder="From Date" SPParameterName="p_start_date" MaxLength="10" DataType="DateTime" BindType="UItoDBOnly" Format = "dd/MM/yyyy"></cc1:XUITextBox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">To Date</label>
+                                <asp:RequiredFieldValidator ID="rfvEndDate" runat="server" ErrorMessage="*" ControlToValidate="txtEndDate" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-4">
+                                    <cc1:XUITextBox ID="txtEndDate" runat="server" CssClass="form-control default-date-picker-all" placeholder="To Date" SPParameterName="p_end_date" MaxLength="10" DataType="DateTime" BindType="UItoDBOnly" Format = "dd/MM/yyyy"></cc1:XUITextBox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <label class="col-sm-2">Type Receipt </label>
+                                <div class="col-sm-3">
+                                    <cc1:XUIDropDownList ID="ddlTypeReceipt" Width="200px" runat="server" CssClass="form-control" SPParameterName="p_type_code" DataType="String" BindType="Both">
+                                        <asp:ListItem Value="ALL">ALL</asp:ListItem>
+                                        <asp:ListItem Value="DOC">DOCUMENT</asp:ListItem>
+                                        <asp:ListItem Value="PAC">PACKAGE</asp:ListItem>
+                                    </cc1:XUIDropDownList>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">Status</label>
+                                <asp:RequiredFieldValidator ID="rfvddlStatus" runat="server" ErrorMessage="*" ControlToValidate="ddlStatus" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <div class="col-sm-5">
+                                    <cc1:XUIDropDownList ID="ddlStatus" runat="server" CssClass="form-control" SPParameterName="p_status" BindType="Both" DataType="String" >
+                                     <asp:ListItem Value="ALL">ALL</asp:ListItem>
+                                     <asp:ListItem Value="TKN">TAKEN</asp:ListItem>
+                                     <asp:ListItem Value="LAF">LOST AND FOUND</asp:ListItem>
+                                     <asp:ListItem Value="SAVED">SAVED</asp:ListItem>
+                                    </cc1:XUIDropDownList>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                   <div class="row">
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <label class="col-sm-2">Search By</label>
+                                 <div class="col-sm-3">
+                                    <cc1:XUIDropDownList ID="ddlSearchBy" runat="server" CssClass="form-control" SPParameterName="p_search_by" DataType="String" BindType="Both">
+                                        <asp:ListItem Value="SHIPPER">SHIPPER</asp:ListItem>
+                                        <asp:ListItem Value="DOCUMENT NAME">DOCUMENT NAME</asp:ListItem>
+                                        <asp:ListItem Value="FLOOR">FLOOR</asp:ListItem>
+                                    </cc1:XUIDropDownList>
+                                </div>
+                                <div class="col-sm-5">
+                                    <cc1:XUITextBox ID="txtKeywords" runat="server"  CssClass="form-control" placeholder="Keywords" SPParameterName="p_keywords" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                </div>                                    
+                            </div>
+                        </div>
+                    </div>
+                   
+                   
+                </ContentTemplate>
+                <Triggers>
+                    <asp:AsyncPostBackTrigger ControlID="btnPrint" EventName="Click" />
+                </Triggers>
+            </asp:UpdatePanel>
+        </div>
+    </section>
+</asp:Content>
+
