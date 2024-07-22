@@ -397,4 +397,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+# Ignore all files inside the iproc.webui/temp/qrcodes folder
+*/iproc.webui/temp/qrcodes/*
+*/iproc.webui/temp/pdf/*
 
