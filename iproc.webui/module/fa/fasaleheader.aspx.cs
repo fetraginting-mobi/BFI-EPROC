@@ -544,22 +544,32 @@ public partial class module_fa_fasaleheader : BasePage
                 {
                     JurnalID = _dr["Jurnal_ID"].ToString();
                     IsUsed = _dr["Is_Used"].ToString();
-                    string response = _BfiApiService.CancelFASaleDisposal(UserNameAPI, PasswordAPI, JurnalID, IsUsed);
-                    List<ResultAPI> results = JsonConvert.DeserializeObject(response, typeof(List<ResultAPI>)) as List<ResultAPI>;
-                    if (results[0].StatusAPI.Equals("00"))
+                    string responseCheckStatus = _BfiApiService.APIReconcileFASaleDisposal(UserNameAPI, PasswordAPI, JurnalID);
+                    List<ResultAPI> resultsCheckStatus = JsonConvert.DeserializeObject<List<ResultAPI>>(responseCheckStatus);
+
+                    if (resultsCheckStatus[0].StatusAPI.Equals("00"))
                     {
-                        _ht.Clear();
-                        _ht["Jurnal_ID"] = JurnalID;
-                        try
+                        if (resultsCheckStatus[0].IsUsed.Equals("1"))
                         {
-                            _dal.Update("", "xsp_fa_sale_detail_direct_cancel_api_update", _ht);
+                            _ht.Clear();
+                            _ht["p_JurnalID"] = JurnalID;
+                            _dal.Update("", "xsp_fa_sale_detail_reconcile_update", _ht);
                         }
-                        catch (Exception exn)
+                        else
                         {
-                            Shared.ShowErrorDialog(this, exn);
+                            string response = _BfiApiService.CancelFASaleDisposal(UserNameAPI, PasswordAPI, JurnalID, IsUsed);
+                            List<ResultAPI> results = JsonConvert.DeserializeObject<List<ResultAPI>>(response);
+                            if (results[0].StatusAPI.Equals("00"))
+                            {
+                                _ht.Clear();
+                                _ht["p_JurnalID"] = JurnalID;
+                                _dal.Update("", "xsp_fa_sale_detail_direct_cancel_api_update", _ht);
+                            }
                         }
                     }
                 }
+                Shared.ShowSuccessGritter(this, string.Format("fasaleheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
+                BindData();
             }
         }
         catch (Exception ex)
