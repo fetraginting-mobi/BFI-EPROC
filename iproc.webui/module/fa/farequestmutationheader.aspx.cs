@@ -13,10 +13,12 @@ public partial class module_fa_farequestmutationheader : BasePage
 {
     private static string TABLE_NAME_DETAIL = "FA_REQUEST_MUTATION_DETAIL";
     private static string TABLE_NAME_HEADER = "FA_REQUEST_MUTATION_HEADER";
+    private static Boolean EMPLOYEE_HO = false;
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
         txtBranch.Text = Shared.CurrentEmployeeBranchCode;
+        EMPLOYEE_HO = IsEmployeeHo(txtBranch.Text);
         if (!Page.IsPostBack)
         {
             txtBranch.Text = Shared.CurrentEmployeeBranchCode;
@@ -30,9 +32,13 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
             Shared.BindUnitsItemOwnMutation(ddlOwner);
             //(+)gustian 19102023 
-            ////Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
-            Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
-            //(+)
+            if(EMPLOYEE_HO)
+            {
+                Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
+            }
+            else {
+                Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+            }
             ddlBranch.SelectedValue = Shared.CurrentEmployeeBranchCode;
 
             if (Request.Params["action"].Equals("edit"))
@@ -93,8 +99,16 @@ public partial class module_fa_farequestmutationheader : BasePage
                 Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
 
                 //(+)gustian 19102023
-                //Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
-                Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+                if (EMPLOYEE_HO)
+                {
+                    Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
+                }
+                else
+                {
+                    Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+                }
+                //Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text); //disini
+                //Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
 
 
                 btnReject.Visible = btnPost.Visible = false;
@@ -129,8 +143,17 @@ public partial class module_fa_farequestmutationheader : BasePage
             DBToUI.Map(this.Controls, _dr);
             ddlTocc.SelectedValue = _dr["TO_COST_CENTER"].ToString();
             //ddlFromLocationCode.SelectedValue = _dr["FROM_LOCATION_CODE"].ToString();
-           Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
-           Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+            Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
+            if (EMPLOYEE_HO)
+            {
+                Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
+            }
+            else
+            {
+                Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+            }
+            //Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);//disini
+            //Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);//disini
             //ddlToLocationCode.SelectedValue = _dr["TO_LOCATION_CODE"].ToString(); 
             Shared.BindDivision(ddlDivision);
             Shared.BindDepartment(ddlDepartment, ddlDivision.SelectedValue);
@@ -216,10 +239,17 @@ public partial class module_fa_farequestmutationheader : BasePage
 
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
-
+        if (EMPLOYEE_HO)
+        {
+            Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
+        }
+        else
+        {
+            Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+        }
         //(+)gustian 19102023 
         //Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
-        Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
+        //Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue); //disini
         //(+)
         //updDep.Update();
     }
@@ -326,4 +356,28 @@ public partial class module_fa_farequestmutationheader : BasePage
     }
     #endregion
 
+    public Boolean IsEmployeeHo(String branchCode)
+    {
+        try
+        {
+            GeneralDAL _dal = null;
+            Hashtable _ht = null;
+
+            DataRow _dtUser = null;
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_code"] = branchCode;
+            _dtUser = _dal.GetRow("", "xsp_master_branch_getrow", _ht);
+            if (_dtUser["IS_HO"].ToString().Equals("1"))
+            {
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+        return false;
+    }
 }
