@@ -124,8 +124,11 @@
                             <asp:BoundField DataField="AST_NAME" HeaderText="Aset Name">
                                 <ItemStyle Width="15%" />
                             </asp:BoundField>
+                            <asp:BoundField DataField="AST_CODE" HeaderText="Item Code">
+                                <ItemStyle Width="5%" />
+                            </asp:BoundField>
                             <asp:BoundField DataField="CAT_NAME" HeaderText="Category">
-                                <ItemStyle Width="20%" />
+                                <ItemStyle Width="10%" />
                             </asp:BoundField>
                             <asp:BoundField DataField="DATE_PURC" HeaderText="Date" DataFormatString="{0:dd/MM/yyyy}">
                                 <ItemStyle Width="10%" HorizontalAlign="Center"/>

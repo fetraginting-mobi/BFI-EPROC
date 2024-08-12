@@ -16,6 +16,7 @@
                     <cc1:XUILinkButton RoleCode="R12000168E" ID="btnSave" runat="server" CssClass="btn btn-primary" OnClick="btnSave_Click" ValidationGroup="validateprepaid"><i class="icon-save"></i>  Save</cc1:XUILinkButton>
                     <cc1:XUILinkButton RoleCode="R12000168O" ID="btnPost" runat="server" CssClass="btn btn-success" OnClick="btnPost_Click" CausesValidation="false"><i class="icon-envelope"></i> Post</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnCancel" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i class="icon-arrow-left"></i>  Back</cc1:XUILinkButton> 
+                     <cc1:XUITextBox ID="txtEmpCode" style="display:none"  runat="server"  CssClass="form-control" DBColumnName="EMP_CODE"  DataType="String" BindType="UIToDBOnly"></cc1:XUITextBox>
                 </div>
             </div>
         </div>

@@ -28,9 +28,10 @@ public partial class module_accounting_accallocprepaidexpense : BasePage
        
         if (!Page.IsPostBack)
         {
+
+            txtEmpCode.Text = Shared.CurrentUID;
+            btnLookUpBranch.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=BRN&acol_0={0}&bcol_1={1}&parc_code={2}');", txtBranchCode.ClientID, lblBranch.ClientID, txtEmpCode.ClientID);
             btnLookUpInvoiceNo.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/generic.aspx?code=INVCN&acol_0={0}&bcol_1={1}&ccol_2={2}&dcol_3={3}&ecol_4={4}&fcol_5={5}&gcol_6={6}&hcol_7={7}');", txtInvoiceNo.ClientID, txtInvoiceName.ClientID, txtBranchCode.ClientID, lblBranch.ClientID, txtTransDate.ClientID, txtDescription.ClientID, txtAmount.ClientID, txtItemCode.ClientID);
-            
-            btnLookUpBranch.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/generic.aspx?code=BRN&acol_0={0}&bcol_1={1}');", txtBranchCode.ClientID, lblBranch.ClientID);
 
 
             if (Request.Params["action"].Equals("edit"))

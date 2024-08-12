@@ -82,17 +82,20 @@
                                             <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
                                         </ItemTemplate>
                                         </asp:TemplateField>
+                                        <asp:BoundField DataField="ITEM_CODE" HeaderText="Code">
+                                            <ItemStyle Width="10%"  />
+                                        </asp:BoundField>
                                         <asp:BoundField DataField="ITEM_NAME" HeaderText="Name">
                                             <ItemStyle Width="20%"  />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="DESCRIPTION" HeaderText="Group">
-                                            <ItemStyle Width="25%" HorizontalAlign="Left" />
+                                            <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="OWNER" HeaderText="Owner">
                                             <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="UNIT_DESC" HeaderText="UOM">
-                                            <ItemStyle Width="25%"   />
+                                            <ItemStyle Width="20%"   />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="STATUS" HeaderText="Status">
                                            <ItemStyle Width="10%" />
@@ -155,17 +158,20 @@
                                             <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
                                         </ItemTemplate>
                                         </asp:TemplateField>
+                                        <asp:BoundField DataField="ITEM_CODE" HeaderText="Code">
+                                            <ItemStyle Width="10%"  />
+                                        </asp:BoundField>
                                         <asp:BoundField DataField="ITEM_NAME" HeaderText="Name">
                                             <ItemStyle Width="20%"  />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="DESCRIPTION" HeaderText="Group">
-                                            <ItemStyle Width="25%" HorizontalAlign="Left" />
+                                            <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="OWNER" HeaderText="Owner">
                                             <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="UNIT_DESC" HeaderText="UOM">
-                                            <ItemStyle Width="25%"   />
+                                            <ItemStyle Width="20%"   />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="STATUS" HeaderText="Status">
                                            <ItemStyle Width="10%" />
@@ -228,17 +234,20 @@
                                             <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
                                         </ItemTemplate>
                                         </asp:TemplateField>
+                                        <asp:BoundField DataField="ITEM_CODE" HeaderText="Code">
+                                            <ItemStyle Width="10%"  />
+                                        </asp:BoundField>
                                         <asp:BoundField DataField="ITEM_NAME" HeaderText="Name">
                                             <ItemStyle Width="20%"  />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="DESCRIPTION" HeaderText="Group">
-                                            <ItemStyle Width="25%" HorizontalAlign="Left" />
+                                            <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="OWNER" HeaderText="Owner">
                                             <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="UNIT_DESC" HeaderText="UOM">
-                                            <ItemStyle Width="25%"   />
+                                            <ItemStyle Width="20%"   />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="STATUS" HeaderText="Status">
                                            <ItemStyle Width="10%" />
@@ -301,17 +310,20 @@
                                             <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
                                         </ItemTemplate>
                                         </asp:TemplateField>
+                                        <asp:BoundField DataField="ITEM_CODE" HeaderText="Code">
+                                            <ItemStyle Width="10%"  />
+                                        </asp:BoundField>
                                        <asp:BoundField DataField="ITEM_NAME" HeaderText="Name">
                                             <ItemStyle Width="20%"  />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="DESCRIPTION" HeaderText="Group">
-                                            <ItemStyle Width="25%" HorizontalAlign="Left" />
+                                            <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="OWNER" HeaderText="Owner">
                                             <ItemStyle Width="20%" HorizontalAlign="Left" />
                                         </asp:BoundField>
                                         <asp:BoundField DataField="UNIT_DESC" HeaderText="UOM">
-                                            <ItemStyle Width="25%"   />
+                                            <ItemStyle Width="20%"   />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="STATUS" HeaderText="Status">
                                            <ItemStyle Width="10%" />
