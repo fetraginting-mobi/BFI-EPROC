@@ -411,16 +411,18 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
                     if (Typeapp == "approval")
                     {
+                        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idartarget"]) ? "0" : Request.Params["idartarget"];
 
                         if (!Request.Params["idartarget"].Equals(""))
                         {
-                            idTarget = Int32.Parse(Request.Params["idartarget"]);
+                            idTarget = Int32.Parse(idTargetCondition);
                         }
                         else
                         {
                             idTarget = 0;
                         }
 
+                        idTarget = idTarget == null ? 0 : idTarget;
                         //btnApprovalTiered.Visible = true;
 
                     }
@@ -492,8 +494,15 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                     //btnAddUploadDoc.Visible = false; // jaka 
                     btnAddUploadDoc.Visible = true; // Ari 29-08-2022
                 }
-           
-                
+
+                string typeRequest = string.IsNullOrEmpty(Request.Params["type"]) ? "" : Request.Params["type"];
+                if (typeRequest.ToLower() == "approval" && (lblApprovalRequestTargetID.Text == "0" || string.IsNullOrEmpty(lblApprovalRequestTargetID.Text)))
+                {
+                    btnApprovalTiered.Visible = false;
+                    BtnCancelPO.Visible = false;
+                    btnClose.Visible = false;
+                    btnAddUploadDoc.Visible = false; // Ari 29-08-2022
+                }
             }
 
             else
@@ -1003,9 +1012,11 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
         Type = Request.Params["type"];
 
+        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idartarget"]) ? "0" : Request.Params["idartarget"];
+
         if (Type == "approval")
         {
-            idTarget = Int32.Parse(Request.Params["idartarget"]);
+            idTarget = Int32.Parse(idTargetCondition);
 
         }
         else
@@ -1135,9 +1146,10 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
         Type = Request.Params["type"];
 
+        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idartarget"]) ? "0" : Request.Params["idartarget"];
         if (Type == "approval")
         {
-            idTarget = Int32.Parse(Request.Params["idartarget"]);
+            idTarget = Int32.Parse(idTargetCondition);
 
         }
         else
@@ -1405,16 +1417,16 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
         Type = Request.Params["type"];
 
+        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idartarget"]) ? "0" : Request.Params["idartarget"];
         if (Type == "approval")
         {
-            idTarget = Int32.Parse(Request.Params["idartarget"]);
+            idTarget = Int32.Parse(idTargetCondition);
 
         }
         else
         {
             idTarget = 0;
         }
-
 
         if (Type == "approval")
         {

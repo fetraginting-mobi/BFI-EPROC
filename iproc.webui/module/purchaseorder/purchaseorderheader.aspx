@@ -625,7 +625,7 @@
                                         <asp:BoundField DataField="TRX_CODE_NAME" HeaderText="Trx Code" >
                                             <ItemStyle Width="40%" HorizontalAlign="Left" />
                                         </asp:BoundField>
-                                        <asp:BoundField DataField="PERCENTAGE" HeaderText="Percentage" DataFormatString="{0:N2}">
+                                        <asp:BoundField DataField="PERCENTAGE" HeaderText="Percentage" DataFormatString="{0:N6}">
                                             <ItemStyle Width="30%" HorizontalAlign="Right" />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="AMOUNT" HeaderText="Amount"  DataFormatString="{0:N2}">
