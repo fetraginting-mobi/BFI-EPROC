@@ -129,7 +129,8 @@ public partial class module_shared_myapproval : BasePage
             Response.Redirect(string.Format("../accounting/accallocprepaidexpense.aspx?action=edit&type=approval&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
         else if (gvwList.SelectedDataKey["TYPE"].ToString().Equals("APP0071"))
             Response.Redirect(string.Format("../accounting/accallocprepaidadjustment.aspx?action=edit&type=approval&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
-
+        else if (gvwList.SelectedDataKey["TYPE"].ToString().Equals("APP0072"))
+            Response.Redirect(string.Format("../inventory/refundinventoryamortizationheader.aspx?action=edit&type=approval&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
     }
 
 }

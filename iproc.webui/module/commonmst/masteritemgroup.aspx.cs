@@ -374,7 +374,7 @@ public partial class module_commonmst_masteritem : BasePage
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-        Response.Redirect("masteritemgroupdetail.aspx?action=add&&categorycode=" + txtGroup.Text + "&type=" + Request.Params["type"] + "&groupcategorytype=" + lblCategory.Text);
+        Response.Redirect("masteritemgroupdetail.aspx?action=add&&categorycode=" + txtGroup.Text + "&type=" + Request.Params["type"] + "&groupcategorytype=" + lblCategory.Text + "&assetperiodhakguna=" + txtMasaAsset.Text);
         //Response.Redirect("masteritemgroupdetail.aspx?action=add&idheader=" + lblId.Text + "&categorycode=" + txtGroup.Text + "&accexpensepo=" + lblNoExpensePO.Text + "&accexpenseponame=" + lblNameExpensePO.Text + "&accnoinv=" + lblNoINV.Text + "&accnoinvname=" + lblNameNoINV.Text + "&accassetpo=" + lblNoAssetPO.Text + "&accassetponame=" + lblNameAssetPO.Text);
     }
 

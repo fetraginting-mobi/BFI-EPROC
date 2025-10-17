@@ -445,7 +445,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Modified </label>
                                 <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "EMP_NAME" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "EMP_NAME_MOD" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
                                     <span>@</span>
                                     <cc1:XUILabel ID="lblModDate" runat="server" DBColumnName= "MOD_DATE" DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss"></cc1:XUILabel>
                                 </div>
