@@ -2405,6 +2405,31 @@ public class Shared
         {
         }
     }
+    public static void BindOwnerAll(DropDownList ddl)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = "";
+            _ht["p_code"] = Shared.CurrentUID;
+
+            //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
+            ddl.DataSource = _dal.GetRows("", "xsp_master_owner_getrows_all", _ht);
+            ddl.DataTextField = "DESCRIPTION";
+            ddl.DataValueField = "CODE";
+            ddl.DataBind();
+
+
+        }
+        catch (Exception ex)
+        {
+        }
+    }
 
     public static void BindBranchEmployeeAll1(DropDownList ddl)
     {

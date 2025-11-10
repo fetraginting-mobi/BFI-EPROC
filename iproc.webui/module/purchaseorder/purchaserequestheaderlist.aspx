@@ -34,7 +34,7 @@
                            <cc1:XUITextBox ID="txtempcode" runat="server" CssClass="form-control"  DBColumnName="BRANCH" DataType="String" BindType="None" style="display:none" ></cc1:XUITextBox>
                         </div>
                     </div>
-                </div>
+                </div>                
                 <div class="col-sm-3">
                     <div class="form-group">
                     <label class="col-sm-3">Status</label>
@@ -81,6 +81,15 @@
                             <cc1:XUITextBox ID="txtToDate" runat="server" Width="200px" CssClass="form-control default-date-picker-all" DBColumnName="REQUEST_DATE" SPParameterName="p_to_date" DataType="DateTime" BindType="Both" Format="dd/MM/yyyy" OnTextChanged="txtToDateChanged" AutoPostBack="true"></cc1:XUITextBox>
                         </div>
                     </div>                            
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                    <label class="col-sm-3">Owner</label>
+                        <div class="col-sm-8">
+                          <cc1:XUIDropDownList ID="ddlOwner" Width="200px" runat="server" CssClass="form-control" DBColumnName="OWNER_CODE" SPParameterName="p_owner" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlOwner_SelectedIndexChanged" ></cc1:XUIDropDownList>
+                           <cc1:XUITextBox ID="XUITextBox1" runat="server" CssClass="form-control"  DBColumnName="BRANCH" DataType="String" BindType="None" style="display:none" ></cc1:XUITextBox>
+                        </div>
+                    </div>
                 </div>
             </div>
              <div class="row">
