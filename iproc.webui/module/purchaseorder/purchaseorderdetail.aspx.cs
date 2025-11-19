@@ -536,8 +536,7 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
         String Type_app = "";
 
         Type_app = Request.Params["type"];
-
-        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idartarget"]) ? "0" : Request.Params["idartarget"];
+        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idtarget"]) ? "0" : Request.Params["idtarget"];
 
         if (Type_app == "approval")
         {
