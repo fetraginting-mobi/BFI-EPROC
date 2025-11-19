@@ -71,12 +71,15 @@ public partial class module_commonmst_masteritemgroupdetail : BasePage
             else if (lblCategory.Text == "IC")
             {
                 FaAssetInprogress.Visible = FaAsset.Visible = COGS.Visible = Inventory.Visible = false;
-                if (Convert.ToInt32(lblAssetPeriodHakGuna.Text) > 12)
+
+                //(+)fetra 20251119 : Penjagaan ketika lblAssetPeriodHakGuna empty / Null
+                int AssetPeriodHakGuna = string.IsNullOrEmpty(lblAssetPeriodHakGuna.Text) ? 0 : Convert.ToInt32(lblAssetPeriodHakGuna.Text);
+                if (AssetPeriodHakGuna > 12)
                 {
                     Rent.Visible = Expanse.Visible = RentRefund.Visible = ExpenseRefund.Visible = false;
 
                 }
-                else if (Convert.ToInt32(lblAssetPeriodHakGuna.Text) <= 12 && Convert.ToInt32(lblAssetPeriodHakGuna.Text) != 0)
+                else if (AssetPeriodHakGuna <= 12 && AssetPeriodHakGuna != 0)
                 {
                     RentUp1.Visible = ExpenseUp1.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
                 }
@@ -118,12 +121,15 @@ public partial class module_commonmst_masteritemgroupdetail : BasePage
                 else if (lblCategory.Text == "IC")
                 {
                     FaAssetInprogress.Visible = FaAsset.Visible = COGS.Visible = Inventory.Visible = false;
-                    if (Convert.ToInt32(lblAssetPeriodHakGuna.Text) > 12)
+
+                    //(+)fetra 20251119 : Penjagaan ketika lblAssetPeriodHakGuna empty / Null
+                    int AssetPeriodHakGuna = string.IsNullOrEmpty(lblAssetPeriodHakGuna.Text) ? 0 : Convert.ToInt32(lblAssetPeriodHakGuna.Text);                    
+                    if (AssetPeriodHakGuna > 12)
                     {
                         Rent.Visible = Expanse.Visible = RentRefund.Visible = ExpenseRefund.Visible = false;
                         
                     }
-                    else if (Convert.ToInt32(lblAssetPeriodHakGuna.Text) <= 12 && Convert.ToInt32(lblAssetPeriodHakGuna.Text) != 0)
+                    else if (AssetPeriodHakGuna <= 12 && AssetPeriodHakGuna != 0)
                     {
                         RentUp1.Visible = ExpenseUp1.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
                     }
