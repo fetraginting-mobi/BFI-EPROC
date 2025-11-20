@@ -98,7 +98,7 @@
                                      <cc1:XUITextBox ID="txtPADExpensePOUp1" style="display:none" runat="server" CssClass="form-control" DBColumnName="PAD_EXPENSE_NO_UP_1" SPParameterName="p_pad_expense_no_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
                                     <cc1:XUILabel ID="lblNoExpensePOUp1"  runat="server" style="display:none"  DBColumnName="ACC_EXPENSE_PO_UP_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
                                     <cc1:XUILabel ID="lblNameExpensePOUp1"  runat="server"  DBColumnName="NAME_EXPENSE_PO_UP_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtACCExpensePO" Display="Dynamic"></asp:RequiredFieldValidator>
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtACCExpensePOUp1" Display="Dynamic"></asp:RequiredFieldValidator>
                                 </div>
                             </div>                            
                         </div>

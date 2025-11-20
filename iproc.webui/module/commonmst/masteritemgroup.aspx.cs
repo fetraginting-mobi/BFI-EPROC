@@ -379,11 +379,11 @@ public partial class module_commonmst_masteritem : BasePage
         {
             if (!int.TryParse(txtMasaAsset.Text, out masaAssetValue))
             {
-                Shared.ShowErrorDialog(this, new Exception("Gagal karena bukan angka"));
+                Shared.ShowErrorDialog(this, new Exception("Parameter Asset Hak Guna Harus angka!"));
             }
             else if (masaAssetValue <= 0)
             {
-                Shared.ShowErrorDialog(this, new Exception("Gagal karena bukan angka"));
+                Shared.ShowErrorDialog(this, new Exception("Parameter Asset Hak Guna Harus tidak boleh 0"));
             }
             else
             {
