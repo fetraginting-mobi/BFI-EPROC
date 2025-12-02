@@ -102,6 +102,7 @@
                             <label class="col-sm-4">Max Parameter Asset Hak Guna (Month) </label>
                             <div class="col-sm-4">
                                 <cc1:XUITextBox ID="txtMasaAsset" runat="server" CssClass="form-control" placeholder="Max Parameter Asset Hak Guna" DBColumnName="ASSET_PERIOD_HAK_GUNA" SPParameterName="p_asset_period_hak_guna"  DataType="Integer" BindType="Both" MaxLength="4" ></cc1:XUITextBox>
+                                <asp:RegularExpressionValidator ID="revMasaASset" runat="server" ErrorMessage="Format Invalid!" ControlToValidate="txtMasaAsset" ValidationExpression="[0-9 .,]*[0-9 .,]" Display="Dynamic"></asp:RegularExpressionValidator>  
                             <%--<asp:RequiredFieldValidator ID="rfvMasaAsset" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtMasaAsset" Display="Dynamic"></asp:RequiredFieldValidator>--%>
                             </div>
                         </div>                            

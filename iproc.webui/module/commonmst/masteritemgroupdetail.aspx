@@ -22,6 +22,7 @@
                 <ContentTemplate>
                     <cc1:XUILabel ID="lblID" runat="server" DBColumnName="ID" SPParameterName="p_id" DataType="String" BindType="Both" Text= "0" style="display:none"></cc1:XUILabel>
                     <cc1:XUILabel ID="lblCategory" style="display:none" runat="server" DBColumnName="GROUP_CATEGORY_TYPE" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                    <cc1:XUILabel ID="lblAssetPeriodHakGuna" style="display:none" runat="server" DBColumnName="ASSET_PERIOD_HAK_GUNA" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -87,6 +88,22 @@
                             </div>                            
                         </div>
                     </div> 
+                     <div class="row" runat="server" id="ExpenseUp1">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Expense ACC No. *</label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookUpACCExpensePOUp1"  class="btn btn-primary up1" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtACCExpensePOUp1" style="display:none" runat="server" CssClass="form-control" DBColumnName="ACC_EXPENSE_PO_UP_1" SPParameterName="p_acc_expense_po_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPADExpensePOUp1" style="display:none" runat="server" CssClass="form-control" DBColumnName="PAD_EXPENSE_NO_UP_1" SPParameterName="p_pad_expense_no_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoExpensePOUp1"  runat="server" style="display:none"  DBColumnName="ACC_EXPENSE_PO_UP_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameExpensePOUp1"  runat="server"  DBColumnName="NAME_EXPENSE_PO_UP_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtACCExpensePOUp1" Display="Dynamic"></asp:RequiredFieldValidator>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div> 
+                   
                     <%--(+)gustian 09/11/2022 Enhance Prepaid --%>
                    <%-- start--%>
                     <div class="row" runat="server" id="Expese2">
@@ -105,6 +122,90 @@
                         </div>
                     </div>
                     <%----end--%>
+                     <div class="row" runat="server" id="Rent">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Rent Acc No. </label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookupRentAccNo"  class="btn btn-primary" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtRentAccNo" style="display:none"  runat="server" CssClass="form-control" DBColumnName="ACC_SEWA" SPParameterName="p_acc_sewa_no" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPADRentAccNo" style="display:none"  runat="server" CssClass="form-control" DBColumnName="PAD_SEWA" SPParameterName="p_pad_sewa_no" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoRentAccNo"  runat="server" style="display:none"  DBColumnName="ACC_SEWA" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameRentAccNo"  runat="server"  DBColumnName="name_sewa" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                     <div class="row" runat="server" id="RentUp1">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Rent Acc No. </label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookupRentAccNoUp1"  class="btn btn-primary up1" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtRentAccNoUp1" style="display:none"  runat="server" CssClass="form-control" DBColumnName="ACC_SEWA_UP_1" SPParameterName="p_acc_sewa_no_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPADRentAccNoUp1" style="display:none"  runat="server" CssClass="form-control" DBColumnName="PAD_SEWA_UP_1" SPParameterName="p_pad_sewa_no_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoRentAccNoUp1"  runat="server" style="display:none"  DBColumnName="ACC_SEWA_UP_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameRentAccNoUp1"  runat="server"  DBColumnName="name_sewa_up_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                      <div class="row" runat="server" id="RentRefund">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Rent Refund Acc No. </label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookupRentRefundAccNo"  class="btn btn-primary" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtRentRefundAccNo" style="display:none"  runat="server" CssClass="form-control" DBColumnName="acc_rent_refund" SPParameterName="p_acc_rent_refund" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPadRentRefundAccNo" style="display:none"  runat="server" CssClass="form-control" DBColumnName="pad_rent_refund" SPParameterName="p_pad_rent_refund" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoRentRefundAccNo"  runat="server" style="display:none"  DBColumnName="acc_rent_refund" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameRentRefundAccNo"  runat="server"  DBColumnName="name_rent_refund" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                      <div class="row" runat="server" id="RentRefundUp1">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Rent Refund Acc No. </label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookupRentRefundAccNoUp1"  class="btn btn-primary up1" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtRentRefundAccNoUp1" style="display:none"  runat="server" CssClass="form-control" DBColumnName="acc_rent_refund_up_1" SPParameterName="p_acc_rent_refund_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPadRentRefundAccNoUp1" style="display:none"  runat="server" CssClass="form-control" DBColumnName="pad_rent_refund_up_1" SPParameterName="p_pad_rent_refund_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoRentRefundAccNoUp1"  runat="server" style="display:none"  DBColumnName="acc_rent_refund_up_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameRentRefundAccNoUp1"  runat="server"  DBColumnName="name_rent_refund_up_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row" runat="server" id="ExpenseRefund">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Expense Refund ACC No.</label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookUpExpenseRefund"  class="btn btn-primary" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtAccExpenseRefund" style="display:none" runat="server" CssClass="form-control" DBColumnName="acc_expense_refund" SPParameterName="p_acc_expense_refund" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPadExpenseRefund" style="display:none" runat="server" CssClass="form-control" DBColumnName="pad_expense_refund" SPParameterName="p_pad_expense_refund" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoExpenseRefund"  runat="server" style="display:none"  DBColumnName="acc_expense_refund" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameExpenseRefund"  runat="server"  DBColumnName="name_expense_refund" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div> 
+                    <div class="row" runat="server" id="ExpenseRefundUp1">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4">Expense Refund ACC No.</label>
+                                <div class="col-sm-7">
+                                    <asp:LinkButton runat="server" ID="btnLookUpExpenseRefundUp1"  class="btn btn-primary up1" data-toggle="modal" CausesValidation="false" ><i class="icon-table"></i></asp:LinkButton>
+                                    <cc1:XUITextBox ID="txtAccExpenseRefundUp1" style="display:none" runat="server" CssClass="form-control" DBColumnName="acc_expense_refund_up_1" SPParameterName="p_acc_expense_refund_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                     <cc1:XUITextBox ID="txtPadExpenseRefundUp1" style="display:none" runat="server" CssClass="form-control" DBColumnName="pad_expense_refund_up_1" SPParameterName="p_pad_expense_refund_up_1" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUILabel ID="lblNoExpenseRefundUp1"  runat="server" style="display:none"  DBColumnName="acc_expense_refund_up_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblNameExpenseRefundUp1"  runat="server"  DBColumnName="name_expense_refund_up_1" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div> 
                      <div class="row" runat="server" id="FaAssetInprogress">
                         <div class="col-sm-6">
                              <div class="form-group">

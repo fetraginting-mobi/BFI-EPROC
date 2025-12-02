@@ -20,6 +20,7 @@
     <link href="assets/font-awesome/css/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
     <link href="assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="assets/flatpickr/css/flatpickr.min.css" rel="stylesheet" />
     
 <%--    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
     <link href="assets/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" />--%>
@@ -66,6 +67,8 @@
     <script src="../../assets/highcharts/js/highcharts.js"></script>
 
     <script src="../../assets/highcharts/js/modules/exporting.js"></script>
+    
+    <script src="../../assets/flatpickr/js/flatpickrv4.6.13.js"></script>
 
     <!--common script for all pages-->
     <script src="../../js/accounting.min.js"></script>
@@ -101,7 +104,7 @@
         }).on('changeDate', function(e) {
             $(this).datepicker('hide');
         });
-
+        
         $('.default-date-picker-all').datepicker({
             ignoreReadonly: true,
             clearBtn: true,

@@ -94,6 +94,7 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
                 DRT.Visible = true;
                 txtDueRentTo.Visible = true;
               // rfvDueRentTo.Enabled = true;
+                LTB.Visible = true;
 
             }
             if (Request.Params["flagrent"] == "0")
@@ -216,13 +217,15 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
                     //ddlSubBranch.Enabled = false;
                     txtPPN.Enabled = txtPPH.Enabled = false;
                     btnCancel.Visible = true;
-                   btnCancelAp.Visible = false;
-                   txtAdditionalAmount.Enabled = false;
+                    btnCancelAp.Visible = false;
+                    txtAdditionalAmount.Enabled = false;
+                    ddlLeaseTax.Enabled = false;
                     
                 }
 
                 if (lblStatus.Text == "ON-PROGRESS")
                 {
+                    txtAdditionalAmount.Enabled = false;
                     btnSave.Visible = false;
                     btnCancel.Visible = true;
                     btnLookUpItem.Enabled = false;
@@ -251,6 +254,7 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
                     txtPPN.Enabled = txtPPH.Enabled = false;
                     btnCancel.Visible = true;
                     btnCancelAp.Visible = false;
+                    ddlLeaseTax.Enabled = false;
                 }
 
                 if (Request.Params["flagrent"] == "1")
@@ -533,9 +537,11 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
 
         Type_app = Request.Params["type"];
 
+        var idTargetCondition = string.IsNullOrEmpty(Request.Params["idtarget"]) ? "0" : Request.Params["idtarget"];
+
         if (Type_app == "approval")
         {
-            idTarget = Int32.Parse(Request.Params["idtarget"]);
+            idTarget = Int32.Parse(idTargetCondition);
 
         }
         else
@@ -586,5 +592,4 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
     {
         Shared.BindItemUOM(ddlUnit, txtItemCode.Text);
     }
-     
 }

@@ -25,6 +25,16 @@ public partial class module_commonmst_masteritemgroupdetail : BasePage
         
         btnLookUpACCCOGS.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&parc_curr_code={3}');", txtACCCOGS.ClientID, lblNoACCCOGS.ClientID, lblNameACCCOGS.ClientID, ddlCurrency.ClientID);
         btnLookUpACCAssetinprogressPO.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtACCAssetinprogressPO.ClientID, lblNoAssetinprogressPO.ClientID, lblNameAssetinprogressPO.ClientID, txtPADAssetinprogressPO.ClientID, ddlCurrency.ClientID);
+        btnLookupRentAccNo.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtRentAccNo.ClientID, lblNoRentAccNo.ClientID, lblNameRentAccNo.ClientID, txtPADRentAccNo.ClientID, ddlCurrency.ClientID);
+
+        btnLookupRentAccNoUp1.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtRentAccNoUp1.ClientID, lblNoRentAccNoUp1.ClientID, lblNameRentAccNoUp1.ClientID, txtPADRentAccNoUp1.ClientID, ddlCurrency.ClientID);
+        btnLookUpACCExpensePOUp1.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtACCExpensePOUp1.ClientID, lblNoExpensePOUp1.ClientID, lblNameExpensePOUp1.ClientID, txtPADExpensePOUp1.ClientID, ddlCurrency.ClientID);
+
+
+        btnLookupRentRefundAccNo.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtRentRefundAccNo.ClientID, lblNoRentRefundAccNo.ClientID, lblNameRentRefundAccNo.ClientID, txtPadRentRefundAccNo.ClientID, ddlCurrency.ClientID);
+        btnLookupRentRefundAccNoUp1.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtRentRefundAccNoUp1.ClientID, lblNoRentRefundAccNoUp1.ClientID, lblNameRentRefundAccNoUp1.ClientID, txtPadRentRefundAccNoUp1.ClientID, ddlCurrency.ClientID);
+        btnLookUpExpenseRefund.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtAccExpenseRefund.ClientID, lblNoExpenseRefund.ClientID, lblNameExpenseRefund.ClientID, txtPadExpenseRefund.ClientID, ddlCurrency.ClientID);
+        btnLookUpExpenseRefundUp1.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHC&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&parc_curr_code={4}');", txtAccExpenseRefundUp1.ClientID, lblNoExpenseRefundUp1.ClientID, lblNameExpenseRefundUp1.ClientID, txtPadExpenseRefundUp1.ClientID, ddlCurrency.ClientID);
         LoadInit();
 
         if (!Page.IsPostBack)
@@ -32,27 +42,53 @@ public partial class module_commonmst_masteritemgroupdetail : BasePage
             lblID.Text = Request.Params["id"];
             lblCategory.Text = Request.Params["groupcategorytype"];
             lblCategoryCode.Text = Request.Params["categorycode"];
+            lblAssetPeriodHakGuna.Text = Request.Params["assetperiodhakguna"];
 
             Shared.BindCurrencyCode(ddlCurrency);
 
             if (lblCategory.Text == "IT")
             {
                 //FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = false; //(+)gustian 09/11/2022 enhance Prepaid
-                FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = Expese2.Visible = false; 
+                //FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = Expese2.Visible = false;
+                FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = Expese2.Visible = Rent.Visible = ExpenseUp1.Visible = RentUp1.Visible = false;
+
+                RentRefund.Visible = ExpenseRefund.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
             }
             else if (lblCategory.Text == "FA")
             {
-                Inventory.Visible = COGS.Visible = false;
+                //Inventory.Visible = COGS.Visible = false;
+                Inventory.Visible = COGS.Visible = Rent.Visible = ExpenseUp1.Visible = RentUp1.Visible = false;
+
+                RentRefund.Visible = ExpenseRefund.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
             }
             else if (lblCategory.Text == "ET")
             {
-                FaAssetInprogress.Visible = FaAsset.Visible = Inventory.Visible = COGS.Visible = false;
+                //FaAssetInprogress.Visible = FaAsset.Visible = Inventory.Visible = COGS.Visible = false;
+                FaAssetInprogress.Visible = FaAsset.Visible = Inventory.Visible = COGS.Visible = Rent.Visible = ExpenseUp1.Visible = RentUp1.Visible = false;
+
+                RentRefund.Visible = ExpenseRefund.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
             }
             else if (lblCategory.Text == "IC")
             {
                 FaAssetInprogress.Visible = FaAsset.Visible = COGS.Visible = Inventory.Visible = false;
+
+                //(+)fetra 20251119 : Penjagaan ketika lblAssetPeriodHakGuna empty / Null
+                int AssetPeriodHakGuna = string.IsNullOrEmpty(lblAssetPeriodHakGuna.Text) ? 0 : Convert.ToInt32(lblAssetPeriodHakGuna.Text);
+                if (AssetPeriodHakGuna > 12)
+                {
+                    Rent.Visible = Expanse.Visible = RentRefund.Visible = ExpenseRefund.Visible = false;
+
+                }
+                else if (AssetPeriodHakGuna <= 12 && AssetPeriodHakGuna != 0)
+                {
+                    RentUp1.Visible = ExpenseUp1.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
+                }
+                else
+                {
+                    RentRefund.Visible = ExpenseRefund.Visible = false;
+                    RentUp1.Visible = ExpenseUp1.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
+                }
             }
-            
             
             if (Request.Params["action"].Equals("edit"))
             {
@@ -63,19 +99,45 @@ public partial class module_commonmst_masteritemgroupdetail : BasePage
                 if (lblCategory.Text == "IT")
                 {
                     //FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = false; //(+)gustian 09/11/2022 enhance Prepaid
-                  FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = Expese2.Visible = false;
+                    //FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = Expese2.Visible = false;
+                    FaAssetInprogress.Visible = Expanse.Visible = FaAsset.Visible = Expese2.Visible = Rent.Visible = ExpenseUp1.Visible = RentUp1.Visible = false;
+
+                    RentRefund.Visible = ExpenseRefund.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
                 }
                 else if (lblCategory.Text == "FA")
                 {
-                    Inventory.Visible = COGS.Visible = false;
+                    //Inventory.Visible = COGS.Visible = false;
+                    Inventory.Visible = COGS.Visible = Rent.Visible = ExpenseUp1.Visible = RentUp1.Visible = false;
+
+                    RentRefund.Visible = ExpenseRefund.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
                 }
                 else if (lblCategory.Text == "ET")
                 {
-                    FaAssetInprogress.Visible = FaAsset.Visible = Inventory.Visible = COGS.Visible = false;
+                    //FaAssetInprogress.Visible = FaAsset.Visible = Inventory.Visible = COGS.Visible = false;
+                    FaAssetInprogress.Visible = FaAsset.Visible = Inventory.Visible = COGS.Visible = Rent.Visible = ExpenseUp1.Visible = RentUp1.Visible = false;
+
+                    RentRefund.Visible = ExpenseRefund.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
                 }
                 else if (lblCategory.Text == "IC")
                 {
                     FaAssetInprogress.Visible = FaAsset.Visible = COGS.Visible = Inventory.Visible = false;
+
+                    //(+)fetra 20251119 : Penjagaan ketika lblAssetPeriodHakGuna empty / Null
+                    int AssetPeriodHakGuna = string.IsNullOrEmpty(lblAssetPeriodHakGuna.Text) ? 0 : Convert.ToInt32(lblAssetPeriodHakGuna.Text);                    
+                    if (AssetPeriodHakGuna > 12)
+                    {
+                        Rent.Visible = Expanse.Visible = RentRefund.Visible = ExpenseRefund.Visible = false;
+                        
+                    }
+                    else if (AssetPeriodHakGuna <= 12 && AssetPeriodHakGuna != 0)
+                    {
+                        RentUp1.Visible = ExpenseUp1.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
+                    }
+                    else
+                    {
+                        RentRefund.Visible = ExpenseRefund.Visible = false;
+                        RentUp1.Visible = ExpenseUp1.Visible = RentRefundUp1.Visible = ExpenseRefundUp1.Visible = false;
+                    }
                 }
 
             }

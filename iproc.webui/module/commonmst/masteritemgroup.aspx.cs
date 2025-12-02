@@ -143,7 +143,7 @@ public partial class module_commonmst_masteritem : BasePage
                 else if (ddlJenisItem.SelectedValue == "IC")
                 {
                     txtAssetAmountThreshold.Visible = false;
-                    Amount.Visible = false;
+                    Amount.Visible = false;                   
                 }
                 else if (ddlJenisItem.SelectedValue == "ET")
                 {
@@ -374,7 +374,30 @@ public partial class module_commonmst_masteritem : BasePage
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-        Response.Redirect("masteritemgroupdetail.aspx?action=add&&categorycode=" + txtGroup.Text + "&type=" + Request.Params["type"] + "&groupcategorytype=" + lblCategory.Text);
+        int masaAssetValue;
+        if (ddlJenisItem.SelectedValue == "IC")
+        {
+            if (!int.TryParse(txtMasaAsset.Text, out masaAssetValue))
+            {
+                Shared.ShowErrorDialog(this, new Exception("Parameter Asset Hak Guna Harus angka!"));
+            }
+            else if (masaAssetValue <= 0)
+            {
+                Shared.ShowErrorDialog(this, new Exception("Parameter Asset Hak Guna Harus tidak boleh 0"));
+            }
+            else
+            {
+                Response.Redirect("masteritemgroupdetail.aspx?action=add&&categorycode=" + txtGroup.Text + "&type=" + Request.Params["type"] + "&groupcategorytype=" + lblCategory.Text + "&assetperiodhakguna=" + txtMasaAsset.Text);
+            }
+
+        }     
+            
+        else
+        {
+            Response.Redirect("masteritemgroupdetail.aspx?action=add&&categorycode=" + txtGroup.Text + "&type=" + Request.Params["type"] + "&groupcategorytype=" + lblCategory.Text + "&assetperiodhakguna=" + txtMasaAsset.Text);
+        }
+
+        
         //Response.Redirect("masteritemgroupdetail.aspx?action=add&idheader=" + lblId.Text + "&categorycode=" + txtGroup.Text + "&accexpensepo=" + lblNoExpensePO.Text + "&accexpenseponame=" + lblNameExpensePO.Text + "&accnoinv=" + lblNoINV.Text + "&accnoinvname=" + lblNameNoINV.Text + "&accassetpo=" + lblNoAssetPO.Text + "&accassetponame=" + lblNameAssetPO.Text);
     }
 
