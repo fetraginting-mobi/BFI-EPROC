@@ -445,7 +445,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Modified </label>
                                 <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "EMP_NAME" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "EMP_NAME_MOD" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
                                     <span>@</span>
                                     <cc1:XUILabel ID="lblModDate" runat="server" DBColumnName= "MOD_DATE" DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss"></cc1:XUILabel>
                                 </div>
@@ -625,7 +625,7 @@
                                         <asp:BoundField DataField="TRX_CODE_NAME" HeaderText="Trx Code" >
                                             <ItemStyle Width="40%" HorizontalAlign="Left" />
                                         </asp:BoundField>
-                                        <asp:BoundField DataField="PERCENTAGE" HeaderText="Percentage" DataFormatString="{0:N2}">
+                                        <asp:BoundField DataField="PERCENTAGE" HeaderText="Percentage" DataFormatString="{0:N6}">
                                             <ItemStyle Width="30%" HorizontalAlign="Right" />
                                         </asp:BoundField>
                                          <asp:BoundField DataField="AMOUNT" HeaderText="Amount"  DataFormatString="{0:N2}">

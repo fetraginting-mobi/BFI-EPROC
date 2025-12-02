@@ -21,8 +21,13 @@ public class BasePage : System.Web.UI.Page
         if (Session.Count == 0)
         {
             Response.Redirect(ResolveUrl("~/logout.aspx"));
-        } 
-        
+        }
+        bool result = Shared.IsUserRoleChanged();
+        if (result)
+        {
+            Response.Redirect("~/logout.aspx", false);
+            HttpContext.Current.Response.End();
+        }
         ScriptManager.RegisterStartupScript(this, GetType(), "dp", "javascript:datepicker();", true);
         ScriptManager.RegisterStartupScript(this, GetType(), "num", "javascript:textBoxInit();", true);
     }

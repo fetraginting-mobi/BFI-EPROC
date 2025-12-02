@@ -64,6 +64,7 @@
                                 <label class="col-sm-3">Status</label>
                                     <div class="col-sm-5">
                                         <cc1:XUIDropDownList ID="ddlStatus" Width="200px" runat="server" CssClass="form-control" SPParameterName="p_status" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged"></cc1:XUIDropDownList>
+                                        <%--<cc1:XUIDropDownList ID="ddlCurrencyShared" Width="200px" runat="server" CssClass="form-control" AutoPostBack="true" Visible="false"></cc1:XUIDropDownList>--%>
                                     </div>
                                 </div>
                             </div>    

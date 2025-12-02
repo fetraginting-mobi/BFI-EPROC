@@ -39,6 +39,16 @@ public partial class module_inventory_inventoryamortizationheader : BasePage
                     btnChange.Visible = true;
                     txtAmortizationDate.Enabled = false;
 
+                } 
+                if (lblStatus.Text == "REFUND" || lblStatus.Text == "REFUND-INPROGRESS")
+                {
+                    btnSave.Visible = btnProcess.Visible = false;
+                    txtAmortizationDate.Enabled = false;
+                    txtItemName.Enabled = false;
+                    btnLookUpInvBarcode.Enabled = false;
+                    txtBarcode.Enabled = false;
+                    ddlBranch.Enabled = false;
+
                 }
             }
             else

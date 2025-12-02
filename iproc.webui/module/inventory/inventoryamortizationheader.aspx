@@ -300,6 +300,9 @@
                             <asp:BoundField DataField="ACCRUED_AMOUNT" HeaderText="Accrue Amount" DataFormatString="{0:N0}">
                                 <ItemStyle Width="35%" HorizontalAlign="Right"  />
                             </asp:BoundField>
+                            <asp:BoundField DataField="STATUS" HeaderText="Amortization Status">
+                                <ItemStyle Width="10%" HorizontalAlign="Left" />
+                            </asp:BoundField>
                            <%-- <asp:CommandField ShowSelectButton="true" />--%>
                         </Columns>
                     </asp:GridView>

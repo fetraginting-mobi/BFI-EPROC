@@ -37,6 +37,7 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "PO");
             Shared.BindBranchEmployeeSort(ddlBranch);
             Shared.BindBranchEmployeeSort(ddlBranchPO);
+            //Shared.BindCurrencyCode(ddlCurrencyShared);
 
             //(+) Ari 11-07-2022 ket : enhancement 2022
             ddlBranchPO.Items.Insert(0, "ALL");
@@ -220,6 +221,7 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
         {
             GeneralDAL _dal = null;
             Hashtable _ht = null;
+            string pqhCode = "";
             string code = "";
             try
             {
@@ -237,12 +239,14 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
                 Shared.BindCurrencyCode(ddlCurrencyCode);
 
 
-                _ht["p_supplier_code"] = gvwListGenerate.DataKeys[e.Row.RowIndex][1].ToString();
-                _ht["p_item_code"] = gvwListGenerate.DataKeys[e.Row.RowIndex][2].ToString();
-                _ht["p_pq_code"] = gvwListGenerate.DataKeys[e.Row.RowIndex][0].ToString();
+                //_ht["p_supplier_code"] = gvwListGenerate.DataKeys[e.Row.RowIndex][1].ToString();
+                //_ht["p_item_code"] = gvwListGenerate.DataKeys[e.Row.RowIndex][2].ToString();
+                //_ht["p_pq_code"] = gvwListGenerate.DataKeys[e.Row.RowIndex][0].ToString();
+                //DataRow _dr = _dal.GetRow("", "xsp_supplier_selection_for_po_getrows", _ht);
+                //code = _dr["CODE"].ToString();
 
-                DataRow _dr = _dal.GetRow("", "xsp_supplier_selection_for_po_getrows", _ht);
-                code = _dr["CODE"].ToString();
+                pqhCode = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "PQ_DESC"));
+                code = pqhCode.Substring(4, 2); 
 
                 txtUnitPrice.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "WINNER_AMOUNT"));
                 ddlCurrencyCode.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "CURRENCY_CODE"));

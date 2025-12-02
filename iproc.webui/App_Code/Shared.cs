@@ -4077,4 +4077,46 @@ public class Shared
             return true;
     }
 
+    public static bool IsUserRoleChanged()
+    {
+        ArrayList existingRoles = HttpContext.Current.Session[SessionKey.CURRENT_USER_ROLE_SESSION_KEY] as ArrayList;
+        ArrayList freshRoles = new ArrayList();
+
+        try
+        {
+            GeneralDAL _dal = new GeneralDAL();
+            Hashtable _ht = new Hashtable();
+            _ht["p_uid"] = CurrentUID;
+
+            DataTable dt = _dal.GetRows("", "xsp_master_user_main_getrows_all_role", _ht);
+            if (dt != null)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    freshRoles.Add(dr["ROLE_CODE"]);
+                }
+            }
+
+            // Bandingkan isi existing dan fresh
+            if (existingRoles == null || existingRoles.Count != freshRoles.Count)
+            {
+                return true;
+            }
+
+            foreach (string role in freshRoles)
+            {
+                if (!existingRoles.Contains(role))
+                {
+                    return true;
+                }
+            }
+
+            return false; // semua cocok
+        }
+        catch
+        {
+            return true; // anggap berubah jika gagal ambil
+        }
+    }
+
 }
