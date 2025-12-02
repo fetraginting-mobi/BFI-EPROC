@@ -401,3 +401,6 @@ FodyWeavers.xsd
 iproc.webui/temp/qrcodes/*
 iproc.webui/temp/pdf/*
 
+# Local History for Visual Studio
+BFI-EPROC/iproc.webui/vwd.webinfo
+BFI-EPROC/iproc.webui/web.config

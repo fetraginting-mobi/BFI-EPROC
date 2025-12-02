@@ -51,6 +51,19 @@
                         </div>
                     </div>                            
                 </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group"></div>
+                    </div>
+               </div>
+               <div class="col-sm-3">
+                    <div class="form-group">
+                    <label class="col-sm-3">Owner</label>
+                        <div class="col-sm-8">
+                          <cc1:XUIDropDownList ID="ddlOwner" Width="200px" runat="server" CssClass="form-control" DBColumnName="OWNER_CODE" SPParameterName="p_owner" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlOwner_SelectedIndexChanged" ></cc1:XUIDropDownList>
+                        </div>
+                    </div>
+                </div>  
             </div>
             <div class="row">
                 <div class="col-sm-6">
