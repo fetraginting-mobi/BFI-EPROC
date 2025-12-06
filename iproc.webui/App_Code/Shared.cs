@@ -368,7 +368,7 @@ public class Shared
             ddl.DataValueField = "CODE";
             ddl.DataBind();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
@@ -391,7 +391,7 @@ public class Shared
             ddl.DataValueField = "CODE";
             ddl.DataBind();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
@@ -415,7 +415,7 @@ public class Shared
             ddl.DataBind();
             ddl.Items.Insert(0, new ListItem("-=Select=-", "0"));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
@@ -439,7 +439,7 @@ public class Shared
             ddl.DataBind();
             ddl.Items.Insert(0, new ListItem("ALL", "ALL"));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
@@ -3438,7 +3438,7 @@ public class Shared
     public static string ExecuteReportExportExcel(Page page, string spReportName, string spResultName, Hashtable parameter, string filepath)
     {
         GeneralDAL dalReport = null;
-        string fullpathtextfile = "";
+        //string fullpathtextfile = "";
         try
         {
             //  execute DAL first

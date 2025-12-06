@@ -9,7 +9,7 @@ using iProc.DataAccessLayer;
 
 public partial class module_inventory_inventoryviewstock : BasePageList
 {
-    private static string TABLE_NAME = "INVENTORY_CARD";
+    //private static string TABLE_NAME = "INVENTORY_CARD";
 
     protected void Page_Init(object sender, EventArgs e)
     {

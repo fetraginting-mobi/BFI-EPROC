@@ -9,7 +9,7 @@ using iProc.DataAccessLayer;
 
 public partial class module_fa_fadepretiationlistlist : BasePage
 {
-    private static string TABLE_NAME_HEADER = "FA_ASSET_HISTORY_DEPRECIATION";
+    //private static string TABLE_NAME_HEADER = "FA_ASSET_HISTORY_DEPRECIATION";
 
     protected void Page_Init(object sender, EventArgs e)
     {

@@ -11,7 +11,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_generatenobs : BasePage
 {
-    private static string TABLE_NAME = "RECEIPT_VOUCHER_TAXI";
+    //private static string TABLE_NAME = "RECEIPT_VOUCHER_TAXI";
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();

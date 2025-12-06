@@ -127,7 +127,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
             string pdfName = "upload_mutation_list"+ ".xlsx"; ;
             string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
-            string filetype = "xls";
+            //string filetype = "xls";
 
 
             // menampilkan pdf yang sudah dibuat

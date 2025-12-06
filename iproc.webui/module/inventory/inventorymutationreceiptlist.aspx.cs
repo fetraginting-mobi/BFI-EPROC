@@ -10,7 +10,7 @@ using iProc.DataAccessLayer;
 
 public partial class module_inventory_inventorymutationreceiptlist : BasePageList
 {
-    private static string TABLE_NAME = "INVENTORY_MUTATION_REQUEST_DETAIL";
+    //private static string TABLE_NAME = "INVENTORY_MUTATION_REQUEST_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -32,7 +32,7 @@ public partial class module_inventory_inventorymutationreceiptlist : BasePageLis
         GeneralDAL _dal = null;
         Hashtable _ht = null;
 
-        DataView dv = null;
+        //DataView dv = null;
 
         try
         {

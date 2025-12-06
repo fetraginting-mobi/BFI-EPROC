@@ -724,7 +724,7 @@ public partial class module_commonmst_mastersupplier : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

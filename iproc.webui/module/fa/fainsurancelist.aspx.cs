@@ -68,7 +68,7 @@ public partial class module_fa_fainsurancelist : BasePageList
            // string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             string pdfPath = Server.MapPath(@"..\..\temp\" + pdfName);
          
-            string filetype = "xls";
+            //string filetype = "xls";
 
 
             // menampilkan pdf yang sudah dibuat
@@ -87,7 +87,7 @@ public partial class module_fa_fainsurancelist : BasePageList
         
         //string asd = "";
         bool valid = true;
-        DateTime datetime;
+        //DateTime datetime;
         if (FileUploadControlAmort.HasFile)
         {
             string filename, saveAsFileName;
@@ -471,7 +471,7 @@ public partial class module_fa_fainsurancelist : BasePageList
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        int iNextID = 0;
+        //int iNextID = 0;
        
         //
        

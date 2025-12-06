@@ -25,10 +25,10 @@ public class odstockaging : IHttpHandler {
     {
         GeneralDAL dal = null;
         Hashtable ht = null;
-        DataTable dt = null;
+        //DataTable dt = null;
         StringBuilder sb = null;
 
-        int i = 0;
+        //int i = 0;
 
         try
         {
@@ -66,7 +66,7 @@ public class odstockaging : IHttpHandler {
 
             sb.Append("]");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             sb = new StringBuilder("[{\"data\":[]}]");
         }

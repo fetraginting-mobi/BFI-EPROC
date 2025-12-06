@@ -13,7 +13,7 @@ using MPF23.Shared.Mapper;
 public partial class module_finance_paymententrylist : BasePageList
 {
     private static string TABLE_NAME = "AP_PAYMENT_ENTRY";
-    private static string TABLE_NAME_FI_PV_HEADER = "FI_PV_HEADER";
+    //private static string TABLE_NAME_FI_PV_HEADER = "FI_PV_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {

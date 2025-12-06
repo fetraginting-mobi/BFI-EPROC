@@ -31,7 +31,7 @@ public partial class module_report_rptagingasset : BasePage
     {
         Hashtable _htParameters = new Hashtable();
         ExportFormatType eftreport = new ExportFormatType();
-        string data = "";
+        //string data = "";
         string filename = "";
 
        // System.Diagnostics.Debugger.Break();
@@ -71,7 +71,7 @@ public partial class module_report_rptagingasset : BasePage
     { 
         Hashtable _htParameters = new Hashtable();
         ExportFormatType eftreport = new ExportFormatType();
-        string data = "";
+        //string data = "";
         string filename = "";
 
         //System.Diagnostics.Debugger.Break();

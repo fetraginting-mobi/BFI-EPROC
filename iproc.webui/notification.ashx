@@ -78,7 +78,7 @@ public class notification : IHttpHandler, System.Web.SessionState.IRequiresSessi
 
             sMsg += "</ul></li>";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 

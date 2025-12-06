@@ -12,7 +12,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_confirmationlist : BasePage
 {
-    private static string TABLE_NAME = "PROCUREMENT_REQUEST_DETAIL";
+    //private static string TABLE_NAME = "PROCUREMENT_REQUEST_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -30,7 +30,7 @@ public partial class module_purchaseorder_confirmationlist : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        DataView dv = null;
+        //DataView dv = null;
 
         try
         {

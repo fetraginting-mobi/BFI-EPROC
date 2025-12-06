@@ -11,7 +11,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_verifikasirequestheader : BasePage
 {
-    private static string TABLE_NAME_HEADER = "PURCHASE_REQUEST_HEADER";
+    //private static string TABLE_NAME_HEADER = "PURCHASE_REQUEST_HEADER";
     private static string TABLE_NAME_DETAIL = "PURCHASE_REQUEST_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
@@ -360,7 +360,7 @@ public partial class module_purchaseorder_verifikasirequestheader : BasePage
                 txtApproveQty.Text = _dr["APPROVE_QUANTITY"].ToString();
                 //txtApproveQty.Enabled = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

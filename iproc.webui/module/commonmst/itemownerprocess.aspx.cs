@@ -11,8 +11,8 @@ using MPF23.Shared.Mapper;
 
 public partial class module_commonmst_itemownerprocess : BasePage
 {
-    private static string TABLE_NAME = "MASTER_CREDITOR_TYPE";
-    private static string TABLE_NAME_DETAIL = "MASTER_CREDITOR_TYPE_LINK_ACC";
+    //private static string TABLE_NAME = "MASTER_CREDITOR_TYPE";
+    //private static string TABLE_NAME_DETAIL = "MASTER_CREDITOR_TYPE_LINK_ACC";
     protected void Page_Load(object sender, EventArgs e)
     {
         //btnLookUpCapyCOA.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=ACCHT&acol_0={0}&bcol_0={1}&ccol_1={2}');", txtCapyAcc.ClientID, lblCapyAcc.ClientID, lblNameCapyAcc.ClientID);

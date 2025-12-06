@@ -11,7 +11,7 @@ using MPF23.Shared.Mapper;
 public partial class module_purchaseorder_procurementreview : BasePage
 {
    
-    private static string TABLE_NAME_HEADER = "PURCHASE_REQUEST_DETAIL";
+    //private static string TABLE_NAME_HEADER = "PURCHASE_REQUEST_DETAIL";
     private static string TABLE_NAME_DETAIL = "PROCUREMENT_REVIEW";
 
 

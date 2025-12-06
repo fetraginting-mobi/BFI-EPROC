@@ -92,7 +92,7 @@ public partial class controller : BasePage
 
                 isValid = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 isValid = false;
             }

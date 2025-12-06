@@ -514,7 +514,7 @@ public partial class module_purchaseorder_purchaseticketheader : BasePage
 
 
              }
-             catch (Exception ex)
+             catch (Exception)
              {
 
              }
@@ -755,7 +755,7 @@ public partial class module_purchaseorder_purchaseticketheader : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

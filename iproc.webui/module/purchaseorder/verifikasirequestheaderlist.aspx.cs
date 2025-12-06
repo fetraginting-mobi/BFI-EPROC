@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_verifikasirequestheaderlist : BasePageList
 {
-    private static string TABLE_NAME = "PURCHASE_REQUEST_HEADER";
+    //private static string TABLE_NAME = "PURCHASE_REQUEST_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {

@@ -62,8 +62,8 @@ public partial class module_fa_faassetmaintenanceservice : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        string nextID = "";
-        string NextUrl = "";
+        //string nextID = "";
+        //string NextUrl = "";
 
         try
         {

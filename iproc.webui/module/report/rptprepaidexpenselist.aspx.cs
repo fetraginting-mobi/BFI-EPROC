@@ -95,7 +95,7 @@ public partial class module_report_rptprepaidexpenselist : BasePage
             // string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             string pdfPath = Server.MapPath(@"..\..\temp\" + pdfName);
 
-            string filetype = "xls";
+            //string filetype = "xls";
 
 
             // menampilkan pdf yang sudah dibuat
@@ -115,7 +115,7 @@ public partial class module_report_rptprepaidexpenselist : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable htReportParams = null;
-        string filename = "";
+        //string filename = "";
         try
         {
 
@@ -135,7 +135,7 @@ public partial class module_report_rptprepaidexpenselist : BasePage
             // string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             string pdfPath = Server.MapPath(@"..\..\temp\" + pdfName);
 
-            string filetype = "xls";
+            //string filetype = "xls";
 
 
             // menampilkan pdf yang sudah dibuat

@@ -9,8 +9,6 @@ using iProc.DataAccessLayer;
 
 public partial class module_accounting_accrevaluation : BasePageList
 {
-    private static string TABLE_NAME_HEADER = "ACC_REVAL_PROCESS";
-
     protected void Page_Init(object sender, EventArgs e)
     {
         PAGE_LIST = "ACC_REVAL_PROCESS";

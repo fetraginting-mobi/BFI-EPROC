@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_itemquotationselection : BasePageList
 {
-    private static string TABLE_NAME = "PURCHASE_REQUEST_DETAIL";
+    //private static string TABLE_NAME = "PURCHASE_REQUEST_DETAIL";
 
     protected void Page_Init(object sender, EventArgs e)
     {

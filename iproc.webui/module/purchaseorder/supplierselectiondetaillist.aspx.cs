@@ -12,7 +12,7 @@ using MPF23.Shared.Mapper;
 public partial class module_purchaseorder_supplierselectiondetaillist : BasePage
 {
 
-    private static string TABLE_NAME_DETAIL = "SUPPLIER_SELECTION_DETAIL";
+    //private static string TABLE_NAME_DETAIL = "SUPPLIER_SELECTION_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -212,7 +212,7 @@ public partial class module_purchaseorder_supplierselectiondetaillist : BasePage
 
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

@@ -14,7 +14,7 @@ public partial class module_purchaseorder_purchasequotationdetail : BasePage
 {
 
     private static string TABLE_NAME = "PURCHASE_QUOTATION_DETAIL";
-    private static string TABLE_NAME_DOC_DETAIL = "PURCHASE_QUOTATION_DOCUMENT_DETAIL";
+    //private static string TABLE_NAME_DOC_DETAIL = "PURCHASE_QUOTATION_DOCUMENT_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
     {

@@ -12,7 +12,7 @@ using MPF23.Shared.Mapper;
 public partial class module_commonsec_mastergroupsec : BasePage
 {
     private static string TABLE_NAME_GROUP_SEC = "MASTER_GROUP_SEC";
-    private static string TABLE_NAME_ROLE_SEC = "MASTER_ROLE_SEC";
+    //private static string TABLE_NAME_ROLE_SEC = "MASTER_ROLE_SEC";
     private static string TABLE_NAME_GROUP_ROLE_SEC = "MASTER_GROUP_ROLE_SEC";
 
     private const int APP_NAME_INDEX = 1;

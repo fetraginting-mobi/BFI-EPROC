@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Data;
 using System.Collections;
 using System.Linq;
@@ -14,7 +13,7 @@ public partial class module_fa_faentrydetail : BasePage
 {
 
     private static string TABLE_NAME_DETAIL = "FA_ENTRY_DETAIL";
-    private static string TABLE_NAME_FA = "FA_ASSET";
+    //private static string TABLE_NAME_FA = "FA_ASSET";
 
 
     protected void Page_Load(object sender, EventArgs e)

@@ -611,7 +611,7 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

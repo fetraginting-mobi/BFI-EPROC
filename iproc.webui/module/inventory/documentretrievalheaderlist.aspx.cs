@@ -162,7 +162,7 @@ public partial class module_inventory_documentretrievalheaderlist : BasePageList
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        int iNextID = 0;
+        //int iNextID = 0;
         //
         //System.Diagnostics.Debugger.Break();
         if (!SelectedExist())

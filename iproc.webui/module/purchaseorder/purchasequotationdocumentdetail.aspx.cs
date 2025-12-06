@@ -89,9 +89,9 @@ public partial class module_purchaseorder_purchasequotationdocumentdetail : Base
         Hashtable _ht = null;
         int inextid = 0;
         string sFileDirectorys;
-        FileUpload fupFile;
-        string lblFileName;
-        string sFileName;
+        //FileUpload fupFile;
+        //string lblFileName;
+        //string sFileName;
         String sFilePath;
         sFilePath = string.Empty;
  

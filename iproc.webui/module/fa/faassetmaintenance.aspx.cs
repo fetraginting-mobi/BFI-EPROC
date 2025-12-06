@@ -193,8 +193,8 @@ public partial class module_fa_faassetmaintenance : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        string nextID = "";
-        string NextUrl = "";
+        //string nextID = "";
+        //string NextUrl = "";
 
         try
         {

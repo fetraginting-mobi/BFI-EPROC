@@ -473,7 +473,7 @@ public partial class module_purchaseorder_supplierselectionheader : BasePage
 
               
             }
-            catch (Exception ex){
+            catch (Exception){
             
             }
         }

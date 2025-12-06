@@ -133,7 +133,7 @@ public partial class module_accounting_financialrptgen : BasePage
             ddlFormula.DataBind();
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
@@ -206,7 +206,7 @@ public partial class module_accounting_financialrptgen : BasePage
 
             string pdfName = "upload_row_format" + Shared.CurrentUID + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx"; ;
             string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
-            string filetype = "xls";
+            //string filetype = "xls";
             
 
             // menampilkan pdf yang sudah dibuat
@@ -225,13 +225,13 @@ public partial class module_accounting_financialrptgen : BasePage
      
         //string asd = "";
         bool valid = true;
-        DateTime datetime;
+        //DateTime datetime;
         if (FileUploadControlAmort.HasFile)
         {
             string filename, saveAsFileName;
             string extension;
             int ctr;
-            int iNextID = 0;
+            //int iNextID = 0;
             filename = FileUploadControlAmort.FileName.ToString();
             string[] s = filename.Split('.');
             extension = s[s.Length - 1];
@@ -584,8 +584,8 @@ public partial class module_accounting_financialrptgen : BasePage
 
     private void DeleteDataColumn(string ID)
     {
-        GeneralDAL _dal = null;
-        Hashtable _ht = null;
+        //GeneralDAL _dal = null;
+        //Hashtable _ht = null;
 
         try
         {

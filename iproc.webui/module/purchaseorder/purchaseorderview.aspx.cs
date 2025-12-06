@@ -922,7 +922,7 @@ public partial class purchaseorderview : BasePage
 
     protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
     {
-        Hashtable _ht;
+        //Hashtable _ht;
         FileUpload fupFile;
         string lblFileName;
         string sFileName;
@@ -1000,7 +1000,7 @@ public partial class purchaseorderview : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

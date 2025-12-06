@@ -68,7 +68,7 @@ public partial class module_asset_wcfaassetvehicle : System.Web.UI.UserControl
 
             DBToUI.Map(pnlAll.Controls, _dr);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //Shared.ShowErrorDialog(this.Page, ex);
         }

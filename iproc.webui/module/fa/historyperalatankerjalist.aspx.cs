@@ -10,8 +10,8 @@ using MPF23.Shared.Mapper;
 
 public partial class module_fa_historyperalatankerjalist : BasePageList
 {
-    private static string TABLE_NAME_REQUEST = "REQUEST_PERALATAN_KERJA_HEADER";
-    private static string TABLE_NAME_RETURN = "RETURN_PERALATAN_KERJA_HEADER";
+    //private static string TABLE_NAME_REQUEST = "REQUEST_PERALATAN_KERJA_HEADER";
+    //private static string TABLE_NAME_RETURN = "RETURN_PERALATAN_KERJA_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -105,7 +105,7 @@ public partial class module_fa_historyperalatankerjalist : BasePageList
 
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
-            string transaction;//= ((Label)e.Row.Cells[3].Controls[1]).Text;
+            //string transaction;//= ((Label)e.Row.Cells[3].Controls[1]).Text;
 
 
             //LinkButton btnPreview = (LinkButton)e.Row.Cells[11].Controls[1];

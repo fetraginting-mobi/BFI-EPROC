@@ -708,7 +708,7 @@ public partial class module_purchaseorder_purchasequotationheader : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

@@ -33,7 +33,7 @@ public partial class module_report_rptassetinprogresssumary : BasePage
 
         Hashtable _htParameters = new Hashtable();
         ExportFormatType eftreport = new ExportFormatType();
-        string data = "";
+        //string data = "";
         string filename = "";
         //System.Diagnostics.Debugger.Break();
         try

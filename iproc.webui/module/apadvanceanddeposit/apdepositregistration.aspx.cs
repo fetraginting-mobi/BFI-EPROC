@@ -603,7 +603,7 @@ public partial class module_apadvanceanddeposit_apdepositregistration : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

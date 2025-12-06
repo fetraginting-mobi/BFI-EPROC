@@ -14,7 +14,7 @@ public partial class module_fa_fareconmigrasi : BasePage
     private static string TABLE_NAME = "FA_ASSET";
     private static string TABLE_NAME_FA_ASSET_INSURANCE = "FA_ASSET_INSURANCE";
     private static string TABLE_NAME_FA_ASSET_HISTORY_LOCATION = "FA_ASSET_HISTORY_LOCATION";
-    private static string TABLE_NAME_FA_ASSET_HISTORY_DEPRECIATION = "FA_ASSET_HISTORY_DEPRECIATION";
+    //private static string TABLE_NAME_FA_ASSET_HISTORY_DEPRECIATION = "FA_ASSET_HISTORY_DEPRECIATION";
 
     private static string TABLE_NAME_SYS_ASSET_TYPE = "SYS_ASSET_TYPE";
 
@@ -83,7 +83,7 @@ public partial class module_fa_fareconmigrasi : BasePage
             if (_dr != null && pnlPlaceholder.Page != null)
                 pnlPlaceholder.Controls.Add(LoadControl("../../" + _dr["FILENAME"].ToString()));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //Shared.ShowErrorDialog(this, ex);
         }

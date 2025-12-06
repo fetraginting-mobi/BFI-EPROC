@@ -11,7 +11,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_report_fixedassetreportlist : BasePageList
 {
-    private static string TABLE_NAME = "MASTER_REPORT";
+    //private static string TABLE_NAME = "MASTER_REPORT";
 
     protected void Page_Init(object sender, EventArgs e)
     {

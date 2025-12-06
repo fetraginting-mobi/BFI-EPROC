@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_fa_requestperalatankerjalist : BasePageList
 {
-    private static string TABLE_NAME = "REQUEST_PERALATAN_KERJA_HEADER";
+    //private static string TABLE_NAME = "REQUEST_PERALATAN_KERJA_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {

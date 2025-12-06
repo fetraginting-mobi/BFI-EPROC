@@ -1440,7 +1440,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
    protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
     {
-        Hashtable _ht;
+        //Hashtable _ht;
         FileUpload fupFile;
         string lblFileName;
         string sFileName;
@@ -1518,7 +1518,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

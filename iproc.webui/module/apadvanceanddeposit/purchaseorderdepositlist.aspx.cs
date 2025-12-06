@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_apadvanceanddeposit_purchaseorderdepositlist : BasePageList
 {
-    private static string TABLE_NAME = "PURCHASE_ORDER_DEPOSIT";
+    //private static string TABLE_NAME = "PURCHASE_ORDER_DEPOSIT";
 
     protected void Page_Init(object sender, EventArgs e)
     {

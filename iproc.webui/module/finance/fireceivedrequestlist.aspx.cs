@@ -10,7 +10,7 @@ using iProc.DataAccessLayer;
 public partial class module_finance_fireceivedrequestlist : BasePageList
 {
     private static string TABLE_NAME = "FI_RECEIVED_REQUEST";
-    private static string TABLE_NAME_FI_RV_HEADER = "FI_RV_HEADER";
+    //private static string TABLE_NAME_FI_RV_HEADER = "FI_RV_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {

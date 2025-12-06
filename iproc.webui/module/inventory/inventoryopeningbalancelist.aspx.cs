@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_inventory_inventoryopeningbalancelist : BasePageList
 {
-    private static string TABLE_NAME = "INVENTORY_OPENING_BALANCE";
+    //private static string TABLE_NAME = "INVENTORY_OPENING_BALANCE";
 
     protected void Page_Init(object sender, EventArgs e)
     {

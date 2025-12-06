@@ -9,7 +9,7 @@ using iProc.DataAccessLayer;
 
 public partial class module_fa_fadepreciationlist : BasePageList
 {
-    private static string TABLE_NAME_HEADER = "FA_ASSET_HISTORY_DEPRECIATION";
+    //private static string TABLE_NAME_HEADER = "FA_ASSET_HISTORY_DEPRECIATION";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -218,7 +218,7 @@ public partial class module_fa_fadepreciationlist : BasePageList
             // string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             string pdfPath = Server.MapPath(@"..\..\temp\" + pdfName);
 
-            string filetype = "xls";
+            //string filetype = "xls";
 
             // menampilkan xls yang sudah dibuat
             Shared.ExecuteReportExportExcel(this, null, "xsp_fa_depreciation_list_download_getrows", _htParameters, pdfPath);

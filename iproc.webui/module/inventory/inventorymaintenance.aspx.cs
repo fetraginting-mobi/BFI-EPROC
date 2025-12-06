@@ -155,8 +155,8 @@ public partial class module_inventory_inventorymaintenance : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        string nextID = "";
-        string NextUrl = "";
+        //string nextID = "";
+        //string NextUrl = "";
 
         try
         {

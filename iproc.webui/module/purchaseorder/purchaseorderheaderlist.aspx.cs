@@ -287,7 +287,7 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
                     txtRate.Text = "1";
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             

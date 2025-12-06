@@ -10,7 +10,7 @@ using iProc.DataAccessLayer;
 
 public partial class module_fa_famutationreceiptlist : BasePageList
 {
-    private static string TABLE_NAME = "FA_REQUEST_MUTATION_DETAIL";
+    //private static string TABLE_NAME = "FA_REQUEST_MUTATION_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
     {

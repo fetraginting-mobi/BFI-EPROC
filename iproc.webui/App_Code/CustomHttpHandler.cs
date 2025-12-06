@@ -25,9 +25,9 @@ public class CustomHttpHandler : IHttpHandler, IRequiresSessionState
         HttpRequest request = context.Request;
         HttpResponse response = context.Response;
 
-        string fileURL;
+        //string fileURL;
         string appPath;
-        string fileName;
+        //string fileName;
         string fileRawURL;
         string RequestedPage = context.Request.Url.Segments[2].ToLower();
 

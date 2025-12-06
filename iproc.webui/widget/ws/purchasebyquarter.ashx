@@ -76,7 +76,7 @@ public class purchasebyquarter : IHttpHandler {
 
             sb.Append("]");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             sb = new StringBuilder("[{\"data\":[]}]");
         }

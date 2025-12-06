@@ -193,7 +193,7 @@ public partial class module_commonmst_faassetlist : BasePageList
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        DataTable _dt = null;
+        //DataTable _dt = null;
 
 
         //

@@ -11,7 +11,7 @@ using MPF23.Shared.Mapper;
 public partial class module_inventory_documentretrievalheader : BasePage
 {
     private static string TABLE_NAME_HEADER = "DOCUMENT_RECEIPT_HEADER";
-    private static string TABLE_NAME_DETAIL = "DOCUMENT_RECEIPT_DETAIL";
+    //private static string TABLE_NAME_DETAIL = "DOCUMENT_RECEIPT_DETAIL";
     string sfullname = string.Empty;
 
     protected void Page_Load(object sender, EventArgs e)
@@ -116,9 +116,9 @@ public partial class module_inventory_documentretrievalheader : BasePage
         Hashtable _ht = null;
         string sNextBarcode = "";
         string sFileDirectorys;
-        FileUpload fupFile;
-        string lblFileName;
-        string sFileName;
+        //FileUpload fupFile;
+        //string lblFileName;
+        //string sFileName;
         String sFilePath;
         sFilePath = string.Empty;
 

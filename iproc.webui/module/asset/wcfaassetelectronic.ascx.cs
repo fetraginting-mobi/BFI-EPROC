@@ -64,7 +64,7 @@ public partial class module_asset_wcfaassetelectronic : UserControl
 
             DBToUI.Map(this.Controls, _dr);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //Shared.ShowErrorDialog(this.Page, ex);
         }

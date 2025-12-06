@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_transactioninquiry : BasePageList
 {
-    private static string TABLE_NAME = "APPROVAL_REQUEST";
+    //private static string TABLE_NAME = "APPROVAL_REQUEST";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -112,7 +112,7 @@ public partial class module_purchaseorder_transactioninquiry : BasePageList
 
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
-            string transaction;//= ((Label)e.Row.Cells[3].Controls[1]).Text;
+            //string transaction;//= ((Label)e.Row.Cells[3].Controls[1]).Text;
  
 
             //LinkButton btnPreview = (LinkButton)e.Row.Cells[11].Controls[1];

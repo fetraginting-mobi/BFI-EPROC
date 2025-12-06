@@ -9,8 +9,8 @@ using iProc.DataAccessLayer;
 
 public partial class module_fa_historyperalatan : BasePage
 {
-    private static string TABLE_NAME_REQUEST = "REQUEST_PERALATAN_KERJA_HEADER";
-    private static string TABLE_NAME_RETURN = "RETURN_PERALATAN_KERJA_HEADER";
+    //private static string TABLE_NAME_REQUEST = "REQUEST_PERALATAN_KERJA_HEADER";
+    //private static string TABLE_NAME_RETURN = "RETURN_PERALATAN_KERJA_HEADER";
    
     protected void Page_Load(object sender, EventArgs e)
     {

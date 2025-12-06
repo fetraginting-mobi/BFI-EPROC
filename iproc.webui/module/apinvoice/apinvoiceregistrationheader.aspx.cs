@@ -1880,7 +1880,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

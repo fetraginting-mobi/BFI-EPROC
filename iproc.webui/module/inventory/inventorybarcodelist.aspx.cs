@@ -201,8 +201,8 @@ public partial class module_inventory_inventorybarcodelist : BasePageList
         GeneralDAL _dal;
         Hashtable _ht;
         IList listPDF = new ArrayList();
-        GeneralDAL _daldelete = null;
-        Hashtable _htdelete = null;
+        //GeneralDAL _daldelete = null;
+        //Hashtable _htdelete = null;
 
         string rptName = "rpt_barcode_inv_list_qr";
         string rptPath;

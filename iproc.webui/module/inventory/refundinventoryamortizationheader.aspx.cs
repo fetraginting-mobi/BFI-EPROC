@@ -383,7 +383,7 @@ public partial class module_inventory_refundinventoryamortizationheader : BasePa
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

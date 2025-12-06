@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Data;
 using System.Collections;
 using System.Linq;
@@ -358,7 +357,7 @@ public partial class module_fa_fasaledetail : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

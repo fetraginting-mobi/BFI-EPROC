@@ -76,7 +76,7 @@ public partial class module_purchaseorder_purchaserequesttender : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        string sNextBarcode = "";
+        //string sNextBarcode = "";
         //
         try
         {
@@ -145,7 +145,7 @@ public partial class module_purchaseorder_purchaserequesttender : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        string sNextBarcode = "";
+        //string sNextBarcode = "";
         //
         try
         {

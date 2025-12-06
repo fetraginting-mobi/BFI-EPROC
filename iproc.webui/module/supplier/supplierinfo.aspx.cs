@@ -560,7 +560,7 @@ public partial class module_supplier_supplierinfo : BasePage
 
     protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
     {
-        Hashtable _ht;
+        //Hashtable _ht;
         FileUpload fupFile;
         string lblFileName;
         string sFileName;
@@ -638,7 +638,7 @@ public partial class module_supplier_supplierinfo : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

@@ -102,7 +102,7 @@ public partial class module_fa_returnperalatankerjadetail : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        string sNextBarcode = "";
+        //string sNextBarcode = "";
 
        
         try

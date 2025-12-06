@@ -357,7 +357,7 @@ public partial class module_fa_fadisposaldetail : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

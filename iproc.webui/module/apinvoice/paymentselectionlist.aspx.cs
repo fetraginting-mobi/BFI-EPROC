@@ -10,7 +10,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_apinvoice_paymentselectionlist : BasePageList
 {
-    private static string TABLE_NAME = "AP_INVOICE_REGISTRATION_HEADER";
+    //private static string TABLE_NAME = "AP_INVOICE_REGISTRATION_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -94,8 +94,8 @@ public partial class module_apinvoice_paymentselectionlist : BasePageList
     private void ProcessData()
     {
         
-        string InvoiceNo = "";
-        int flag = 0;
+        //string InvoiceNo = "";
+        //int flag = 0;
         //foreach (GridViewRow row in gvwList.Rows)
         //{
         //    CheckBox chb = (CheckBox)gvwList.Rows[row.RowIndex].Cells[1].Controls[1];

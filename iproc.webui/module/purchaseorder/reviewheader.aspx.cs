@@ -11,7 +11,7 @@ using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_reviewheader : BasePage
 {
-    private static string TABLE_NAME = "PROCUREMENT_REVIEW";
+    //private static string TABLE_NAME = "PROCUREMENT_REVIEW";
 
    
     protected void Page_Load(object sender, EventArgs e)

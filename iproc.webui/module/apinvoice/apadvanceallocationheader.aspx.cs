@@ -492,7 +492,7 @@ public partial class module_apinvoice_apadvanceallocationheader : BasePage
                 txtAllocationAdvance.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "ALLOCATION_ADVANCE"));
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

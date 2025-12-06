@@ -760,7 +760,7 @@ public partial class module_fa_faadjustheader : BasePage
                 //}
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

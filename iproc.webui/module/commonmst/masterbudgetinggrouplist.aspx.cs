@@ -119,7 +119,7 @@ public partial class module_commonmst_masterbudgetinggrouplist : BasePageList
 
             string pdfName = "upload_row_format" + Shared.CurrentUID + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx"; ;
             string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
-            string filetype = "xls";
+            //string filetype = "xls";
 
 
             // menampilkan pdf yang sudah dibuat
@@ -138,13 +138,13 @@ public partial class module_commonmst_masterbudgetinggrouplist : BasePageList
         //System.Diagnostics.Debugger.Break();
         //string asd = "";
         bool valid = true;
-        DateTime datetime;
+        //DateTime datetime;
         if (FileUploadControlAmort.HasFile)
         {
             string filename, saveAsFileName;
             string extension;
             int ctr;
-            int iNextID = 0;
+            //int iNextID = 0;
             filename = FileUploadControlAmort.FileName.ToString();
             string[] s = filename.Split('.');
             extension = s[s.Length - 1];

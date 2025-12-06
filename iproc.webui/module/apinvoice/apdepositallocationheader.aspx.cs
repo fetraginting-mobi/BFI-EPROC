@@ -528,7 +528,7 @@ public partial class module_apinvoice_apdepositallocationheader : BasePage
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

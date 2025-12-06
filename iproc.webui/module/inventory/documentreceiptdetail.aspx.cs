@@ -89,9 +89,9 @@ public partial class module_inventory_documentreceiptdetail : BasePage
         Hashtable _ht = null;
         int iNextID = 0;
         string sFileDirectorys;
-        FileUpload fupFile;
-        string lblFileName;
-        string sFileName;
+        //FileUpload fupFile;
+        //string lblFileName;
+        //string sFileName;
         String sFilePath;
         sFilePath = string.Empty;
 

@@ -14,7 +14,7 @@ public partial class module_commonmst_masterbranch : BasePage
     private static string TABLE_NAME = "MASTER_BRANCH";
     private static string TABLE_NAME_BANK = "SYS_BRANCH_BANK";
     private static string TABLE_NAME_ACC = "SYS_BRANCH_ACC_FIRST_PERIOD";
-    private static string TABLE_NAME_SUB_BRANCH = "SUB_BRANCH";
+    //private static string TABLE_NAME_SUB_BRANCH = "SUB_BRANCH";
 
 
     protected void Page_Load(object sender, EventArgs e)

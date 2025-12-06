@@ -589,7 +589,7 @@ public partial class module_purchaseorder_purchasequotationreviewheader : BasePa
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
