@@ -24,7 +24,7 @@ public partial class module_fa_faentryheaderlist : BasePageList
         if (!Page.IsPostBack)
         {
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "FE");
-            Shared.BindBranchEmployeeSort(ddlBranch);
+            Shared.BindBranchEmployeeCustomSort(ddlBranch);
 
             BindData();
             btnDeleteEntryHeader.OnClientClick = "return confirm('Delete selected data?');";

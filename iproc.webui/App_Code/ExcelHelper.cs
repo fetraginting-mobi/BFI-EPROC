@@ -7,331 +7,274 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
-/// <summary>
-/// Summary description for ExcelHelper
-/// </summary>
 public class ExcelHelper
 {
-    public ExcelHelper()
-    {
-        //
-        // TODO: Add constructor logic here
-        //
-    }
+    public ExcelHelper() { }
 
+    // ================================================================
+    // COLUMN CAPTION (A, B, C, ..., Z, AA, AB ...)
+    // ================================================================
     internal class ColumnCaption
     {
         private static string[] Alphabets = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+
         private static ColumnCaption instance = null;
         private List<string> cellHeaders = null;
+
         public static ColumnCaption Instance
         {
             get
             {
                 if (instance == null)
                     return new ColumnCaption();
-                else return ColumnCaption.Instance;
+                else
+                    return ColumnCaption.Instance;
             }
         }
 
         public ColumnCaption()
         {
-            this.InitCollection();
+            InitCollection();
         }
 
         private void InitCollection()
         {
             cellHeaders = new List<string>();
 
-            foreach (string sItem in Alphabets)
-                cellHeaders.Add(sItem);
+            foreach (string s in Alphabets)
+                cellHeaders.Add(s);
 
-            foreach (string item in Alphabets)
-                foreach (string sItem in Alphabets)
-                    cellHeaders.Add(item + sItem);
+            foreach (string a in Alphabets)
+                foreach (string b in Alphabets)
+                    cellHeaders.Add(a + b);
         }
 
-        /// <summary>
-        /// Returns the column caption for the given row & column index.
-        /// </summary>
-        /// <param name="rowIndex">Index of the row.</param>
-        /// <param name="columnIndex">Index of the column.</param>
-        /// <returns></returns>
         internal string Get(int rowIndex, int columnIndex)
         {
-            return this.cellHeaders.ElementAt(columnIndex) + (rowIndex + 1).ToString();
+            return cellHeaders.ElementAt(columnIndex) + (rowIndex + 1).ToString();
         }
     }
 
-    internal string ExportToExcel(DataTable table)
+    // ================================================================
+    // EXPORT MAIN
+    // ================================================================
+    internal string ExportToExcel(DataTable dt)
     {
-        string excelfile = Path.GetTempPath() + Guid.NewGuid().ToString() + ".xlsx";
-        using (SpreadsheetDocument excelDoc = SpreadsheetDocument.Create(excelfile, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook))
+        string file = Path.GetTempPath() + Guid.NewGuid() + ".xlsx";
+
+        using (SpreadsheetDocument doc = SpreadsheetDocument.Create(file, SpreadsheetDocumentType.Workbook))
         {
-            CreateExcelParts(excelDoc, table);
+            CreateExcelParts(doc, dt);
         }
-        return excelfile;
+
+        return file;
     }
 
-    private void CreateExcelParts(SpreadsheetDocument spreadsheetDoc, DataTable data)
+    // ================================================================
+    // BUILD WORKBOOK
+    // ================================================================
+    private void CreateExcelParts(SpreadsheetDocument doc, DataTable data)
     {
-        WorkbookPart workbookPart = spreadsheetDoc.AddWorkbookPart();
-        CreateWorkbookPart(workbookPart);
+        WorkbookPart wbPart = doc.AddWorkbookPart();
+        wbPart.Workbook = new Workbook();
 
-        int workBookPartCount = 1;
+        WorkbookStylesPart stylesPart = wbPart.AddNewPart<WorkbookStylesPart>();
+        stylesPart.Stylesheet = CreateStylesheet();
+        stylesPart.Stylesheet.Save();
 
-        WorkbookStylesPart workbookStylesPart = workbookPart.AddNewPart<WorkbookStylesPart>("rId" + (workBookPartCount++).ToString());
-        CreateWorkbookStylesPart(workbookStylesPart);
+        WorksheetPart wsPart = wbPart.AddNewPart<WorksheetPart>();
+        WriteWorksheet(wsPart, data);
 
-        WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>("rId" + (101).ToString());
-        CreateWorksheetPart(workbookPart.WorksheetParts.ElementAt(0), data);
-
-        SharedStringTablePart sharedStringTablePart = workbookPart.AddNewPart<SharedStringTablePart>("rId" + (workBookPartCount++).ToString());
-        CreateSharedStringTablePart(sharedStringTablePart, data);
-
-        workbookPart.Workbook.Save();
-    }
-
-    /// <summary>
-    /// Creates the shared string table part.
-    /// </summary>
-    /// <param name="sharedStringTablePart">The shared string table part.</param>
-    /// <param name="sheetData">The sheet data.</param>
-    private void CreateSharedStringTablePart(SharedStringTablePart sharedStringTablePart, DataTable sheetData)
-    {
-        UInt32Value stringCount = Convert.ToUInt32(sheetData.Rows.Count) + Convert.ToUInt32(sheetData.Columns.Count);
-
-        SharedStringTable sharedStringTable = new SharedStringTable()
+        Sheets sheets = new Sheets();
+        Sheet sheet = new Sheet()
         {
-            Count = stringCount,
-            UniqueCount = stringCount
+            Id = doc.WorkbookPart.GetIdOfPart(wsPart),
+            SheetId = 1,
+            Name = "Report"
         };
+        sheets.Append(sheet);
 
-        for (int columnIndex = 0; columnIndex < sheetData.Columns.Count; columnIndex++)
-        {
-            SharedStringItem sharedStringItem = new SharedStringItem();
-            Text text = new Text();
-            text.Text = sheetData.Columns[columnIndex].ColumnName;
-            sharedStringItem.Append(text);
-            sharedStringTable.Append(sharedStringItem);
-        }
-
-        for (int rowIndex = 0; rowIndex < sheetData.Rows.Count; rowIndex++)
-        {
-            SharedStringItem sharedStringItem = new SharedStringItem();
-            Text text = new Text();
-            text.Text = sheetData.Rows[rowIndex][0].ToString();
-            sharedStringItem.Append(text);
-            sharedStringTable.Append(sharedStringItem);
-        }
-
-        sharedStringTablePart.SharedStringTable = sharedStringTable;
+        wbPart.Workbook.Append(sheets);
+        wbPart.Workbook.Save();
     }
 
-    /// <summary>
-    /// Creates the worksheet part.
-    /// </summary>
-    /// <param name="worksheetPart">The worksheet part.</param>
-    /// <param name="data">The data.</param>
-    private void CreateWorksheetPart(WorksheetPart worksheetPart, DataTable data)
+    // ================================================================
+    // STYLESHEET (BOLD HEADER, BORDER, GRAY BACKGROUND)
+    // ================================================================
+    private Stylesheet CreateStylesheet()
     {
-        Worksheet worksheet = new Worksheet() { MCAttributes = new MarkupCompatibilityAttributes() { Ignorable = "x14ac" } };
-        worksheet.AddNamespaceDeclaration("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
-        worksheet.AddNamespaceDeclaration("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
-        worksheet.AddNamespaceDeclaration("x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac");
+        Fonts fonts = new Fonts(
+            new Font( // normal
+                new FontSize() { Val = 10 },
+                new Color() { Rgb = "000000" },
+                new FontName() { Val = "Calibri" }
+            ),
+            new Font( // bold header
+                new Bold(),
+                new FontSize() { Val = 11 },
+                new Color() { Rgb = "000000" },
+                new FontName() { Val = "Calibri" }
+            )
+        );
 
+        Fills fills = new Fills(
+            new Fill(new PatternFill() { PatternType = PatternValues.None }),
+            new Fill(new PatternFill() { PatternType = PatternValues.Gray125 }),
+            new Fill(new PatternFill(
+                new ForegroundColor { Rgb = "FFD9D9D9" }
+            ) { PatternType = PatternValues.Solid }) // header gray
+        );
 
-        SheetViews sheetViews = new SheetViews();
-        SheetView sheetView = new SheetView() { WorkbookViewId = (UInt32Value)0U };
-        Selection selection = new Selection() { ActiveCell = "A1" };
-        sheetView.Append(selection);
-        sheetViews.Append(sheetView);
+        Borders borders = new Borders(
+            new Border(),
+            new Border(
+                new LeftBorder() { Style = BorderStyleValues.Thin },
+                new RightBorder() { Style = BorderStyleValues.Thin },
+                new TopBorder() { Style = BorderStyleValues.Thin },
+                new BottomBorder() { Style = BorderStyleValues.Thin },
+                new DiagonalBorder())
+        );
 
-        PageMargins pageMargins = new PageMargins()
-        {
-            Left = 0.7D,
-            Right = 0.7D,
-            Top = 0.75D,
-            Bottom = 0.75D,
-            Header = 0.3D,
-            Footer = 0.3D
-        };
+        CellFormats cellFormats = new CellFormats(
+            new CellFormat(), // default
+            new CellFormat() // header style index 1
+            {
+                FontId = 1,
+                FillId = 2,
+                BorderId = 1,
+                Alignment = new Alignment() { Horizontal = HorizontalAlignmentValues.Center },
+                ApplyFont = true,
+                ApplyFill = true,
+                ApplyBorder = true
+            },
+            new CellFormat() // normal data style index 2
+            {
+                FontId = 0,
+                FillId = 0,
+                BorderId = 1,
+                Alignment = new Alignment() { Horizontal = HorizontalAlignmentValues.Left },
+                ApplyBorder = true
+            }
+        );
 
-        SheetFormatProperties sheetFormatPr = new SheetFormatProperties()
-        {
-            DefaultRowHeight = 15D,
-            DyDescent = 0.25D
-        };
+        return new Stylesheet(fonts, fills, borders, cellFormats);
+    }
 
+    // ================================================================
+    // WRITE WORKSHEET
+    // ================================================================
+    private void WriteWorksheet(WorksheetPart wsPart, DataTable data)
+    {
+        Worksheet ws = new Worksheet();
         SheetData sheetData = new SheetData();
 
         UInt32Value rowIndex = 1U;
 
-        Row row1 = new Row()
+        // Freeze Header Row
+        ws.Append(new SheetViews(new SheetView()
         {
-            RowIndex = rowIndex++,
-            Spans = new ListValue<StringValue>() { InnerText = "1:3" },
-            DyDescent = 0.25D
-        };
-
-        for (int columnIndex = 0; columnIndex < data.Columns.Count; columnIndex++)
-        {
-            
-            Cell cell = new Cell() { CellReference = ExcelHelper.ColumnCaption.Instance.Get((Convert.ToInt32((UInt32)rowIndex) - 2), columnIndex), DataType = CellValues.String };
-            CellValue cellValue = new CellValue();
-            cellValue.Text = data.Columns[columnIndex].ColumnName.ToString().FormatCode();
-            cell.Append(cellValue);
-
-            row1.Append(cell);
-        }
-        sheetData.Append(row1);
-
-        for (int rIndex = 0; rIndex < data.Rows.Count; rIndex++)
-        {
-            Row row = new Row()
+            WorkbookViewId = 0,
+            Pane = new Pane()
             {
-                RowIndex = rowIndex++,
-                Spans = new ListValue<StringValue>() { InnerText = "1:3" },
-                DyDescent = 0.25D
+                VerticalSplit = 1,
+                TopLeftCell = "A2",
+                ActivePane = PaneValues.BottomLeft,
+                State = PaneStateValues.Frozen
+            }
+        }));
+
+        // ------------------ HEADER ROW -------------------
+        Row header = new Row() { RowIndex = rowIndex++ };
+        List<int> maxWidth = new List<int>();
+
+        for (int c = 0; c < data.Columns.Count; c++)
+        {
+            string colName = data.Columns[c].ColumnName;
+
+            maxWidth.Add(colName.Length);
+
+            Cell cell = new Cell()
+            {
+                CellReference = ColumnCaption.Instance.Get((int)rowIndex.Value - 2, c),
+                StyleIndex = 1
             };
 
-            for (int cIndex = 0; cIndex < data.Columns.Count; cIndex++)
+            SetCellValue(cell, colName);
+            header.Append(cell);
+        }
+
+        sheetData.Append(header);
+
+        // ------------------ DATA ROWS -------------------
+        for (int r = 0; r < data.Rows.Count; r++)
+        {
+            Row row = new Row() { RowIndex = rowIndex++ };
+
+            for (int c = 0; c < data.Columns.Count; c++)
             {
-                if (cIndex == 0)
+                object raw = data.Rows[r][c];
+
+                // Fix untuk compiler lama — tanam null check manual
+                string value = (raw == null || raw == DBNull.Value) ? "" : raw.ToString();
+
+                if (value.Length > maxWidth[c])
+                    maxWidth[c] = value.Length;
+
+                Cell cell = new Cell()
                 {
-                    Cell cell = new Cell() { CellReference = ExcelHelper.ColumnCaption.Instance.Get((Convert.ToInt32((UInt32)rowIndex) - 2), cIndex), DataType = CellValues.String };
-                    CellValue cellValue = new CellValue();
+                    CellReference = ColumnCaption.Instance.Get((int)rowIndex.Value - 2, c),
+                    StyleIndex = 2
+                };
 
-                    cell.DataType = CellValues.String;
-                    cellValue.Text = data.Rows[rIndex][cIndex].ToString();
+                SetCellValue(cell, value);
 
-                    cell.Append(cellValue);
-
-                    row.Append(cell);
-                }
-                else
-                {
-                    Cell cell = new Cell() { CellReference = ExcelHelper.ColumnCaption.Instance.Get((Convert.ToInt32((UInt32)rowIndex) - 2), cIndex), DataType = CellValues.String };
-                    CellValue cellValue = new CellValue();
-                    if (data.Columns[cIndex].DataType == System.Type.GetType("System.DateTime"))
-                    {
-                        cell.DataType = CellValues.String;
-                        try
-                        {
-                            //cellValue.Text = ((DateTime)data.Rows[rIndex][cIndex]).ToString("dd/MM/yyyy");
-                            cellValue.Text = ((DateTime)data.Rows[rIndex][cIndex]).ToString("dd-MMM-yyyy");
-                        }
-                        catch (Exception ex)
-                        {
-                            cellValue.Text = "";
-                        }
-                    }
-                    else if (data.Columns[cIndex].DataType == System.Type.GetType("System.Decimal") || data.Columns[cIndex].DataType == System.Type.GetType("System.Numeric"))
-                    {
-                        cell.DataType = CellValues.Number;
-                        try
-                        {
-                            cellValue.Text = ((Decimal)data.Rows[rIndex][cIndex]).ToString();
-                        }
-                        catch (Exception ex)
-                        {
-                            string s = data.Rows[rIndex][cIndex].ToString();
-                            cellValue.Text = "0";
-                        }
-                    }
-                    else
-                    {
-                        cell.DataType = CellValues.String;
-                        try
-                        {
-                            cellValue.Text = data.Rows[rIndex][cIndex].ToString();
-                        }
-                        catch (Exception ex)
-                        {
-                            cellValue.Text = "";
-                        }
-                       
-                    }
-
-
-                    cell.Append(cellValue);
-
-                    row.Append(cell);
-                }
+                row.Append(cell);
             }
+
             sheetData.Append(row);
         }
 
-        worksheet.Append(sheetViews);
-        worksheet.Append(sheetFormatPr);
-        worksheet.Append(sheetData);
-        worksheet.Append(pageMargins);
-        worksheetPart.Worksheet = worksheet;
-    }
+        ws.Append(sheetData);
 
-    /// <summary>
-    /// Creates the workbook styles part.
-    /// </summary>
-    /// <param name="workbookStylesPart">The workbook styles part.</param>
-    private void CreateWorkbookStylesPart(WorkbookStylesPart workbookStylesPart)
-    {
-        Stylesheet stylesheet = new Stylesheet() { MCAttributes = new MarkupCompatibilityAttributes() { Ignorable = "x14ac" } };
-        stylesheet.AddNamespaceDeclaration("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
-        stylesheet.AddNamespaceDeclaration("x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac");
+        // ------------------ AUTO-FIT COLUMNS -------------------
+        Columns cols = new Columns();
 
-        StylesheetExtensionList stylesheetExtensionList = new StylesheetExtensionList();
-        StylesheetExtension stylesheetExtension = new StylesheetExtension() { Uri = "{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" };
-        stylesheetExtension.AddNamespaceDeclaration("x14", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main");
-        DocumentFormat.OpenXml.Office2010.Excel.SlicerStyles slicerStyles = new DocumentFormat.OpenXml.Office2010.Excel.SlicerStyles() { DefaultSlicerStyle = "SlicerStyleLight1" };
-        stylesheetExtension.Append(slicerStyles);
-        stylesheetExtensionList.Append(stylesheetExtension);
-
-        stylesheet.Append(stylesheetExtensionList);
-
-        workbookStylesPart.Stylesheet = stylesheet;
-    }
-
-    /// <summary>
-    /// Creates the workbook part.
-    /// </summary>
-    /// <param name="workbookPart">The workbook part.</param>
-    private void CreateWorkbookPart(WorkbookPart workbookPart)
-    {
-        Workbook workbook = new Workbook();
-        Sheets sheets = new Sheets();
-
-        Sheet sheet = new Sheet()
+        for (int i = 0; i < maxWidth.Count; i++)
         {
-            Name = "Book" + 1,
-            SheetId = Convert.ToUInt32(101),
-            Id = "rId" + (101).ToString()
-        };
-        sheets.Append(sheet);
+            double width = maxWidth[i] + 2; // padding
+            cols.Append(new Column()
+            {
+                Min = (UInt32)(i + 1),
+                Max = (UInt32)(i + 1),
+                Width = width,
+                CustomWidth = true
+            });
+        }
 
-        CalculationProperties calculationProperties = new CalculationProperties()
-        {
-            CalculationId = (UInt32Value)123456U  // some default Int32Value
-        };
+        ws.InsertAt(cols, 1);
 
-        workbook.Append(sheets);
-        workbook.Append(calculationProperties);
-
-        workbookPart.Workbook = workbook;
+        wsPart.Worksheet = ws;
+        wsPart.Worksheet.Save();
     }
 
-
-}
-
-public static class Extensions
-{
-    public static string FormatCode(this string sourceString)
+    // ================================================================
+    // INLINE STRING FIX (SUPPORT < >)
+    // ================================================================
+    private void SetCellValue(Cell cell, string value)
     {
-        if (sourceString.Contains("<"))
-            sourceString = sourceString.Replace("<", "&lt;");
-
-        if (sourceString.Contains(">"))
-            sourceString = sourceString.Replace(">", "&gt;");
-
-        return sourceString;
+        if (value.Contains("<") || value.Contains(">"))
+        {
+            cell.DataType = CellValues.InlineString;
+            cell.InlineString = new InlineString(
+                new Text(value)
+                {
+                    Space = SpaceProcessingModeValues.Preserve
+                });
+        }
+        else
+        {
+            cell.DataType = CellValues.String;
+            cell.CellValue = new CellValue(value);
+        }
     }
 }

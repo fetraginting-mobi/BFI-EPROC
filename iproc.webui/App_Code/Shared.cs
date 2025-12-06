@@ -2379,6 +2379,31 @@ public class Shared
         {
         }
     }
+    public static void BindBranchEmployeeCustomSort(DropDownList ddl)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = "";
+            _ht["p_code"] = Shared.CurrentUID;
+
+            //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
+            ddl.DataSource = _dal.GetRows("", "xsp_master_branch_filter_sort_custom_getrows", _ht);
+            ddl.DataTextField = "DESCRIPTION";
+            ddl.DataValueField = "CODE";
+            ddl.DataBind();
+
+
+        }
+        catch (Exception ex)
+        {
+        }
+    }
 
     public static void BindBranchEmployeeAll(DropDownList ddl)
     {
@@ -3337,14 +3362,29 @@ public class Shared
         DataTable table = new DataTable();
         CreateTable(dt, ref table, column);
 
-        string file = new ExcelHelper().ExportToExcel(table);
+        foreach (DataRow row in table.Rows)
+        {
+            foreach (DataColumn col in table.Columns)
+            {
+                if (row[col] != null)
+                {
+                    string val = row[col].ToString();
 
+                    if (val.Contains("<") || val.Contains(">"))
+                    {
+                        row[col] = "=\"" + val + "\"";
+                    }
+                }
+            }
+        }
+
+        string file = new ExcelHelper().ExportToExcel(table);
         if (filepath[filepath.Length - 1] != 'x')
             filepath += "x";
         File.Copy(file, filepath, true);
-
         return filepath;
     }
+
     private static void CreateTable(DataTable source, ref DataTable table, ArrayList column)
     {
         // create columns

@@ -26,6 +26,12 @@
         </div>
         <div class="panel-body">
         	<div class="row">
+        	    <div class="col-sm-3">
+                  <span>Upload Excel : </span>
+                  <asp:FileUpload ID="FileUploadControlAmort" runat="server" />
+                  <cc1:XUIButton ID="btnUploadRowFormat" runat="server" CssClass="btn btn-primary" Text="Upload" Style="width: auto; margin-top:10px;" />
+                  <cc1:XUIButton ID="btnDownload" Style="width: auto; margin-top:10px;" runat="server" Text="Download Template" CssClass="btn btn-primary" OnClick="btnDownload_Click" />
+                </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                     <label class="col-sm-3">Status</label>

@@ -111,4 +111,38 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         BindData();
     }
+    protected void btnDownload_Click(object sender, EventArgs e)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _htParameters = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _htParameters = new Hashtable();
+
+            _htParameters.Clear();
+            _htParameters["p_code"] = Request.Params["code"];
+
+
+            string pdfName = "upload_mutation_list"+ ".xlsx"; ;
+            string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
+            string filetype = "xls";
+
+
+            // menampilkan pdf yang sudah dibuat
+            Shared.ExecuteReportExportExcel(this, null, "xsp_inventory_list_item_getrows", _htParameters, pdfPath);
+            ScriptManager.RegisterStartupScript(this, GetType(), "Report", "window.open('../../template/" + pdfName + "', 'Report', 'fullscreen=0,menubar=0,status=0,scrollbars=0,resizable=1,toolbar=0,width=600,height=400');", true);
+        }
+
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+ 
+    }
+    protected void btnUploadRowFormat_Click()
+    {
+
+    }
 }
