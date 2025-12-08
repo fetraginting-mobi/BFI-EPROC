@@ -441,9 +441,9 @@ public partial class module_accounting_accgeneralledger : BasePage
                         //
                         ArrayList filenames = null;
                         //string filename = null;
-                        string srcFile;
-                        string nameFile;
-                        string rsultFile;
+                        //string srcFile;
+                        //string nameFile;
+                        //string rsultFile;
 
                         {
                             filenames = new ArrayList();
@@ -480,7 +480,7 @@ public partial class module_accounting_accgeneralledger : BasePage
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

@@ -29,7 +29,7 @@ public partial class module_report_rptapreportarandaging : BasePage
     {
         //
         int iReportID = Int32.Parse(Request.Params["rptid"]);
-        Hashtable htReportParams = null;
+        //Hashtable htReportParams = null;
 
         try
         {
@@ -48,7 +48,7 @@ public partial class module_report_rptapreportarandaging : BasePage
     {
         //
         int iReportID = Int32.Parse(Request.Params["rptid"]);
-        Hashtable htReportParams = null;
+        //Hashtable htReportParams = null;
 
         try
         {

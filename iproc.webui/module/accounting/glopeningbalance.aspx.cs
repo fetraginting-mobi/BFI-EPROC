@@ -223,7 +223,7 @@ public partial class module_accounting_glopeningbalance : BasePageList
    
         Hashtable _htParameters = new Hashtable();
         ExportFormatType eftreport = new ExportFormatType();
-        string data = "";
+        //string data = "";
         string filename = "";
 
         try
