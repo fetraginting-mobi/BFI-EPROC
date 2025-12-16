@@ -16,21 +16,49 @@ public class BasePage : System.Web.UI.Page
         //
     }
 
+    //protected void LoadInit()
+    //{
+    //    if (Session.Count == 0)
+    //    {
+    //        Response.Redirect(ResolveUrl("~/logout.aspx"));
+    //    }
+    //    bool result = Shared.IsUserRoleChanged();
+    //    if (result)
+    //    {
+    //        Response.Redirect("~/logout.aspx", false);
+    //        HttpContext.Current.Response.End();
+    //    }
+    //    ScriptManager.RegisterStartupScript(this, GetType(), "dp", "javascript:datepicker();", true);
+    //    ScriptManager.RegisterStartupScript(this, GetType(), "num", "javascript:textBoxInit();", true);
+    //}
     protected void LoadInit()
     {
-        if (Session.Count == 0)
+        if (Session["IsLogin"] == null || !(bool)Session["IsLogin"])
         {
             Response.Redirect(ResolveUrl("~/logout.aspx"));
+            return;
         }
+
+        if (Session["UID"] == null)
+        {
+            Response.Redirect(ResolveUrl("~/logout.aspx"));
+            return;
+        }
+
         bool result = Shared.IsUserRoleChanged();
         if (result)
         {
             Response.Redirect("~/logout.aspx", false);
             HttpContext.Current.Response.End();
+            return;
         }
-        ScriptManager.RegisterStartupScript(this, GetType(), "dp", "javascript:datepicker();", true);
-        ScriptManager.RegisterStartupScript(this, GetType(), "num", "javascript:textBoxInit();", true);
+
+        ScriptManager.RegisterStartupScript(this, GetType(), "dp",
+            "javascript:datepicker();", true);
+        ScriptManager.RegisterStartupScript(this, GetType(), "num",
+            "javascript:textBoxInit();", true);
     }
+
 
     protected void  LoadAfterInit()
     {

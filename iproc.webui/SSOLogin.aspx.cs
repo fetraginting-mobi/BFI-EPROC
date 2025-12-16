@@ -20,24 +20,25 @@ public partial class SSOLogin : System.Web.UI.Page
     protected void btnSignIn_Click(object sender, EventArgs e)
     {
         GoToMain();
-
     }
 
     private void GoToMain()
     {
-        //if (!GetHomeBranch())
-        //{
-        //    //ScriptManager.RegisterStartupScript(this, GetType(), "fx", "fnShowErrorNotif('There is no default branch for this user. Please contact your MIS/IT Department.', '');", true);
-        //    ScriptManager.RegisterStartupScript(this, GetType(), "fx", "fnShowErrorNotif('User Name or Password Not Match!', '');", true);
-        //    return;
-        //}
+        string kcBase = ConfigurationManager.AppSettings["KC_BASE_URL"];
+        string realm = ConfigurationManager.AppSettings["KC_REALM"];
+        string clientId = ConfigurationManager.AppSettings["KC_CLIENT_ID"];
+        string redirectUri = ConfigurationManager.AppSettings["KC_REDIRECT_URI"];
 
-        //GetUserRole();
+        string authUrl =
+            kcBase + "/realms/" + realm +
+            "/protocol/openid-connect/auth" +
+            "?client_id=" + clientId +
+            "&response_type=code" +
+            "&scope=openid%20email%20profile" +
+            "&redirect_uri=" + HttpUtility.UrlEncode(redirectUri);
 
-        //Session[SessionKey.CURRENT_USER_APP_CODE] = "PR";
-        //Session[SessionKey.CURRENT_USER_APP_DESC] = "iProcurement";
-
-        ////Shared.ClearLock("LOGIN");
-        Response.Redirect("main.aspx");
+        Response.Redirect(authUrl);
+        Response.Write(authUrl);
+        Response.End();
     }
 }

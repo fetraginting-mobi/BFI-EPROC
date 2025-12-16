@@ -57,9 +57,20 @@ public class Shared
 
     public static string CurrentEmpName
     {
+        //get
+        //{
+        //    return ((DataTable)HttpContext.Current.Session[SessionKey.CURRENT_USER_SESSION_KEY]).Rows[0]["EMP_NAME"].ToString();
+        //}
         get
         {
-            return ((DataTable)HttpContext.Current.Session[SessionKey.CURRENT_USER_SESSION_KEY]).Rows[0]["EMP_NAME"].ToString();
+            DataTable dt =
+                HttpContext.Current.Session[SessionKey.CURRENT_USER_SESSION_KEY]
+                as DataTable;
+
+            if (dt == null || dt.Rows.Count == 0)
+                return string.Empty;
+
+            return dt.Rows[0]["EMP_NAME"].ToString();
         }
     }
 
@@ -69,7 +80,13 @@ public class Shared
     {
         get
         {
-            return HttpContext.Current.Session[SessionKey.CURRENT_USER_BRANCH_CODE].ToString();
+            //return HttpContext.Current.Session[SessionKey.CURRENT_USER_BRANCH_CODE].ToString();
+            object obj = HttpContext.Current.Session[SessionKey.CURRENT_USER_BRANCH_CODE];
+
+            if (obj == null)
+                return string.Empty;
+
+            return obj.ToString();
         }
     }
 
@@ -77,7 +94,13 @@ public class Shared
     {
         get
         {
-            return HttpContext.Current.Session[SessionKey.CURRENT_USER_BRANCH_DESC].ToString();
+            //return HttpContext.Current.Session[SessionKey.CURRENT_USER_BRANCH_DESC].ToString();
+            object obj = HttpContext.Current.Session[SessionKey.CURRENT_USER_BRANCH_DESC];
+
+            if (obj == null)
+                return string.Empty;
+
+            return obj.ToString();
         }
     }
 
@@ -4077,46 +4100,120 @@ public class Shared
             return true;
     }
 
+    //public static bool IsUserRoleChanged()
+    //{
+    //    ArrayList existingRoles = HttpContext.Current.Session[SessionKey.CURRENT_USER_ROLE_SESSION_KEY] as ArrayList;
+    //    ArrayList freshRoles = new ArrayList();
+
+    //    try
+    //    {
+    //        GeneralDAL _dal = new GeneralDAL();
+    //        Hashtable _ht = new Hashtable();
+    //        _ht["p_uid"] = CurrentUID;
+
+    //        DataTable dt = _dal.GetRows("", "xsp_master_user_main_getrows_all_role", _ht);
+    //        if (dt != null)
+    //        {
+    //            foreach (DataRow dr in dt.Rows)
+    //            {
+    //                freshRoles.Add(dr["ROLE_CODE"]);
+    //            }
+    //        }
+
+    //        // Bandingkan isi existing dan fresh
+    //        if (existingRoles == null || existingRoles.Count != freshRoles.Count)
+    //        {
+    //            return true;
+    //        }
+
+    //        foreach (string role in freshRoles)
+    //        {
+    //            if (!existingRoles.Contains(role))
+    //            {
+    //                return true;
+    //            }
+    //        }
+
+    //        return false; // semua cocok
+    //    }
+    //    catch
+    //    {
+    //        return true; // anggap berubah jika gagal ambil
+    //    }
+    //}
+
     public static bool IsUserRoleChanged()
     {
-        ArrayList existingRoles = HttpContext.Current.Session[SessionKey.CURRENT_USER_ROLE_SESSION_KEY] as ArrayList;
-        ArrayList freshRoles = new ArrayList();
-
         try
         {
-            GeneralDAL _dal = new GeneralDAL();
-            Hashtable _ht = new Hashtable();
-            _ht["p_uid"] = CurrentUID;
-
-            DataTable dt = _dal.GetRows("", "xsp_master_user_main_getrows_all_role", _ht);
-            if (dt != null)
+            // ===============================
+            // 1. Validasi UID
+            // ===============================
+            if (string.IsNullOrEmpty(CurrentUID))
             {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    freshRoles.Add(dr["ROLE_CODE"]);
-                }
+                // UID belum ada → belum login sempurna
+                return false;
             }
 
-            // Bandingkan isi existing dan fresh
-            if (existingRoles == null || existingRoles.Count != freshRoles.Count)
+            // ===============================
+            // 2. Ambil role dari session
+            // ===============================
+            ArrayList existingRoles =
+                HttpContext.Current.Session[SessionKey.CURRENT_USER_ROLE_SESSION_KEY]
+                as ArrayList;
+
+            // Jika belum ada role di session (SSO baru login)
+            if (existingRoles == null || existingRoles.Count == 0)
             {
+                return false;
+            }
+
+            // ===============================
+            // 3. Ambil role terbaru dari DB
+            // ===============================
+            ArrayList freshRoles = new ArrayList();
+
+            GeneralDAL dal = new GeneralDAL();
+            Hashtable ht = new Hashtable();
+            ht["p_uid"] = CurrentUID;
+
+            DataTable dt =
+                dal.GetRows("", "xsp_master_user_main_getrows_all_role", ht);
+
+            if (dt == null)
+            {
+                // DB gagal → JANGAN logout
+                return false;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                freshRoles.Add(dr["ROLE_CODE"].ToString());
+            }
+
+            // ===============================
+            // 4. Bandingkan role
+            // ===============================
+            if (existingRoles.Count != freshRoles.Count)
                 return true;
-            }
 
             foreach (string role in freshRoles)
             {
                 if (!existingRoles.Contains(role))
-                {
                     return true;
-                }
             }
 
-            return false; // semua cocok
+            return false; // role sama
         }
         catch
         {
-            return true; // anggap berubah jika gagal ambil
+            // ===============================
+            // FAIL-SAFE
+            // ===============================
+            // Error teknis → jangan logout user
+            return false;
         }
     }
+
 
 }
