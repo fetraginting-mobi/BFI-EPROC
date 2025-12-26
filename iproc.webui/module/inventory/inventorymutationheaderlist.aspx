@@ -28,8 +28,10 @@
         	<div class="row">
         	    <div class="col-sm-3">
                   <span>Upload Excel : </span>
-                  <asp:FileUpload ID="FileUploadControlAmort" runat="server" />
-                  <cc1:XUIButton ID="btnUploadRowFormat" runat="server" CssClass="btn btn-primary" Text="Upload" Style="width: auto; margin-top:10px;" />
+                  <asp:FileUpload ID="FileUploadControlMutation" runat="server" />
+                  <cc1:XUIButton ID="btnUploadRowFormat" runat="server" CssClass="btn btn-primary" 
+                        Text="Upload" Style="width: auto; margin-top:10px;" 
+                        onclick="btnUploadRowFormat_Click" />
                   <cc1:XUIButton ID="btnDownload" Style="width: auto; margin-top:10px;" runat="server" Text="Download Template" CssClass="btn btn-primary" OnClick="btnDownload_Click" />
                 </div>
                 <div class="col-sm-3">
