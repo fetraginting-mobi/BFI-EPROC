@@ -258,5 +258,24 @@ namespace iProc.DataAccessLayer
             }
             else return null;
         }
+
+        public void Upload(string TableName, Hashtable parameters, ref string id)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+            if (!dbw.ExecuteSP("xsp_" + TableName + "_upload", parameters, ref id))
+            {
+                throw new Exception("Fail to execute xsp_" + TableName + "_upload", new Exception(dbw.DBErrorMessage));
+            }
+        }
+        public void Upload(string TableName, Hashtable parameters, ref int id)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+            if (!dbw.ExecuteSP("xsp_" + TableName + "_upload", parameters, ref id))
+            {
+                throw new Exception("Fail to execute xsp_" + TableName + "_upload", new Exception(dbw.DBErrorMessage));
+            }
+        }
     }
 }

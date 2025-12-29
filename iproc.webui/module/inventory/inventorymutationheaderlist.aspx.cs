@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using iProc.DataAccessLayer;
 using Excel;
 using System.IO;
+using System.Collections.Generic;
 public partial class module_inventory_inventorymutationheaderlist : BasePageList
 {
     private static string TABLE_NAME = "INVENTORY_MUTATION_HEADER";
@@ -149,7 +150,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             return;
 
         IExcelDataReader excelReader = null;
-
+        string fileName = FileUploadControlMutation.FileName;
         try
         {
             Stream excelStream = FileUploadControlMutation.PostedFile.InputStream;
@@ -162,82 +163,125 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             else
                 throw new Exception("Format file tidak didukung");
 
-            int excelRowIndex = 0;
+            int excelRowIndex = 0;           
+
+            Hashtable headerMap = new Hashtable();
+            Hashtable headerItemMap = new Hashtable();
 
             while (excelReader.Read())
             {
                 excelRowIndex++;
-
-                // ======================
-                // SKIP HEADER
-                // ======================
                 if (excelRowIndex == 1)
                     continue;
 
-                int rowNumber = excelRowIndex;
+                int rowNumber = (excelRowIndex-1);
+                try
+                { 
+                
 
-                // ======================
-                // STOP JIKA BARIS KOSONG
-                // ======================
-                if (IsRowEmpty(excelReader))
-                    break;
+                    if (IsRowEmpty(excelReader))
+                        break;
+                    // ================= VALIDASI =================
+                    if (IsEmpty(excelReader, 1))
+                        throw new Exception("From Location wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 2))
+                        throw new Exception("To Branch wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 3))
+                        throw new Exception("To Location wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 4))
+                        throw new Exception("Description wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 5))
+                        throw new Exception("ITEM_CODE wajib diisi (baris " + rowNumber + ")");
 
-                // ======================
-                // VALIDASI KOLOM WAJIB
-                // ======================
-                if (IsEmpty(excelReader, 1))
-                    throw new Exception("From Location wajib diisi (baris " + rowNumber + ")");
+                    object qtyValue = excelReader.GetValue(6);
+                    if (qtyValue == null || qtyValue == DBNull.Value)
+                        throw new Exception("Quantity wajib diisi (baris " + rowNumber + ")");
+                    int qty;
+                    if (!TryConvertToInt(qtyValue, out qty))
+                        throw new Exception("Quantity harus angka (baris " + rowNumber + ")");
+                    if (qty <= 0)
+                        throw new Exception("Quantity harus lebih dari 0 (baris " + rowNumber + ")");
 
-                if (IsEmpty(excelReader, 2))
-                    throw new Exception("To Branch wajib diisi (baris " + rowNumber + ")");
+                    string p_from_location = excelReader.GetString(1).Trim();
+                    string p_to_branch = excelReader.GetString(2).Trim();
+                    string p_to_location = excelReader.GetString(3).Trim();
+                    string p_expedition_description = excelReader.GetString(4).Trim();
+                    string p_item_code = excelReader.GetString(5).Trim();
+                    int p_quantity = qty;
 
-                if (IsEmpty(excelReader, 3))
-                    throw new Exception("To Location wajib diisi (baris " + rowNumber + ")");
+                    string headerKey = p_from_location + "|" + p_to_branch + "|" + p_to_location;
 
-                if (IsEmpty(excelReader, 4))
-                    throw new Exception("Description wajib diisi (baris " + rowNumber + ")");
+                    if (!headerItemMap.ContainsKey(headerKey))
+                        headerItemMap[headerKey] = new Hashtable();
 
-                if (IsEmpty(excelReader, 5))
-                    throw new Exception("ITEM_CODE wajib diisi (baris " + rowNumber + ")");
+                    Hashtable itemMap = (Hashtable)headerItemMap[headerKey];
+                    if (itemMap.ContainsKey(p_item_code))
+                        throw new Exception(
+                            "ITEM_CODE '" + p_item_code + "' duplikat pada kombinasi lokasi yang sama (baris " + rowNumber + ")"
+                        );
+                    itemMap[p_item_code] = true;
+                    string mutationBarcode = "";
 
-                // ======================
-                // QUANTITY (NUMERIC SAFE)
-                // ======================
-                object qtyValue = excelReader.GetValue(6);
-                if (qtyValue == null || qtyValue == DBNull.Value)
-                    throw new Exception("Quantity wajib diisi (baris " + rowNumber + ")");
+                    GeneralDAL _dal = new GeneralDAL();
+                    Hashtable _ht = new Hashtable();
+                    string sNextBarcode = "";
+                    int inextid = 0;
 
-                int qty;
-                if (!TryConvertToInt(qtyValue, out qty))
-                    throw new Exception("Quantity harus angka (baris " + rowNumber + ")");
+                    if (!headerMap.ContainsKey(headerKey))
+                    {               
+                        _ht["p_mutation_date"] = DateTime.Now;
+                        _ht["p_expedition_description"] = p_expedition_description;
+                        _ht["p_branch_code"] = "KPO";
+                        _ht["p_department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
+                        _ht["p_division_code"] = Shared.CurrentEmployeeDivCode;
+                        _ht["p_sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
+                        _ht["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
+                        //_ht["p_remarks"] = description;
+                        _ht["p_from_location"] = p_from_location;
+                        _ht["p_to_branch"] = p_to_branch;
+                        _ht["p_to_location"] = p_to_location;
+                        _ht["p_requestor"] = Shared.CurrentUID;
+                        _ht["p_cre_date"] = DateTime.Now;
+                        _ht["p_cre_by"] = Shared.CurrentUID;
+                        _ht["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                        _ht["p_mod_date"] = DateTime.Now;
+                        _ht["p_mod_by"] = Shared.CurrentUID;
+                        _ht["p_mod_ip_address"] = Shared.CurrentIPAddress;
 
-                if (qty <= 0)
-                    throw new Exception("Quantity harus lebih dari 0 (baris " + rowNumber + ")");
+                        _dal.Upload("INVENTORY_MUTATION_HEADER", _ht, ref sNextBarcode);
+                        headerMap[headerKey] = sNextBarcode;
+                        mutationBarcode = sNextBarcode;
+                    }
+                    else
+                    {
+                        mutationBarcode = headerMap[headerKey].ToString();    
+                    }
 
-                // ======================
-                // SET PARAMETER SP
-                // ======================
-                Hashtable ht = new Hashtable();
-                ht["p_from_location"] = excelReader.GetString(1).Trim();
-                ht["p_to_branch"] = excelReader.GetString(2).Trim();
-                ht["p_to_location"] = excelReader.GetString(3).Trim();
-                ht["p_description"] = excelReader.GetString(4).Trim();
-                ht["p_item_code"] = excelReader.GetString(5).Trim();
-                ht["p_quantity"] = qty;
+                    Hashtable _htDetail = new Hashtable();
+                    _htDetail["p_im_code"] = mutationBarcode;
+                    _htDetail["p_item_code"] = p_item_code;
+                    _htDetail["p_quantity"] = qty;
+                    _htDetail["p_remarks"] = "";
+                    _htDetail["p_cre_date"] = DateTime.Now;
+                    _htDetail["p_cre_by"] = Shared.CurrentUID;
+                    _htDetail["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                    _htDetail["p_mod_date"] = DateTime.Now;
+                    _htDetail["p_mod_by"] = Shared.CurrentUID;
+                    _htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
+                    _htDetail["p_from_branch_code"] = "KPO";
+                    _htDetail["p_to_branch_code"] = p_to_branch;
+                    _htDetail["p_status"] = "NEW";
 
-                // ======================
-                // EXEC SP
-                // ======================
-                // ExecRawSP("sp_insert_inventory", ht);
+                    _dal.Upload("inventory_mutation_detail", _htDetail, ref inextid);
+                }
+                catch (Exception exRow)
+                {
+                    string rawItem = excelReader.GetValue(5) == null? "": excelReader.GetValue(5).ToString();
+
+                    LogUploadError("INVENTORY_MUTATION_UPLOAD",fileName,rowNumber,exRow.Message,"ITEM=" + rawItem);
+                    continue; 
+                }
             }
-
-            // lblMessage.Text = "Upload berhasil";
-            // lblMessage.ForeColor = System.Drawing.Color.Green;
-        }
-        catch (Exception ex)
-        {
-            // lblMessage.Text = ex.Message;
-            // lblMessage.ForeColor = System.Drawing.Color.Red;
         }
         finally
         {
@@ -262,26 +306,41 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
     private bool TryConvertToInt(object value, out int result)
     {
-        try
+        result = 0;
+        if (value == null) return false;
+
+        if (value is double)
         {
-            if (value is double)
-            {
-                result = Convert.ToInt32((double)value);
-                return true;
-            }
-            if (value is int)
-            {
-                result = (int)value;
-                return true;
-            }
-            return int.TryParse(value.ToString().Trim(), out result);
+            result = Convert.ToInt32((double)value);
+            return true;
         }
-        catch
-        {
-            result = 0;
-            return false;
-        }
+
+        return int.TryParse(value.ToString().Trim(), out result);
     }
 
+    private void LogUploadError(string processName,string fileName,int rowNumber,string errorMessage,string rawData)
+    {
+        try
+        {
+            GeneralDAL dal = new GeneralDAL();
+            Hashtable htLog = new Hashtable();
+            string logId = "";
 
+            htLog["p_process_name"] = processName;
+            htLog["p_file_name"] = fileName;
+            htLog["p_row_number"] = rowNumber;
+            htLog["p_error_message"] = errorMessage;
+            htLog["p_raw_data"] = rawData;
+            htLog["p_cre_by"] = Shared.CurrentUID;
+            htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+            htLog["p_id"] = 0; 
+
+            dal.Upload("app_process_error_log", htLog, ref logId);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.WriteLine(
+            "FAILED LOGGING ERROR : " + ex.Message);
+        }
+    }
 }
