@@ -259,23 +259,103 @@ namespace iProc.DataAccessLayer
             else return null;
         }
 
-        public void Upload(string TableName, Hashtable parameters, ref string id)
+
+        public int UploadWithReturnInt(string tableName, Hashtable parameters)
         {
             DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
             dbw.ConnectionString = Shared.ConnectionString;
-            if (!dbw.ExecuteSP("xsp_" + TableName + "_upload", parameters, ref id))
-            {
-                throw new Exception("Fail to execute xsp_" + TableName + "_upload", new Exception(dbw.DBErrorMessage));
-            }
+            int id = 0;
+
+            if (!dbw.ExecuteSP("xsp_" + tableName + "_upload", parameters, ref id))
+                throw new Exception(
+                    "Fail to execute xsp_" + tableName + "_upload",
+                    new Exception(dbw.DBErrorMessage)
+                );
+
+            return id; 
         }
-        public void Upload(string TableName, Hashtable parameters, ref int id)
+
+        public string UploadWithReturnString(string tableName, Hashtable parameters)
         {
             DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
             dbw.ConnectionString = Shared.ConnectionString;
-            if (!dbw.ExecuteSP("xsp_" + TableName + "_upload", parameters, ref id))
+            string code = "";
+
+            if (!dbw.ExecuteSP("xsp_" + tableName + "_upload", parameters, ref code))
+                throw new Exception(
+                    "Fail to execute xsp_" + tableName + "_upload",
+                    new Exception(dbw.DBErrorMessage)
+                );
+
+            return code;
+ 
+        }
+
+        public int ExecSPReturnInt(string spName, Hashtable parameters)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            int outputValue = 0;
+
+            if (!dbw.ExecuteSP(spName, parameters, ref outputValue))
             {
-                throw new Exception("Fail to execute xsp_" + TableName + "_upload", new Exception(dbw.DBErrorMessage));
+                throw new Exception(
+                    "Fail to execute " + spName,
+                    new Exception(dbw.DBErrorMessage)
+                );
             }
+
+            return outputValue;
+        }
+
+        public void ExecuteNonQuery(string spName, Hashtable parameters)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            if (!dbw.ExecuteSP(spName, parameters))
+                throw new Exception(
+                    "Fail to execute " + spName,
+                    new Exception(dbw.DBErrorMessage)
+                );
+        }
+
+        public void InsertProcessErrorLog(Hashtable parameters)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            if (!dbw.ExecuteSP("xsp_app_process_error_log_upload", parameters))
+                throw new Exception(dbw.DBErrorMessage);
+        }
+
+        public int GetOnhandStock( string itemCode, string locationCode, string branchCode)
+        {
+            Hashtable ht = new Hashtable();
+            ht["p_item_code"] = itemCode;
+            ht["p_location_code"] = locationCode;
+            ht["p_branch_code"] = branchCode;
+
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            DataSet ds = new DataSet();
+
+            if (!dbw.ExecuteSP("xsp_inventory_stock_getrow", ht, ds))
+                throw new Exception(
+                    "Fail to execute xsp_inventory_stock_getrow",
+                    new Exception(dbw.DBErrorMessage)
+                );
+
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                return 0;
+
+            object val = ds.Tables[0].Rows[0]["ONHAND_QTY"];
+            if (val == DBNull.Value)
+                return 0;
+
+            return Convert.ToInt32(val);
         }
     }
 }

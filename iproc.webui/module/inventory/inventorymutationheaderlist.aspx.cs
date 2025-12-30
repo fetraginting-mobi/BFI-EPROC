@@ -151,6 +151,8 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
         IExcelDataReader excelReader = null;
         string fileName = FileUploadControlMutation.FileName;
+        GeneralDAL _dal = new GeneralDAL();
+        
         try
         {
             Stream excelStream = FileUploadControlMutation.PostedFile.InputStream;
@@ -176,12 +178,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
                 int rowNumber = (excelRowIndex-1);
                 try
-                { 
-                
-
+                {               
                     if (IsRowEmpty(excelReader))
                         break;
-                    // ================= VALIDASI =================
+                    // ================= Add Mandatory Validation =================
                     if (IsEmpty(excelReader, 1))
                         throw new Exception("From Location wajib diisi (baris " + rowNumber + ")");
                     if (IsEmpty(excelReader, 2))
@@ -217,18 +217,14 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     Hashtable itemMap = (Hashtable)headerItemMap[headerKey];
                     if (itemMap.ContainsKey(p_item_code))
                         throw new Exception(
-                            "ITEM_CODE '" + p_item_code + "' duplikat pada kombinasi lokasi yang sama (baris " + rowNumber + ")"
+                            "ITEM_CODE '" + p_item_code + "'duplikat pada kombinasi lokasi yang sama (baris " + rowNumber + ")"
                         );
                     itemMap[p_item_code] = true;
                     string mutationBarcode = "";
 
-                    GeneralDAL _dal = new GeneralDAL();
-                    Hashtable _ht = new Hashtable();
-                    string sNextBarcode = "";
-                    int inextid = 0;
-
                     if (!headerMap.ContainsKey(headerKey))
-                    {               
+                    {
+                        Hashtable _ht = new Hashtable();
                         _ht["p_mutation_date"] = DateTime.Now;
                         _ht["p_expedition_description"] = p_expedition_description;
                         _ht["p_branch_code"] = "KPO";
@@ -248,13 +244,24 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                         _ht["p_mod_by"] = Shared.CurrentUID;
                         _ht["p_mod_ip_address"] = Shared.CurrentIPAddress;
 
-                        _dal.Upload("INVENTORY_MUTATION_HEADER", _ht, ref sNextBarcode);
-                        headerMap[headerKey] = sNextBarcode;
-                        mutationBarcode = sNextBarcode;
+                        mutationBarcode = _dal.UploadWithReturnString("INVENTORY_MUTATION_HEADER", _ht);
+                        headerMap[headerKey] = mutationBarcode;
                     }
                     else
                     {
                         mutationBarcode = headerMap[headerKey].ToString();    
+                    }
+
+                    int onhandQty = _dal.GetOnhandStock(p_item_code, p_from_location, "KPO");
+                    if (onhandQty < p_quantity)
+                    {
+                        throw new Exception(
+                            "Stock tidak mencukupi. Onhand: "
+                            + onhandQty
+                            + ", Request: "
+                            + p_quantity
+                            + " (baris " + rowNumber + ")"
+                        );
                     }
 
                     Hashtable _htDetail = new Hashtable();
@@ -269,17 +276,31 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     _htDetail["p_mod_by"] = Shared.CurrentUID;
                     _htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
                     _htDetail["p_from_branch_code"] = "KPO";
+                    _htDetail["p_from_location_code"] = p_from_location;
                     _htDetail["p_to_branch_code"] = p_to_branch;
+                    _htDetail["p_to_location_code"] = p_to_location;
                     _htDetail["p_status"] = "NEW";
-
-                    _dal.Upload("inventory_mutation_detail", _htDetail, ref inextid);
+                    _dal.ExecSPReturnInt("xsp_inventory_mutation_detail_upload", _htDetail);
                 }
                 catch (Exception exRow)
                 {
-                    string rawItem = excelReader.GetValue(5) == null? "": excelReader.GetValue(5).ToString();
-
-                    LogUploadError("INVENTORY_MUTATION_UPLOAD",fileName,rowNumber,exRow.Message,"ITEM=" + rawItem);
-                    continue; 
+                    Hashtable htLog = new Hashtable();
+                    htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
+                    htLog["p_file_name"] = fileName;
+                    htLog["p_row_number"] = rowNumber;
+                    htLog["p_error_message"] = exRow.Message;
+                    htLog["p_raw_data"] = "ITEM=" + (excelReader.GetValue(5) == null ? "" : excelReader.GetValue(5).ToString());
+                    htLog["p_cre_by"] = Shared.CurrentUID;
+                    htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                    try
+                    {
+                        _dal.InsertProcessErrorLog(htLog);
+                    }
+                    catch (Exception logEx)
+                    {
+                        System.Diagnostics.Trace.WriteLine("LOG FAILED: " + logEx.Message);
+                    }
+                    continue;
                 }
             }
         }
@@ -303,7 +324,6 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         return reader.IsDBNull(index) || reader.GetValue(index).ToString().Trim() == "";
     }
-
     private bool TryConvertToInt(object value, out int result)
     {
         result = 0;
@@ -316,31 +336,5 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         }
 
         return int.TryParse(value.ToString().Trim(), out result);
-    }
-
-    private void LogUploadError(string processName,string fileName,int rowNumber,string errorMessage,string rawData)
-    {
-        try
-        {
-            GeneralDAL dal = new GeneralDAL();
-            Hashtable htLog = new Hashtable();
-            string logId = "";
-
-            htLog["p_process_name"] = processName;
-            htLog["p_file_name"] = fileName;
-            htLog["p_row_number"] = rowNumber;
-            htLog["p_error_message"] = errorMessage;
-            htLog["p_raw_data"] = rawData;
-            htLog["p_cre_by"] = Shared.CurrentUID;
-            htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-            htLog["p_id"] = 0; 
-
-            dal.Upload("app_process_error_log", htLog, ref logId);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Trace.WriteLine(
-            "FAILED LOGGING ERROR : " + ex.Message);
-        }
     }
 }
