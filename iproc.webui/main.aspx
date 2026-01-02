@@ -39,13 +39,16 @@
       <!--main content start-->
       <section id="main-content">
         <section class="wrapper">
-             <iframe id="ifr" src="module/dashboard/default2.aspx" frameborder="0" name="ifr" width="100%"  height="512px"
+             <iframe id="ifr" src="module/dashboard/default2.aspx" frameborder="0" name="ifr" width="100%"  height="100%"
                 scrolling="auto"></iframe>
         </section>
       </section>
         <!--main content end-->
         <!--footer start-->
-      <footer class="site-footer">
+      
+      <!--footer end-->
+    </section>
+    <footer class="site-footer">
           <div class="text-center">
               2016 &copy; PT. MobiTech Media Integrasi.
               <a href="#" class="go-top">
@@ -53,8 +56,6 @@
               </a>
           </div>
       </footer>
-      <!--footer end-->
-    </section>
 
 <%--    <style>
         a.active{color:#FF6C60 !important;}

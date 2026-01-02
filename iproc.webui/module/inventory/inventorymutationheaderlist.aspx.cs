@@ -44,12 +44,14 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_is_upload"] = ddlIsUpload.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
 
             gvwList.DataSource = _dal.GetRows(TABLE_NAME, _ht);
             gvwList.DataBind();
+            ControlPostButton();
         }
         catch (Exception ex)
         {
@@ -114,6 +116,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         BindData();
     }
+    protected void ddlIsUpload_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
     protected void btnDownload_Click(object sender, EventArgs e)
     {
         GeneralDAL _dal = null;
@@ -152,11 +158,15 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         IExcelDataReader excelReader = null;
         string fileName = FileUploadControlMutation.FileName;
         GeneralDAL _dal = new GeneralDAL();
-        
+
+        Hashtable headerMap = new Hashtable();
+        Hashtable headerItemMap = new Hashtable();
+        Hashtable headerDetailBuffer = new Hashtable();
+
         try
         {
             Stream excelStream = FileUploadControlMutation.PostedFile.InputStream;
-            string ext = Path.GetExtension(FileUploadControlMutation.FileName).ToLower();
+            string ext = Path.GetExtension(fileName).ToLower();
 
             if (ext == ".xls")
                 excelReader = ExcelReaderFactory.CreateBinaryReader(excelStream);
@@ -165,122 +175,74 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             else
                 throw new Exception("Format file tidak didukung");
 
-            int excelRowIndex = 0;           
-
-            Hashtable headerMap = new Hashtable();
-            Hashtable headerItemMap = new Hashtable();
+            int excelRowIndex = 0;
 
             while (excelReader.Read())
             {
                 excelRowIndex++;
-                if (excelRowIndex == 1)
-                    continue;
 
-                int rowNumber = (excelRowIndex-1);
+                // ===== HEADER VALIDATION =====
+                if (excelRowIndex == 1)
+                {
+                    if (!ValidateInventoryMutationTemplate(excelReader, fileName))
+                        return;
+
+                    continue;
+                }
+
+                int rowNumber = excelRowIndex - 1;
+
                 try
-                {               
+                {
                     if (IsRowEmpty(excelReader))
                         break;
-                    // ================= Add Mandatory Validation =================
-                    if (IsEmpty(excelReader, 1))
-                        throw new Exception("From Location wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 2))
-                        throw new Exception("To Branch wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 3))
-                        throw new Exception("To Location wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 4))
-                        throw new Exception("Description wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 5))
-                        throw new Exception("ITEM_CODE wajib diisi (baris " + rowNumber + ")");
 
-                    object qtyValue = excelReader.GetValue(6);
-                    if (qtyValue == null || qtyValue == DBNull.Value)
-                        throw new Exception("Quantity wajib diisi (baris " + rowNumber + ")");
+                    // ===== VALIDATION =====
+                    if (IsEmpty(excelReader, 1)) throw new Exception("From Location wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 2)) throw new Exception("To Branch wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 3)) throw new Exception("To Location wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 4)) throw new Exception("Description wajib diisi (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 5)) throw new Exception("ITEM_CODE wajib diisi (baris " + rowNumber + ")");
+
                     int qty;
-                    if (!TryConvertToInt(qtyValue, out qty))
-                        throw new Exception("Quantity harus angka (baris " + rowNumber + ")");
-                    if (qty <= 0)
-                        throw new Exception("Quantity harus lebih dari 0 (baris " + rowNumber + ")");
+                    if (!TryConvertToInt(excelReader.GetValue(6), out qty) || qty <= 0)
+                        throw new Exception("Quantity harus angka > 0 (baris " + rowNumber + ")");
 
                     string p_from_location = excelReader.GetString(1).Trim();
                     string p_to_branch = excelReader.GetString(2).Trim();
                     string p_to_location = excelReader.GetString(3).Trim();
-                    string p_expedition_description = excelReader.GetString(4).Trim();
+                    string p_desc = excelReader.GetString(4).Trim();
                     string p_item_code = excelReader.GetString(5).Trim();
-                    int p_quantity = qty;
 
                     string headerKey = p_from_location + "|" + p_to_branch + "|" + p_to_location;
 
+                    // === DUPLICATE ITEM CHECK ===
                     if (!headerItemMap.ContainsKey(headerKey))
                         headerItemMap[headerKey] = new Hashtable();
 
                     Hashtable itemMap = (Hashtable)headerItemMap[headerKey];
                     if (itemMap.ContainsKey(p_item_code))
-                        throw new Exception(
-                            "ITEM_CODE '" + p_item_code + "'duplikat pada kombinasi lokasi yang sama (baris " + rowNumber + ")"
-                        );
+                        throw new Exception("ITEM_CODE duplikat (baris " + rowNumber + ")");
                     itemMap[p_item_code] = true;
-                    string mutationBarcode = "";
 
-                    if (!headerMap.ContainsKey(headerKey))
-                    {
-                        Hashtable _ht = new Hashtable();
-                        _ht["p_mutation_date"] = DateTime.Now;
-                        _ht["p_expedition_description"] = p_expedition_description;
-                        _ht["p_branch_code"] = "KPO";
-                        _ht["p_department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
-                        _ht["p_division_code"] = Shared.CurrentEmployeeDivCode;
-                        _ht["p_sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
-                        _ht["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
-                        //_ht["p_remarks"] = description;
-                        _ht["p_from_location"] = p_from_location;
-                        _ht["p_to_branch"] = p_to_branch;
-                        _ht["p_to_location"] = p_to_location;
-                        _ht["p_requestor"] = Shared.CurrentUID;
-                        _ht["p_cre_date"] = DateTime.Now;
-                        _ht["p_cre_by"] = Shared.CurrentUID;
-                        _ht["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                        _ht["p_mod_date"] = DateTime.Now;
-                        _ht["p_mod_by"] = Shared.CurrentUID;
-                        _ht["p_mod_ip_address"] = Shared.CurrentIPAddress;
-
-                        mutationBarcode = _dal.UploadWithReturnString("INVENTORY_MUTATION_HEADER", _ht);
-                        headerMap[headerKey] = mutationBarcode;
-                    }
-                    else
-                    {
-                        mutationBarcode = headerMap[headerKey].ToString();    
-                    }
-
+                    // === STOCK CHECK ===
                     int onhandQty = _dal.GetOnhandStock(p_item_code, p_from_location, "KPO");
-                    if (onhandQty < p_quantity)
-                    {
-                        throw new Exception(
-                            "Stock tidak mencukupi. Onhand: "
-                            + onhandQty
-                            + ", Request: "
-                            + p_quantity
-                            + " (baris " + rowNumber + ")"
-                        );
-                    }
+                    if (onhandQty < qty)
+                        throw new Exception("Stock tidak mencukupi (baris " + rowNumber + ")");
 
-                    Hashtable _htDetail = new Hashtable();
-                    _htDetail["p_im_code"] = mutationBarcode;
-                    _htDetail["p_item_code"] = p_item_code;
-                    _htDetail["p_quantity"] = qty;
-                    _htDetail["p_remarks"] = "";
-                    _htDetail["p_cre_date"] = DateTime.Now;
-                    _htDetail["p_cre_by"] = Shared.CurrentUID;
-                    _htDetail["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                    _htDetail["p_mod_date"] = DateTime.Now;
-                    _htDetail["p_mod_by"] = Shared.CurrentUID;
-                    _htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
-                    _htDetail["p_from_branch_code"] = "KPO";
-                    _htDetail["p_from_location_code"] = p_from_location;
-                    _htDetail["p_to_branch_code"] = p_to_branch;
-                    _htDetail["p_to_location_code"] = p_to_location;
-                    _htDetail["p_status"] = "NEW";
-                    _dal.ExecSPReturnInt("xsp_inventory_mutation_detail_upload", _htDetail);
+                    // === BUFFER DETAIL ===
+                    if (!headerDetailBuffer.ContainsKey(headerKey))
+                        headerDetailBuffer[headerKey] = new List<Hashtable>();
+
+                    Hashtable detail = new Hashtable();
+                    detail["p_item_code"] = p_item_code;
+                    detail["p_quantity"] = qty;
+                    detail["p_from_location"] = p_from_location;
+                    detail["p_to_branch"] = p_to_branch;
+                    detail["p_to_location"] = p_to_location;
+                    detail["p_desc"] = p_desc;
+
+                    ((List<Hashtable>)headerDetailBuffer[headerKey]).Add(detail);
                 }
                 catch (Exception exRow)
                 {
@@ -289,18 +251,67 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     htLog["p_file_name"] = fileName;
                     htLog["p_row_number"] = rowNumber;
                     htLog["p_error_message"] = exRow.Message;
-                    htLog["p_raw_data"] = "ITEM=" + (excelReader.GetValue(5) == null ? "" : excelReader.GetValue(5).ToString());
+                    htLog["p_raw_data"] = "ITEM=" + excelReader.GetValue(5);
                     htLog["p_cre_by"] = Shared.CurrentUID;
                     htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                    try
-                    {
-                        _dal.InsertProcessErrorLog(htLog);
-                    }
-                    catch (Exception logEx)
-                    {
-                        System.Diagnostics.Trace.WriteLine("LOG FAILED: " + logEx.Message);
-                    }
+                    _dal.InsertProcessErrorLog(htLog);
                     continue;
+                }
+            }
+
+            // ===== INSERT HEADER & DETAIL (ONLY VALID GROUPS) =====
+            foreach (DictionaryEntry entry in headerDetailBuffer)
+            {
+                string headerKey = entry.Key.ToString();
+                List<Hashtable> details = (List<Hashtable>)entry.Value;
+
+                if (details.Count == 0)
+                    continue;
+
+                string[] key = headerKey.Split('|');
+
+                Hashtable htHeader = new Hashtable();
+                htHeader["p_mutation_date"] = DateTime.Now;
+                htHeader["p_expedition_description"] = details[0]["p_desc"];
+                htHeader["p_branch_code"] = "KPO";
+                htHeader["p_department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
+                htHeader["p_division_code"] = Shared.CurrentEmployeeDivCode;
+                htHeader["p_sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
+                htHeader["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
+                //htHeader["p_remarks"] = description;
+                htHeader["p_from_location"] = key[0];
+                htHeader["p_to_branch"] = key[1];
+                htHeader["p_to_location"] = key[2];
+                htHeader["p_requestor"] = Shared.CurrentUID;
+                htHeader["p_cre_date"] = DateTime.Now;
+                htHeader["p_cre_by"] = Shared.CurrentUID;
+                htHeader["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                htHeader["p_mod_date"] = DateTime.Now;
+                htHeader["p_mod_by"] = Shared.CurrentUID;
+                htHeader["p_mod_ip_address"] = Shared.CurrentIPAddress;
+
+                string barcode = _dal.UploadWithReturnString("INVENTORY_MUTATION_HEADER", htHeader);
+
+                foreach (Hashtable d in details)
+                {
+                    Hashtable htDetail = new Hashtable();
+                    htDetail["p_im_code"] = barcode;
+                    htDetail["p_item_code"] = d["p_item_code"];
+                    htDetail["p_quantity"] = d["p_quantity"];
+                    htDetail["p_remarks"] = "";
+                    htDetail["p_cre_date"] = DateTime.Now;
+                    htDetail["p_cre_by"] = Shared.CurrentUID;
+                    htDetail["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                    htDetail["p_mod_date"] = DateTime.Now;
+                    htDetail["p_mod_by"] = Shared.CurrentUID;
+                    htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
+                    htDetail["p_from_branch_code"] = "KPO";
+                    htDetail["p_from_location_code"] = d["p_from_location"];
+                    htDetail["p_to_branch_code"] = d["p_to_branch"];
+                    htDetail["p_to_location_code"] = d["p_to_location"];
+                    htDetail["p_status"] = "NEW";                    
+
+                    _dal.ExecSPReturnInt("xsp_inventory_mutation_detail_upload", htDetail);
                 }
             }
         }
@@ -308,7 +319,68 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         {
             if (excelReader != null)
                 excelReader.Close();
+            BindData();
         }
+    }
+    private static readonly string[] INVENTORY_MUTATION_TEMPLATE_HEADERS =
+    {
+        "No",
+        "From Location*",
+        "To Branch*",
+        "To Location*",
+        "Description*",
+        "ITEM_CODE*",
+        "Quantity*"
+    };
+    private bool ValidateInventoryMutationTemplate(IExcelDataReader reader, string fileName)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable htLog = new Hashtable();
+
+        // === VALIDASI JUMLAH KOLOM ===
+        if (reader.FieldCount != INVENTORY_MUTATION_TEMPLATE_HEADERS.Length)
+        {
+            htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
+            htLog["p_file_name"] = fileName;
+            htLog["p_row_number"] = 0; // HEADER
+            htLog["p_error_message"] = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
+            htLog["p_raw_data"] = "HEADER VALIDATION";
+            htLog["p_cre_by"] = Shared.CurrentUID;
+            htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+
+            _dal.InsertProcessErrorLog(htLog);
+            return false;
+        }
+
+        // === VALIDASI NAMA HEADER ===
+        for (int i = 0; i < INVENTORY_MUTATION_TEMPLATE_HEADERS.Length; i++)
+        {
+            string actualHeader = reader.GetValue(i) == null
+                ? ""
+                : reader.GetValue(i).ToString().Trim();
+
+            if (!actualHeader.Equals(
+                    INVENTORY_MUTATION_TEMPLATE_HEADERS[i],
+                    StringComparison.OrdinalIgnoreCase
+                ))
+            {
+                htLog.Clear();
+                htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
+                htLog["p_file_name"] = fileName;
+                htLog["p_row_number"] = 0;
+                htLog["p_error_message"] =
+                    "Header kolom ke-" + (i + 1)
+                    + " tidak sesuai. Seharusnya: "
+                    + INVENTORY_MUTATION_TEMPLATE_HEADERS[i];
+                htLog["p_raw_data"] = "HEADER=" + actualHeader;
+                htLog["p_cre_by"] = Shared.CurrentUID;
+                htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+
+                _dal.InsertProcessErrorLog(htLog);
+                return false;
+            }
+        }
+        return true;
     }
     private bool IsRowEmpty(IExcelDataReader reader)
     {
@@ -319,7 +391,6 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         }
         return true;
     }
-
     private bool IsEmpty(IExcelDataReader reader, int index)
     {
         return reader.IsDBNull(index) || reader.GetValue(index).ToString().Trim() == "";
@@ -337,4 +408,46 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
         return int.TryParse(value.ToString().Trim(), out result);
     }
+    protected void btnPost_Click(object sender, EventArgs e)
+    {
+        if (ddlStatus.SelectedValue != "NEW" || ddlIsUpload.SelectedValue != "TRUE")
+        {
+            throw new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE");
+        }
+
+        bool anyChecked = false;
+
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            CheckBox chk = (CheckBox)row.FindControl("chkSelect");
+            if (chk != null && chk.Checked)
+            {
+                anyChecked = true;
+                break;
+            }
+        }
+
+        if (!anyChecked)
+        {
+            throw new Exception("Pilih minimal 1 data untuk diposting");
+        }
+    }
+    private void ControlPostButton()
+    {
+        bool isStatusNew = ddlStatus.SelectedValue == "NEW";
+        bool isUploadTrue = ddlIsUpload.SelectedValue == "1";
+        bool hasData = gvwList.Rows.Count > 0;
+
+        if (isStatusNew && isUploadTrue && hasData)
+        {
+            btnPost.Enabled = true;
+            btnPost.CssClass = "btn btn-success";
+        }
+        else
+        {
+            btnPost.Enabled = false;
+            btnPost.CssClass = "btn btn-success disabled";
+        }
+    }
+
 }

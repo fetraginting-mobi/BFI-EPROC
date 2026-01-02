@@ -34,6 +34,32 @@
                 toggleUploadButton();
             };
         </script>
+        <script type="text/javascript">
+            function togglePostButton() 
+            {
+                var grid = document.getElementById('<%= gvwList.ClientID %>');
+                var checkboxes = grid.getElementsByTagName("input");
+                var btnPost = document.getElementById('<%= btnPost.ClientID %>');
+
+                var checked = false;
+
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].type == "checkbox" && checkboxes[i].checked) {
+                        checked = true;
+                        break;
+                    }
+                }
+
+                if (checked) {
+                    btnPost.classList.remove("disabled");
+                    btnPost.removeAttribute("disabled");
+                } else {
+                    btnPost.classList.add("disabled");
+                    btnPost.setAttribute("disabled", "disabled");
+                }
+            }
+        </script>
+        
     </header>
         <div class="panel-heading">
             <div class="row">
@@ -56,11 +82,9 @@
         	    <div class="col-sm-3">
                   <span>Upload Excel : </span>
                   <asp:FileUpload ID="FileUploadControlMutation" runat="server" onchange="toggleUploadButton()"/>
-                  <%--<cc1:XUIButton ID="btnUploadRowFormat" runat="server" CssClass="btn btn-primary" 
-                        Text="Upload" Style="width: auto; margin-top:10px;" 
-                        onclick="btnUploadRowFormat_Click" />--%>
-                  <cc1:XUIButton ID="btnUploadRowFormat" runat="server" CssClass="btn btn-primary disabled" Text="Upload" Enabled="false" Style=" width:auto; margin-top:10px;" OnClick="btnUploadRowFormat_Click" />      
-                  <cc1:XUIButton ID="btnDownload" Style="width: auto; margin-top:10px;" runat="server" Text="Download Template" CssClass="btn btn-primary" OnClick="btnDownload_Click" />
+                  <cc1:XUIButton ID="btnUploadRowFormat" RoleCode="R60000110O" runat="server" CssClass="btn btn-primary disabled" Text="Upload" Enabled="false" Style=" width:auto; margin-top:10px;" OnClick="btnUploadRowFormat_Click" />      
+                  <cc1:XUIButton ID="btnDownload" RoleCode="R60000110O" Style="width: auto; margin-top:10px;" runat="server" Text="Download Template" CssClass="btn btn-primary" OnClick="btnDownload_Click" />
+                  <cc1:XUILinkButton ID="btnPost" RoleCode="R60000110O" runat="server" CssClass="btn btn-success disabled" Enabled="false" Style="width:auto; margin-top:10px;" OnClick="btnPost_Click"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -70,14 +94,26 @@
                         </div>
                     </div>
                 </div>    
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <div class="form-group">
-                    <label class="col-sm-2">Branch</label>
+                    <label class="col-sm-3">Branch</label>
                         <div class="col-sm-5">
                           <cc1:XUIDropDownList ID="ddlBranch" runat="server" CssClass="form-control" DBColumnName="BRANCH_CODE" SPParameterName="p_branch_code" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlBranch_SelectedIndexChanged" ></cc1:XUIDropDownList>
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                    <label class="col-sm-3">IsUpload</label>
+                        <div class="col-sm-5">
+                            <cc1:XUIDropDownList ID="ddlIsUpload" runat="server" CssClass="form-control" DBColumnName="IS_UPLOAD" SPParameterName="p_is_upload" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlIsUpload_SelectedIndexChanged" >
+                            <asp:ListItem Text="ALL" Value="ALL"></asp:ListItem>
+                             <asp:ListItem Text="TRUE" Value="1"></asp:ListItem>
+                             <asp:ListItem Text="FALSE" Value="0"></asp:ListItem>
+                             </cc1:XUIDropDownList>
+                        </div>
+                    </div>
+                </div> 
             </div>
             <div class="row">
                 <div class="col-sm-6">
@@ -86,7 +122,7 @@
             </div>
             <asp:UpdatePanel ID="upd" runat="server">
                 <ContentTemplate>
-                    <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
+                    <asp:GridView ID="gvwList" runat="server" onclick="togglePostButton() AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
                     AllowPaging="true" PageSize="10" DataKeyNames="CODE_BARCODE"
                         OnPageIndexChanging="gvwList_PageIndexChanging" 
                         onselectedindexchanged="SelectedIndexChanged" EmptyDataText="There Is No Data">
