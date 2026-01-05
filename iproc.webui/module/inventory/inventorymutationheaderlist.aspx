@@ -38,13 +38,17 @@
             function togglePostButton() 
             {
                 var grid = document.getElementById('<%= gvwList.ClientID %>');
-                var checkboxes = grid.getElementsByTagName("input");
                 var btnPost = document.getElementById('<%= btnPost.ClientID %>');
 
+                if (!grid || !btnPost) return;
+
+                var inputs = grid.getElementsByTagName("input");
                 var checked = false;
 
-                for (var i = 0; i < checkboxes.length; i++) {
-                    if (checkboxes[i].type == "checkbox" && checkboxes[i].checked) {
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type === "checkbox" &&
+                        inputs[i].id.indexOf("chbSelect") !== -1 &&
+                        inputs[i].checked) {
                         checked = true;
                         break;
                     }
@@ -59,6 +63,21 @@
                 }
             }
         </script>
+        <script type="text/javascript">
+        function checkAll(source) 
+        {
+            var grid = document.getElementById('<%= gvwList.ClientID %>');
+            var inputs = grid.getElementsByTagName("input");
+
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type === "checkbox" &&
+                    inputs[i].id.indexOf("chbSelect") !== -1) {
+                    inputs[i].checked = source.checked;
+                }
+            }
+            togglePostButton();
+        }
+      </script>
         
     </header>
         <div class="panel-heading">
@@ -155,12 +174,6 @@
                             <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
                                 <ItemStyle Width="20%" HorizontalAlign="Center"/>
                             </asp:BoundField>
-                          <%-- <asp:BoundField DataField="FROM_LOCATION_DESCRIPTION" HeaderText="From">
-                                <ItemStyle Width="25%" />
-                            </asp:BoundField>
-                             <asp:BoundField DataField="TO_LOCATION_DESCRIPTION" HeaderText="To">
-                                <ItemStyle Width="25%" />
-                            </asp:BoundField>--%>
                             <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status">
                                 <ItemStyle Width="10%" HorizontalAlign="Center"/>
                             </asp:BoundField>

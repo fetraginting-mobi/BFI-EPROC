@@ -23,17 +23,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
         if (!Page.IsPostBack)
         {
 
-            //btnFromLocation.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/generic.aspx?code=MLGFL&acol_0={0}&bcol_1={1}');", txtFromLocationCode.ClientID, lblFromLocationName.ClientID);
-            //btnLookUpFromLotCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MLFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}');", txtFromLotCode.ClientID, txtFromLotName.ClientID, lblFromLotName.ClientID, txtFromLocationCode.ClientID);
-            //btnLookUpFromRakCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MRGFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}&parc_lot_code={4}');", txtFromRakCode.ClientID, txtFromRakName.ClientID, lblFromRakName.ClientID, txtFromLocationCode.ClientID, txtFromLotCode.ClientID);
-            //btnLookUpFromSlotCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MSGFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}&parc_lot_code={4}&parc_rak_code={5}');", txtFromSlotCode.ClientID, txtFromSlotName.ClientID, lblFromSlotName.ClientID, txtFromLocationCode.ClientID, txtFromLotCode.ClientID, txtFromRakCode.ClientID);
-
-
-            //btnToLocation.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/generic.aspx?code=MLGFL&acol_0={0}&bcol_1={1}');", txtToLocationCode.ClientID, lblToLocationName.ClientID);
-            //btnLookUpToLotCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MLFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}');", txtToLotCode.ClientID, txtToLotName.ClientID, lblToLotName.ClientID, txtToLocationCode.ClientID);
-            //btnLookUpToRakCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MRGFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}&parc_lot_code={4}');", txtToRakCode.ClientID, txtToRakName.ClientID, lblToRakName.ClientID, txtToLocationCode.ClientID, txtToLotCode.ClientID);
-            //btnLookUpToSlotCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MSGFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}&parc_lot_code={4}&parc_rak_code={5}');", txtToSlotCode.ClientID, txtToSlotName.ClientID, lblToSlotName.ClientID, txtToLocationCode.ClientID, txtToLotCode.ClientID, txtToRakCode.ClientID);
-
             Shared.BindBranchMutAll(ddlToBranch);
             txtBranch.Text = Shared.CurrentEmployeeBranchCode;
             btnLookUpRequestoro.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=RQST&acol_0={0}&bcol_1={1}&ccol_2={2}&ccol_3={3}&ccol_4={4}&parc_branch_code={5}');", txtRequestorCode.ClientID, txtRequestorName.ClientID, ddlBranch.ClientID, ddlDepartment.ClientID, ddlDivision.ClientID, txtBranch.ClientID);
@@ -59,67 +48,34 @@ public partial class module_inventory_inventorymutationheader : BasePage
             {
                 LoadData();
                 BindTOP();
-                ddlBranch.Enabled = false;
-                ddlDivision.Enabled = false;
-                ddlDepartment.Enabled = false;
-                ddlSubDepartment.Enabled = false;
-                ddlUnits.Enabled = false;
-                txtMutationDate.Enabled = false;
-                btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
-                btnCancel.CssClass = "btn btn-custome";
-                btnLookUpRequestoro.Enabled = false;
-                btnFromLocation.Enabled = false;
-               // btnToLocation.Enabled = false;
-                btnLookUpFromLotCode.Enabled = false;
-                btnLookUpFromRakCode.Enabled = false;
-                btnLookUpFromSlotCode.Enabled = false;
-                //btnLookUpToLotCode.Enabled = false;
-                //btnLookUpToRakCode.Enabled = false;
-                //btnLookUpToSlotCode.Enabled = false;
-
-                btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
-                //btnFromLocation.Enabled = false;
-                //btnLookUpFromLotCode.Enabled = false;
-               // btnLookUpFromRakCode.Enabled = false;
-                //btnLookUpFromSlotCode.Enabled = false;
-
                 BindData();
-                btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
-                btnDeleteTOP.OnClientClick = "return confirm('Delete selected data?');";
-                //btnPost.OnClientClick = "return confirm('Post selected data?');";
-                //btnReject.OnClientClick = "return confirm('Cancel selected data?');";
-                lblApprovalRequestTargetID.Text = Request.Params["idartarget"];
+                SetDefaultEditMode();
 
+
+                if (lblProcess.Text == "UPLOAD")
+                {
+                    SetReadOnlyMode();
+                    return; 
+                }
                 if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "ON-PROGRESS" || lblTransFlagCode.Text == "CANCEL")
                 {
-                    btnSave.Visible  = btnReject.Visible = false;
-                    btnPost.Visible = false;
-                    //btnAddRequestDetail.Visible = btnDeleteRequestDetail.Visible = false;
-                    //btnAddTOP.Visible = btnDeleteTOP.Visible = false;
-                    txtMutationDate.Enabled = false;
-                    txtRemarks.Enabled = false;
-                    //btnFromLocation.Enabled = false;
-                    //btnToLocation.Enabled = false;
-                    txtExpeditionDescription.Enabled = false;
-                    btnAddTOP.Visible = false;
-                    btnDeleteTOP.Visible = false;
-                    gvwList.Columns[1].Visible = false;
-                    ddlBranch.Enabled = false;
-                    ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = ddlUnits.Enabled = false;
-                   
-
+                    SetReadOnlyMode();
+                    return;
                 }
+
+                btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
+                btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
+                btnDeleteTOP.OnClientClick = "return confirm('Delete selected data?');";
+                lblApprovalRequestTargetID.Text = Request.Params["idartarget"];                
             }
             else
             {
                 btnReject.Visible = btnPost.Visible = false;
                 btnAddTOP.Visible = btnDeleteTOP.Visible = true;
-                //btnAddRequestDetail.Visible = btnDeleteRequestDetail.Visible = false;
                 pnlMutation.Visible = false;
                 txtMutationDate.Enabled = false;
                 txtMutationDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 txtFromBranchDesc.Text = Shared.CurrentDefaultEmployeeBranchDesc;
-                //ddlBranch.SelectedValue = Shared.CurrentEmployeeBranchDesc;
                 ddlDivision.SelectedValue = Shared.CurrentEmployeeDivCode;
                 ddlDepartment.SelectedValue = Shared.CurrentEmployeeDeptCodeDefault;
                 ddlSubDepartment.SelectedValue = Shared.CurrentEmployeeSubDepartmentCode;
@@ -130,7 +86,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
                 txtRequestorCode.Text = Shared.CurrentUID;
                 txtRequestorName.Text = Shared.CurrentEmpName;
-                //txtRequestorName.Text = Shared.CurrentEmpName;
             }
             if (!lblApprovalRequestTargetID.Text.Equals(""))
                 btnApprovalTiered.Visible = true;
@@ -139,12 +94,92 @@ public partial class module_inventory_inventorymutationheader : BasePage
 
         btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000013&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID, lblAmount.ClientID, lblbranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
         btnApprovalTiered.Attributes["href"] = String.Format("javascript:fnShowApprovalTieredDialog('../../approval/generictiered.aspx?parc_id_ar_target={0}&nexturl={1}&spname={2}');", lblApprovalRequestTargetID.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert");
-
-        //btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000013&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID);
-        //btnApprovalTiered.Attributes["href"] = String.Format("javascript:fnShowApprovalTieredDialog('../../approval/generictiered.aspx?parc_id_ar_target={0}&nexturl={1}&spname={2}');", lblApprovalRequestTargetID.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert");
         btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000014&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblbranch.ClientID);
         LoadAfterInit();
     }
+
+    private void SetDefaultEditMode()
+    {
+        ddlBranch.Enabled = false;
+        ddlDivision.Enabled = false;
+        ddlDepartment.Enabled = false;
+        ddlSubDepartment.Enabled = false;
+        ddlUnits.Enabled = false;
+        txtMutationDate.Enabled = false;
+        btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
+        btnCancel.CssClass = "btn btn-custome";
+        btnLookUpRequestoro.Enabled = false;
+        btnFromLocation.Enabled = false;
+        btnLookUpFromLotCode.Enabled = false;
+        btnLookUpFromRakCode.Enabled = false;
+        btnLookUpFromSlotCode.Enabled = false;
+    }
+    private void SetReadOnlyMode()
+    {
+        // HEADER        
+        ddlBranch.Enabled = false;
+        ddlDivision.Enabled = false;
+        ddlDepartment.Enabled = false;
+        ddlSubDepartment.Enabled = false;
+        ddlUnits.Enabled = false;
+
+        txtMutationDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
+        txtMutationDate.Enabled = false;
+        txtRemarks.Enabled = false;
+        txtExpeditionDescription.Enabled = false;
+        btnLookUpRequestoro.Enabled = false;
+        btnFromLocation.Enabled = false;
+        btnLookUpFromLotCode.Enabled = false;
+        btnLookUpFromRakCode.Enabled = false;
+        btnLookUpFromSlotCode.Enabled = false;
+        btnToLocation.Enabled = false;
+        btnLookUpToLotCode.Enabled = false;
+        btnLookUpToRakCode.Enabled = false;
+        btnLookUpToSlotCode.Enabled = false;
+
+        // DETAIL
+        btnAddTOP.Visible = false;
+        btnDeleteTOP.Visible = false;
+        btnDeleteRequestDetail.Visible = false;
+        btnAddAdDep.Enabled = false;
+        btnSaveDetail.Enabled = false;
+
+        // BUTTON
+        btnSave.Visible = false;
+        btnPost.Visible = false;
+        btnReject.Visible = false;
+
+        DisableGridDetail();
+    }
+    private void DisableGridDetail()
+    {
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            if (row.RowType != DataControlRowType.DataRow)
+                continue;
+
+            TextBox txtQty = row.FindControl("txtQuantity") as TextBox;
+            if (txtQty != null)
+            {
+                txtQty.Enabled = false;
+                txtQty.CssClass += " disabled";
+            }
+
+            TextBox txtRemark = row.FindControl("txtRemarks") as TextBox;
+            if (txtRemark != null)
+            {
+                txtRemark.Enabled = false;
+                txtRemark.CssClass += " disabled";
+            }
+
+            CheckBox chk = row.FindControl("chbSelect") as CheckBox;
+            if (chk != null)
+            {
+                chk.Enabled = false;
+            }
+        }
+    }
+
 
     private void LoadData()
     {
@@ -323,7 +358,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 }
             }
             //Session[SessionKey.CURRENT_TAB_INDEX_SESSION_KEY] = txtTabCode.Text;
-
             Shared.ShowSuccessGritter(this, string.Format("inventorymutationheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
             BindData();
         }
@@ -352,21 +386,16 @@ public partial class module_inventory_inventorymutationheader : BasePage
             TextBox txtQuantity = (TextBox)e.Row.FindControl("txtQuantity");
             TextBox txtRemarks = (TextBox)e.Row.FindControl("txtRemarks");
 
-
-
-
             txtQuantity.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "QUANTITY"));
             txtRemarks.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "REMARKS"));
             if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CANCEL" || lblTransFlagCode.Text == "ONPROGRESS" || lblProcess.Text == "GENERATE")
             {
-
                 txtQuantity.Enabled = false;
                 txtRemarks.Enabled = false;
                 btnAddAdDep.Visible = false;
                 btnDeleteRequestDetail.Visible = false;
                 btnSaveDetail.Visible = false;
             }
-
         }
     }
 
@@ -387,16 +416,12 @@ public partial class module_inventory_inventorymutationheader : BasePage
         else
             return false;
     }
-
-
+    
     protected void ddlDivision_SelectedIndexChanged(object sender, EventArgs e)
     {
         Shared.BindDepartment(ddlDepartment, ddlDivision.SelectedValue);
         Shared.BindSubDepartment(ddlSubDepartment, ddlDepartment.SelectedValue);
         Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
-
-
-
         //updDep.Update();
     }
 
@@ -413,13 +438,10 @@ public partial class module_inventory_inventorymutationheader : BasePage
 
     protected void ddlSubDepartment_SelectedIndexChanged(object sender, EventArgs e)
     {
-
         Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-       
+    {      
 
         //updDep.Update();
     }

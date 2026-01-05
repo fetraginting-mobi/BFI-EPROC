@@ -410,26 +410,38 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     }
     protected void btnPost_Click(object sender, EventArgs e)
     {
-        if (ddlStatus.SelectedValue != "NEW" || ddlIsUpload.SelectedValue != "TRUE")
+        try
         {
-            throw new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE");
-        }
-
-        bool anyChecked = false;
-
-        foreach (GridViewRow row in gvwList.Rows)
-        {
-            CheckBox chk = (CheckBox)row.FindControl("chkSelect");
-            if (chk != null && chk.Checked)
+            if (ddlStatus.SelectedValue != "NEW" || ddlIsUpload.SelectedValue != "1")
             {
-                anyChecked = true;
-                break;
+                Shared.ShowErrorDialog(this,
+                    new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE"));
+                return;
             }
-        }
 
-        if (!anyChecked)
+            bool anyChecked = false;
+            foreach (GridViewRow row in gvwList.Rows)
+            {
+                CheckBox chk = (CheckBox)row.FindControl("chbSelect");
+                if (chk != null && chk.Checked)
+                {
+                    anyChecked = true;
+                    break;
+                }
+            }
+
+            if (!anyChecked)
+            {
+                Shared.ShowErrorDialog(this,
+                    new Exception("Pilih minimal 1 data untuk diposting"));
+                return;
+            }
+
+            // ===== PROSES POST DI SINI =====
+        }
+        catch (Exception ex)
         {
-            throw new Exception("Pilih minimal 1 data untuk diposting");
+            Shared.ShowErrorDialog(this, ex);
         }
     }
     private void ControlPostButton()
