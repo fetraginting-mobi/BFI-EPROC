@@ -173,7 +173,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Format file tidak didukung");
+                throw new Exception("Format file tidak didukung. Gunakan file Excel (.xls atau .xlsx) sesuai template yang disediakan");
 
             int excelRowIndex = 0;
 
@@ -184,9 +184,12 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 // ===== HEADER VALIDATION =====
                 if (excelRowIndex == 1)
                 {
-                    if (!ValidateInventoryMutationTemplate(excelReader, fileName))
-                        return;
-
+                    string errorMsg;
+                    if (!ValidateInventoryMutationTemplate(excelReader, fileName, out errorMsg))
+                    {
+                        Shared.ShowErrorDialog(this, new Exception(errorMsg));
+                        return; 
+                    }                        
                     continue;
                 }
 
@@ -255,6 +258,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     htLog["p_cre_by"] = Shared.CurrentUID;
                     htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
                     _dal.InsertProcessErrorLog(htLog);
+                    Shared.ShowErrorDialog(this, exRow);
                     continue;
                 }
             }
@@ -315,6 +319,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 }
             }
         }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
         finally
         {
             if (excelReader != null)
@@ -332,18 +340,20 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         "ITEM_CODE*",
         "Quantity*"
     };
-    private bool ValidateInventoryMutationTemplate(IExcelDataReader reader, string fileName)
+    private bool ValidateInventoryMutationTemplate(IExcelDataReader reader, string fileName, out string errorMessage)
     {
+        errorMessage = string.Empty;
         GeneralDAL _dal = new GeneralDAL();
         Hashtable htLog = new Hashtable();
 
         // === VALIDASI JUMLAH KOLOM ===
         if (reader.FieldCount != INVENTORY_MUTATION_TEMPLATE_HEADERS.Length)
         {
+            errorMessage = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
             htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
             htLog["p_file_name"] = fileName;
             htLog["p_row_number"] = 0; // HEADER
-            htLog["p_error_message"] = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
+            htLog["p_error_message"] = errorMessage;
             htLog["p_raw_data"] = "HEADER VALIDATION";
             htLog["p_cre_by"] = Shared.CurrentUID;
             htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
@@ -364,18 +374,15 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
+                errorMessage = "Template file tidak sesuai. Header kolom ke-" + (i + 1) + " harus '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i]+ "'.";
                 htLog.Clear();
                 htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
                 htLog["p_file_name"] = fileName;
                 htLog["p_row_number"] = 0;
-                htLog["p_error_message"] =
-                    "Header kolom ke-" + (i + 1)
-                    + " tidak sesuai. Seharusnya: "
-                    + INVENTORY_MUTATION_TEMPLATE_HEADERS[i];
+                htLog["p_error_message"] = errorMessage;
                 htLog["p_raw_data"] = "HEADER=" + actualHeader;
                 htLog["p_cre_by"] = Shared.CurrentUID;
                 htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-
                 _dal.InsertProcessErrorLog(htLog);
                 return false;
             }
@@ -419,25 +426,71 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 return;
             }
 
-            bool anyChecked = false;
-            foreach (GridViewRow row in gvwList.Rows)
+        //    bool anyChecked = false;
+        //    foreach (GridViewRow row in gvwList.Rows)
+        //    {
+        //        CheckBox chk = (CheckBox)row.FindControl("chbSelect");
+        //        if (chk != null && chk.Checked)
+        //        {
+        //            anyChecked = true;
+        //            break;
+        //        }
+        //    }
+
+        //    if (!anyChecked)
+        //    {
+        //        Shared.ShowErrorDialog(this,
+        //            new Exception("Pilih minimal 1 data untuk diposting"));
+        //        return;
+        //    }
+
+        //    // ===== PROSES POST DI SINI =====
+        //}
+        //catch (Exception ex)
+        //{
+        //    Shared.ShowErrorDialog(this, ex);
+        //}
+            ArrayList selectedCodes = new ArrayList();
+
+            for (int i = 0; i < gvwList.Rows.Count; i++)
             {
-                CheckBox chk = (CheckBox)row.FindControl("chbSelect");
+                GridViewRow row = gvwList.Rows[i];
+                CheckBox chk = row.FindControl("chbSelect") as CheckBox;
+
                 if (chk != null && chk.Checked)
                 {
-                    anyChecked = true;
-                    break;
+                    string codeBarcode =
+                        gvwList.DataKeys[row.RowIndex].Value.ToString();
+
+                    selectedCodes.Add(codeBarcode);
                 }
             }
 
-            if (!anyChecked)
+            if (selectedCodes.Count == 0)
             {
                 Shared.ShowErrorDialog(this,
                     new Exception("Pilih minimal 1 data untuk diposting"));
                 return;
             }
 
-            // ===== PROSES POST DI SINI =====
+            // SIMPAN KE SESSION (BULK LIST)
+            Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
+            Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
+
+            // REDIRECT KE GENERIC APPLICATION (PASSWORD 1x)
+            string url = string.Format(
+            "../../approval/genericapplication.aspx?code=AP000013&nexturl={0}",
+            Server.UrlEncode("inventorymutationheaderlist.aspx")
+            );
+
+            string script = "fnShowApprovalWithCommentDialog('" + url + "');";
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "OPEN_APPROVAL",
+                script,
+                true
+            );
         }
         catch (Exception ex)
         {
