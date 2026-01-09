@@ -7,6 +7,33 @@
     <section class="panel">
         <header class="panel-heading">
           <span>FA Mutation List</span>
+          <style type="text/css">
+            .disabled {
+                cursor: not-allowed;
+            }
+          </style>
+          <script type="text/javascript">
+            function toggleUploadButton() {
+                var fileInput = document.getElementById('<%= FileUploadControlMutation.ClientID %>');
+                var uploadBtn = document.getElementById('<%= btnUploadRowFormat.ClientID %>');
+
+                if (!fileInput || !uploadBtn)
+                    return;
+
+                if (fileInput.value === "") {
+                    uploadBtn.disabled = true;
+                    if (uploadBtn.className.indexOf("disabled") === -1)
+                        uploadBtn.className += " disabled";
+                } else {
+                    uploadBtn.disabled = false;
+                    uploadBtn.className = uploadBtn.className.replace(" disabled", "");
+                }
+            }
+
+            window.onload = function () {
+                toggleUploadButton();
+            };
+        </script>
         </header>
         <div class="panel-heading">
             <div class="row">
@@ -26,6 +53,13 @@
         </div>
         <div class="panel-body">
         	<div class="row">
+        	    <div class="col-sm-3">
+                  <span>Upload Excel : </span>
+                  <asp:FileUpload ID="FileUploadControlMutation" runat="server" onchange="toggleUploadButton()"/>
+                  <cc1:XUIButton ID="btnUploadRowFormat" RoleCode="R60000110O" runat="server" CssClass="btn btn-primary disabled" Text="Upload" Enabled="false" Style=" width:auto; margin-top:10px;" OnClick="btnUploadRowFormat_Click" />      
+                  <cc1:XUIButton ID="btnDownload" RoleCode="R60000110O" Style="width: auto; margin-top:10px;" runat="server" Text="Download Template" CssClass="btn btn-primary" OnClick="btnDownload_Click" />
+                  <%--<cc1:XUILinkButton ID="btnPost" RoleCode="R60000110O" runat="server" CssClass="btn btn-success disabled" Enabled="false" Style="width:auto; margin-top:10px;" OnClick="btnPost_Click"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>--%>
+                </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                     <label class="col-sm-3">Status</label>

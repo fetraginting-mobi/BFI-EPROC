@@ -134,7 +134,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _htParameters["p_code"] = Request.Params["code"];
 
 
-            string pdfName = "upload_mutation_list"+ ".xlsx"; ;
+            string pdfName = "upload_invmutation_list"+ ".xlsx"; ;
             string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             //string filetype = "xls";
 
