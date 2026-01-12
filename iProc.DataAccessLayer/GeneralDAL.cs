@@ -357,5 +357,46 @@ namespace iProc.DataAccessLayer
 
             return Convert.ToInt32(val);
         }
+        private string GetRealErrorMessage(Exception ex)
+        {
+            try
+            {
+                Exception currentEx = ex;
+                while (currentEx.InnerException != null)
+                {
+                    currentEx = currentEx.InnerException;
+                }
+
+                return currentEx.Message;
+            }
+            catch
+            {
+                return ex.Message;
+            }
+        }
+        public DataRow GetAssetProcessRow(string itemCode)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            Hashtable ht = new Hashtable();
+            ht["p_item_code"] = itemCode;
+
+            DataSet ds = new DataSet();
+
+            if (!dbw.ExecuteSP("xsp_asset_in_process_getrow", ht, ds))
+            {
+                throw new Exception(
+                    "Failed execute xsp_asset_in_process_getrow",
+                    new Exception(dbw.DBErrorMessage)
+                );
+            }
+
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                return null;
+
+            return ds.Tables[0].Rows[0];
+        }
+        
     }
 }

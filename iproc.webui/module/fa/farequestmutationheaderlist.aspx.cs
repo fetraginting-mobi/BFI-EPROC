@@ -8,8 +8,7 @@ using iProc.DataAccessLayer;
 using Excel;
 using System.IO;
 using System.Collections.Generic;
-
-using iProc.DataAccessLayer;
+using System.Data;
 
 public partial class module_fa_farequestmutationheaderlist : BasePageList
 {
@@ -159,10 +158,8 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         IExcelDataReader excelReader = null;
         string fileName = FileUploadControlMutation.FileName;
         GeneralDAL _dal = new GeneralDAL();
-
-        Hashtable headerMap = new Hashtable();
-        Hashtable headerItemMap = new Hashtable();
         Hashtable headerDetailBuffer = new Hashtable();
+        DataRow drAsset = null;
 
         try
         {
@@ -174,12 +171,13 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Format file tidak didukung. Gunakan file Excel (.xls atau .xlsx) sesuai template yang disediakan");
-
+                throw new Exception("Format file tidak didukung");
             int excelRowIndex = 0;
+
             while (excelReader.Read())
             {
                 excelRowIndex++;
+                // === HEADER VALIDATION ===
                 if (excelRowIndex == 1)
                 {
                     string errorMsg;
@@ -190,58 +188,76 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                     }
                     continue;
                 }
+
                 int rowNumber = excelRowIndex - 1;
                 try
                 {
                     if (IsRowEmpty(excelReader))
                         break;
-                    if (IsEmpty(excelReader, 1)) throw new Exception("From Cost Center (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 2)) throw new Exception("From Location (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 3)) throw new Exception("To Cost Center (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 4)) throw new Exception("To Location (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 5)) throw new Exception("Owner (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 6)) throw new Exception("Asset Code (baris " + rowNumber + ")");
 
-                    string p_from_cost_center = excelReader.GetString(1).Trim();
-                    string p_from_location = excelReader.GetString(2).Trim();
-                    string p_to_cost_center = excelReader.GetString(3).Trim();
-                    string p_to_location = excelReader.GetString(4).Trim();
-                    string p_owner = excelReader.GetString(5).Trim();
-                    string p_asset_code = excelReader.GetString(6).Trim();
-                    string p_description= excelReader.GetString(7).Trim();
+                    if (IsEmpty(excelReader, 1)) throw new Exception("From Cost Center kosong (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 2)) throw new Exception("From Location kosong (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 3)) throw new Exception("To Cost Center kosong (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 4)) throw new Exception("To Location kosong (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 5)) throw new Exception("Owner kosong (baris " + rowNumber + ")");
+                    if (IsEmpty(excelReader, 6)) throw new Exception("Asset Code kosong (baris " + rowNumber + ")");
 
-                    string headerKey = p_from_cost_center + "|" + p_from_location + "|" + p_to_cost_center + "|" + p_to_location + "|" + p_owner + "|" + p_asset_code;
+                    string fromCostCenter = excelReader.GetString(1).Trim();
+                    string fromLocation = excelReader.GetString(2).Trim();
+                    string toCostCenter = excelReader.GetString(3).Trim();
+                    string toLocation = excelReader.GetString(4).Trim();
+                    string owner = excelReader.GetString(5).Trim();
+                    string assetCode = excelReader.GetString(6).Trim();
+                    string description = excelReader.IsDBNull(7) ? "" : excelReader.GetString(7).Trim();
 
-                    // === BUFFER DETAIL ===
+                    string headerKey =
+                        fromCostCenter + "|" +
+                        fromLocation + "|" +
+                        toCostCenter + "|" +
+                        toLocation + "|" +
+                        owner;
+
+                    drAsset = _dal.GetAssetProcessRow(assetCode);
+                    ValidateAssetProcess(drAsset,assetCode,excelRowIndex);
+
                     if (!headerDetailBuffer.ContainsKey(headerKey))
                         headerDetailBuffer[headerKey] = new List<Hashtable>();
-
-                    Hashtable detail = new Hashtable();
-                    detail["p_item_code"] = p_asset_code;
-                    detail["p_desc"] = p_description;
-                    detail["p_branch_code"] = p_from_cost_center;
-                    detail["p_from_location"] = p_from_location;
-                    detail["p_to_branch_code"] = p_to_cost_center;
-                    detail["p_to_location"] = p_to_location;
-
-                    ((List<Hashtable>)headerDetailBuffer[headerKey]).Add(detail);
-
+                        Hashtable detail = new Hashtable();
+                        detail["p_item_code"] = assetCode;
+                        detail["p_desc"] = description;
+                        detail["p_branch_code"] = fromCostCenter;
+                        detail["p_from_location"] = fromLocation;
+                        detail["p_to_branch_code"] = toCostCenter;
+                        detail["p_to_location"] = toLocation;
+                        detail["p_row_number"] = rowNumber;
+                        ((List<Hashtable>)headerDetailBuffer[headerKey]).Add(detail);
                 }
                 catch (Exception exRow)
                 {
-                    Shared.ShowErrorDialog(this, exRow);
+                    Hashtable htLog = new Hashtable();
+                    htLog["p_process_name"] = "UPLOAD_FA_MUTATION";
+                    htLog["p_file_name"] = fileName;
+                    htLog["p_row_number"] = rowNumber;
+                    htLog["p_error_message"] = exRow.Message;
+                    htLog["p_raw_data"] = excelReader.GetValue(6);
+                    htLog["p_cre_by"] = Shared.CurrentUID;
+                    htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+
+                    _dal.InsertProcessErrorLog(htLog);
                     continue;
                 }
             }
-            // ===== INSERT HEADER =====
+
+            // ================= INSERT HEADER & DETAIL =================
             foreach (DictionaryEntry entry in headerDetailBuffer)
             {
-                string headerKey = entry.Key.ToString();
+                string[] key = entry.Key.ToString().Split('|');
                 List<Hashtable> details = (List<Hashtable>)entry.Value;
+
                 if (details.Count == 0)
                     continue;
 
-                string[] key = headerKey.Split('|');
+                // === INSERT HEADER ===
                 Hashtable htHeader = new Hashtable();
                 htHeader["p_request_date"] = DateTime.Now;
                 htHeader["p_remarks"] = "Upload Fix Asset";
@@ -251,10 +267,10 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 htHeader["p_division_code"] = Shared.CurrentEmployeeDivCode;
                 htHeader["p_sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
                 htHeader["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
-                //htHeader["p_remarks"] = description;
                 htHeader["p_from_location_code"] = key[1];
                 htHeader["p_to_cost_center"] = key[2];
                 htHeader["p_to_location_code"] = key[3];
+                htHeader["p_owner"] = key[4];
                 htHeader["p_requestor"] = Shared.CurrentUID;
                 htHeader["p_cre_date"] = DateTime.Now;
                 htHeader["p_cre_by"] = Shared.CurrentUID;
@@ -262,34 +278,48 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 htHeader["p_mod_date"] = DateTime.Now;
                 htHeader["p_mod_by"] = Shared.CurrentUID;
                 htHeader["p_mod_ip_address"] = Shared.CurrentIPAddress;
-                htHeader["p_owner"] = key[4];
 
-                string barcode = _dal.UploadWithReturnString("fa_request_mutation_header", htHeader);
+                string irCode = _dal.UploadWithReturnString("fa_request_mutation_header",htHeader);
 
-
-                // ===== INSERT HEADER =====
+                // === INSERT DETAIL (PER ITEM, TIDAK STOP) ===
                 foreach (Hashtable d in details)
                 {
-                    Hashtable htDetail = new Hashtable();
-                    htDetail["p_ir_code"] = barcode;
-                    htDetail["p_item_code"] = d["p_item_code"];
-                    htDetail["p_item_description"] = d["p_desc"];
-                    htDetail["p_branch_code"] = d["p_branch_code"];
-                    htDetail["p_cre_date"] = DateTime.Now;
-                    htDetail["p_cre_by"] = Shared.CurrentUID;
-                    htDetail["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                    htDetail["p_mod_date"] = DateTime.Now;
-                    htDetail["p_mod_by"] = Shared.CurrentUID;
-                    htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
-                    htDetail["p_location_code"] = d["p_from_location"];
-                    htDetail["p_to_branch_code"] = d["p_to_branch_code"];
-                    htDetail["p_to_location_code"] = d["p_to_location"];
+                    try
+                    {
+                        Hashtable htDetail = new Hashtable();
+                        htDetail["p_ir_code"] = irCode;
+                        htDetail["p_item_code"] = d["p_item_code"];
+                        htDetail["p_item_description"] = d["p_desc"];
+                        htDetail["p_branch_code"] = d["p_branch_code"];
+                        htDetail["p_cre_date"] = DateTime.Now;
+                        htDetail["p_cre_by"] = Shared.CurrentUID;
+                        htDetail["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                        htDetail["p_mod_date"] = DateTime.Now;
+                        htDetail["p_mod_by"] = Shared.CurrentUID;
+                        htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
+                        htDetail["p_location_code"] = d["p_from_location"];
+                        htDetail["p_to_branch_code"] = d["p_to_branch_code"];
+                        htDetail["p_to_location_code"] = d["p_to_location"];
 
-                    _dal.ExecSPReturnInt("xsp_fa_request_mutation_detail_upload", htDetail);
+                        _dal.ExecSPReturnInt("xsp_fa_request_mutation_detail_upload",htDetail);
+                    }
+
+                    catch (Exception exDetail)
+                    {
+                        string errMsg = GetRealErrorMessage(exDetail);
+                        Hashtable htLog = new Hashtable();
+                        htLog["p_process_name"] = "UPLOAD_FA_MUTATION";
+                        htLog["p_file_name"] = fileName;
+                        htLog["p_row_number"] = d["p_row_number"];
+                        htLog["p_error_message"] = errMsg;
+                        htLog["p_raw_data"] = d["p_item_code"];
+                        htLog["p_cre_by"] = Shared.CurrentUID;
+                        htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+                        _dal.InsertProcessErrorLog(htLog);
+                        continue; 
+                    }
                 }
-
             }
-
         }
         catch (Exception ex)
         {
@@ -302,6 +332,24 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             BindData();
         }
     }
+    private string GetRealErrorMessage(Exception ex)
+    {
+        try
+        {
+            Exception currentEx = ex;
+            while (currentEx.InnerException != null)
+            {
+                currentEx = currentEx.InnerException;
+            }
+
+            return currentEx.Message;
+        }
+        catch
+        {
+            return ex.Message;
+        }
+    }
+
     private static readonly string[] FA_MUTATION_TEMPLATE_HEADERS =
     {
         "No",
@@ -373,5 +421,33 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     {
         return reader.IsDBNull(index) || reader.GetValue(index).ToString().Trim() == "";
     }
+    private void ValidateAssetProcess(DataRow dr,string assetCode,int rowNumber)
+    {
+        if (dr == null)
+            throw new Exception(
+                "Asset tidak ditemukan / tidak AVAILABLE (" + assetCode +
+                ", baris " + rowNumber + ")"
+            );
+
+        if (dr["sale"].ToString() != "")
+            throw new Exception(
+                "Asset sedang dalam proses SALE (Ref: " +
+                dr["sale"].ToString() + ", baris " + rowNumber + ")"
+            );
+
+        if (dr["dispose"].ToString() != "")
+            throw new Exception(
+                "Asset sedang dalam proses DISPOSAL (Ref: " +
+                dr["dispose"].ToString() + ", baris " + rowNumber + ")"
+            );
+
+        if (dr["mutasi"].ToString() != "")
+            throw new Exception(
+                "Asset sedang dalam proses MUTATION (Ref: " +
+                dr["mutasi"].ToString() + ", baris " + rowNumber + ")"
+            );
+    }
+
+
 }
 
