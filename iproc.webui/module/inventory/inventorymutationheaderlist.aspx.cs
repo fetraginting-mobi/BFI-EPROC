@@ -425,31 +425,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE"));
                 return;
             }
-
-        //    bool anyChecked = false;
-        //    foreach (GridViewRow row in gvwList.Rows)
-        //    {
-        //        CheckBox chk = (CheckBox)row.FindControl("chbSelect");
-        //        if (chk != null && chk.Checked)
-        //        {
-        //            anyChecked = true;
-        //            break;
-        //        }
-        //    }
-
-        //    if (!anyChecked)
-        //    {
-        //        Shared.ShowErrorDialog(this,
-        //            new Exception("Pilih minimal 1 data untuk diposting"));
-        //        return;
-        //    }
-
-        //    // ===== PROSES POST DI SINI =====
-        //}
-        //catch (Exception ex)
-        //{
-        //    Shared.ShowErrorDialog(this, ex);
-        //}
+        
             ArrayList selectedCodes = new ArrayList();
 
             for (int i = 0; i < gvwList.Rows.Count; i++)
@@ -480,7 +456,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             // REDIRECT KE GENERIC APPLICATION (PASSWORD 1x)
             string url = string.Format(
             "../../approval/genericapplication.aspx?code=AP000013&nexturl={0}",
-            Server.UrlEncode("inventorymutationheaderlist.aspx")
+            Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx")
             );
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";

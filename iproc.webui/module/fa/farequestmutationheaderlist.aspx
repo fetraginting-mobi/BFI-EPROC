@@ -34,6 +34,50 @@
                 toggleUploadButton();
             };
         </script>
+        <script type="text/javascript">
+            function togglePostButton() 
+            {
+                var grid = document.getElementById('<%= gvwList.ClientID %>');
+                var btnPost = document.getElementById('<%= btnPost.ClientID %>');
+
+                if (!grid || !btnPost) return;
+
+                var inputs = grid.getElementsByTagName("input");
+                var checked = false;
+
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type === "checkbox" &&
+                        inputs[i].id.indexOf("chbSelect") !== -1 &&
+                        inputs[i].checked) {
+                        checked = true;
+                        break;
+                    }
+                }
+
+                if (checked) {
+                    btnPost.classList.remove("disabled");
+                    btnPost.removeAttribute("disabled");
+                } else {
+                    btnPost.classList.add("disabled");
+                    btnPost.setAttribute("disabled", "disabled");
+                }
+            }
+        </script>
+        <script type="text/javascript">
+        function checkAll(source) 
+        {
+            var grid = document.getElementById('<%= gvwList.ClientID %>');
+            var inputs = grid.getElementsByTagName("input");
+
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type === "checkbox" &&
+                    inputs[i].id.indexOf("chbSelect") !== -1) {
+                    inputs[i].checked = source.checked;
+                }
+            }
+            togglePostButton();
+        }
+      </script>
         </header>
         <div class="panel-heading">
             <div class="row">
@@ -58,7 +102,7 @@
                   <asp:FileUpload ID="FileUploadControlMutation" runat="server" onchange="toggleUploadButton()"/>
                   <cc1:XUIButton ID="btnUploadRowFormat" RoleCode="R60000110O" runat="server" CssClass="btn btn-primary disabled" Text="Upload" Enabled="false" Style=" width:auto; margin-top:10px;" OnClick="btnUploadRowFormat_Click" />      
                   <cc1:XUIButton ID="btnDownload" RoleCode="R60000110O" Style="width: auto; margin-top:10px;" runat="server" Text="Download Template" CssClass="btn btn-primary" OnClick="btnDownload_Click" />
-                  <%--<cc1:XUILinkButton ID="btnPost" RoleCode="R60000110O" runat="server" CssClass="btn btn-success disabled" Enabled="false" Style="width:auto; margin-top:10px;" OnClick="btnPost_Click"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>--%>
+                  <cc1:XUILinkButton ID="btnPost" RoleCode="R60000110O" runat="server" CssClass="btn btn-success" Style="width:auto; margin-top:10px;" OnClick="btnPost_Click"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -74,7 +118,7 @@
                         </div>
                     </div>
                 </div>    
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <div class="form-group">
                     <label class="col-sm-3">Cost Center</label>
                         <div class="col-sm-5">
@@ -82,18 +126,28 @@
                         </div>
                     </div>
                 </div>
+                 <div class="col-sm-3">
+                    <div class="form-group">
+                    <label class="col-sm-3">IsUpload</label>
+                        <div class="col-sm-5">
+                            <cc1:XUIDropDownList ID="ddlIsUpload" runat="server" CssClass="form-control" DBColumnName="IS_UPLOAD" SPParameterName="p_is_upload" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlIsUpload_SelectedIndexChanged" >
+                            <asp:ListItem Text="ALL" Value="ALL"></asp:ListItem>
+                             <asp:ListItem Text="TRUE" Value="TRUE"></asp:ListItem>
+                             <asp:ListItem Text="FALSE" Value="FALSE"></asp:ListItem>
+                             </cc1:XUIDropDownList>
+                        </div>
+                    </div>
+                </div> 
             </div>
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group"></div>
                 </div>
-            </div>
-            <asp:UpdatePanel ID="upd" runat="server">
-                <ContentTemplate>
-                    <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                    AllowPaging="true" PageSize="10" DataKeyNames="CODE_BARCODE"
+                    <asp:GridView ID="gvwList" runat="server" onclick="togglePostButton() AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
+                    AllowPaging="true" PageSize="20" DataKeyNames="CODE_BARCODE"
                         OnPageIndexChanging="gvwList_PageIndexChanging" 
-                        onselectedindexchanged="SelectedIndexChanged" EmptyDataText="There Is No Data" Width="100%">
+                        onselectedindexchanged="SelectedIndexChanged" 
+                        EmptyDataText="There Is No Data" Width="100%">
                         <Columns>
                             <asp:TemplateField>
                                 <HeaderTemplate>
@@ -117,7 +171,8 @@
                              <asp:BoundField DataField="CODE_BARCODE" HeaderText="Reff No.">
                                 <ItemStyle Width="15%" HorizontalAlign="Center"  />
                             </asp:BoundField>
-                            <asp:BoundField DataField="REQUEST_DATE" HeaderText="Date" DataFormatString="{0:dd/MM/yyyy}">
+                            <asp:BoundField DataField="REQUEST_DATE" HeaderText="Date" 
+                                DataFormatString="{0:dd/MM/yyyy}">
                                 <ItemStyle Width="10%" HorizontalAlign="Center"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="BRANCH_NAME" HeaderText="From Cost Center">
@@ -141,7 +196,8 @@
                             <asp:CommandField ShowSelectButton="true" />
                         </Columns>
                     </asp:GridView>
-                </ContentTemplate>
+            </div>
+            <asp:UpdatePanel ID="upd" runat="server">
                 <Triggers>
                     <asp:AsyncPostBackTrigger ControlID="btnSearch" EventName="Click" />
                     <asp:AsyncPostBackTrigger ControlID="btnDelete" EventName="Click" />

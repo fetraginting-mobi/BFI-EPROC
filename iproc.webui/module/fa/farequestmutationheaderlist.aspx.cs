@@ -47,6 +47,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_is_upload"] = ddlIsUpload.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -118,6 +119,10 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         BindData();
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlIsUpload_SelectedIndexChanged(object sender, EventArgs e)
     {
         BindData();
     }
@@ -218,10 +223,11 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                         owner;
 
                     drAsset = _dal.GetAssetProcessRow(assetCode);
-                    ValidateAssetProcess(drAsset,assetCode,excelRowIndex);
+                    ValidateAssetProcess(drAsset, assetCode, rowNumber);
 
                     if (!headerDetailBuffer.ContainsKey(headerKey))
                         headerDetailBuffer[headerKey] = new List<Hashtable>();
+
                         Hashtable detail = new Hashtable();
                         detail["p_item_code"] = assetCode;
                         detail["p_desc"] = description;
@@ -331,6 +337,64 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 excelReader.Close();
             BindData();
         }
+    }
+    protected void btnPost_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            //if (ddlStatus.SelectedValue != "NEW" || ddlIsUpload.SelectedValue != "1")
+            //{
+            //    Shared.ShowErrorDialog(this,
+            //        new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE"));
+            //    return;
+            //}
+
+            ArrayList selectedCodes = new ArrayList();
+
+            for (int i = 0; i < gvwList.Rows.Count; i++)
+            {
+                GridViewRow row = gvwList.Rows[i];
+                CheckBox chk = row.FindControl("chbSelect") as CheckBox;
+
+                if (chk != null && chk.Checked)
+                {
+                    string codeBarcode =
+                        gvwList.DataKeys[row.RowIndex].Value.ToString();
+
+                    selectedCodes.Add(codeBarcode);
+                }
+            }
+
+            if (selectedCodes.Count == 0)
+            {
+                Shared.ShowErrorDialog(this,
+                    new Exception("Pilih minimal 1 data untuk diposting"));
+                return;
+            }
+
+            // SIMPAN KE SESSION (BULK LIST)
+            Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
+            Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
+
+            // REDIRECT KE GENERIC APPLICATION (PASSWORD 1x)
+            string url = string.Format(
+            "../../approval/genericapplication.aspx?code=APP0067&nexturl={0}",
+            Server.UrlEncode("../module/fa/farequestmutationheaderlist.aspx")
+            );
+
+            string script = "fnShowApprovalWithCommentDialog('" + url + "');";
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "OPEN_APPROVAL",
+                script,
+                true
+            );
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        } 
     }
     private string GetRealErrorMessage(Exception ex)
     {

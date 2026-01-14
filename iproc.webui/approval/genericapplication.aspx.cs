@@ -195,11 +195,20 @@ public partial class approval_genericapplication : System.Web.UI.Page
                 // ===== SIMPAN SUMMARY =====
                 Session[SessionKey.POST_MUTATION_RESULTS] = results;
                 Session.Remove(SessionKey.POST_MUTATION_LIST);
+                string nextUrl = Request.Params["nexturl"];
 
                 // ===== TUTUP MODAL & REDIRECT =====
+                //string script =
+                //    "parent.$('#ApprovalPassword').modal('hide');" +
+                //    "parent.location.href='../module/inventory/inventorymutationheaderlist.aspx';";
+
                 string script =
                     "parent.$('#ApprovalPassword').modal('hide');" +
-                    "parent.location.href='../module/inventory/inventorymutationheaderlist.aspx';";
+                    (
+                        !string.IsNullOrEmpty(nextUrl)
+                        ? "parent.location.href='" + nextUrl + "';"
+                        : "parent.location.href=parent.location.href;"
+                    );
 
                 ScriptManager.RegisterStartupScript(
                     this, GetType(), "bulk_post", script, true
