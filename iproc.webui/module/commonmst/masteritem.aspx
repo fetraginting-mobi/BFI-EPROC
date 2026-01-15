@@ -290,7 +290,24 @@
                                 <cc1:XUICheckBox ID="cbxExpenseFlag" DBColumnName="EXPENSE_FLAG" SPParameterName="p_expense_flag" DataType="String" BindType="Both" runat="server" Checked="true" />
                             </div>
                         </div>                            
-                     </div> 
+                     </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4">Remarks</label>
+                            <div class="col-sm-5">
+                                <cc1:XUITextBox ID="txtRemarks" runat="server" CssClass="form-control" placeholder="Remarks" DBColumnName="fa_remarks" SPParameterName="p_fa_remarks" MaxLength="400" DataType="String" BindType="Both" TextMode="MultiLine"></cc1:XUITextBox>
+                                <asp:RegularExpressionValidator runat="server" ID="RegularExpressionValidator2" ControlToValidate="txtRemarks" ValidationExpression="^[\s\S]{0,400}$" ErrorMessage="Exceed maximum length 400" Display="Dynamic"></asp:RegularExpressionValidator>
+                            </div>
+                        </div>                            
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <span>Upload Excel : </span>
+                            <asp:FileUpload ID="FileUploadMemoItem" runat="server"/>
+                            <cc1:XUIButton ID="btnUploadMemoItem" RoleCode="R60000110O" runat="server" CssClass="btn btn-primary disabled" Text="Upload" Enabled="false" Style=" width:auto; margin-top:10px;" OnClick="btnUploadMemoItem_Click" />                        
+                        </div>
+
+                    </div>
                    </div>  
                 </ContentTemplate>
                 <Triggers>
@@ -300,4 +317,79 @@
             </asp:UpdatePanel>
         </div>
     </section>
+    <asp:Panel runat="server" ID="pnlDetail">
+         <section class="panel">
+            <header class="panel-heading tab-bg-dark-navy-blue">
+                <asp:TextBox ID="txtTabCode" runat="server" style="display:none"></asp:TextBox>
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active">
+                        <a href="#UploadDoc" id="poupdoc" onclick="javascript:fnSetTab('poupdoc');" data-toggle="tab" style="padding-bottom:28px">
+                            Upload Doc
+                        </a>
+                    </li>
+                </ul>
+            </header>
+            <div class="panel-body">
+                <div class="tab-content tasi-tab">
+                    <div class="tab-pane active" id="UploadDoc">
+                        <div class="panel-heading">
+                            <div class="row">
+                            <div class="col-sm-8 ">
+                                <cc1:XUILinkButton RoleCode="R30000150E" ID="btnAddUploadDoc" runat="server" CssClass="btn btn-primary" OnClick="btnAddUploadDoc_Click" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
+                                <cc1:XUILinkButton RoleCode="R50000150E" ID="btnSaveDocumentDetail" runat="server" CssClass="btn btn-primary" OnClick="btnSaveDocumentDetail_Click" CausesValidation="false"><i class="icon-save"></i>  Save</cc1:XUILinkButton> 
+                            </div>
+                            <div class="col-sm-4 ">
+                                <asp:Panel ID="pnlSearchDocReq" runat="server" DefaultButton="btnSearchDocReq" class="input-group">
+                                <asp:TextBox ID="txtSearchDocReq" runat="server" CssClass="form-control" ></asp:TextBox>  
+                                <div class="input-group-btn">
+                                    <asp:LinkButton ID="btnSearchDocReq" runat="server" CssClass="btn btn-info" OnClick="btnSearchDocReq_Click"><i class="icon-search"></i> Search</asp:LinkButton>
+                                </div>
+                           </asp:Panel>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="panel-body">
+                        <asp:GridView ID="gvwListDocReq" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
+                        AllowPaging="true" PageSize="10"
+                            <!-- OnPageIndexChanging="gvwListDocReq_PageIndexChanging" OnRowDataBound="gvwListDocReq_OnRowDataBound" OnRowCommand="gvwListDocReq_RowCommand"
+                            onselectedindexchanged="gvwListDocReq_SelectedIndexChanged" EmptyDataText="There is no data"  AllowSorting="true"> -->
+                            <Columns>
+                                <asp:TemplateField>
+                                    <HeaderTemplate>
+                                        <span>No</span>
+                                    </HeaderTemplate>
+                                    <%--<ItemTemplate>
+                                        <%# Container.DataItemIndex + 1 %>
+                                    </ItemTemplate>--%>
+                                </asp:TemplateField>
+                                <asp:BoundField DataField="DESCRIPTION" HeaderText="Document">
+                                    <ItemStyle Width="40%" HorizontalAlign="Center" />
+                                </asp:BoundField>
+                                <asp:TemplateField HeaderText="File Name">
+                                <ItemStyle Width="60%" HorizontalAlign="Left" />
+                                <%--<ItemTemplate>
+                                     <asp:Label runat="server" Text='<%# Eval("PATHS") %>' ID="lblFileName"/>
+                                     <br />
+                                    <asp:FileUpload runat="server" ID="fupFilename" />
+                                </ItemTemplate>--%>
+                            </asp:TemplateField>
+                                <asp:TemplateField HeaderText="">
+                                    <ItemStyle Width="10%" HorizontalAlign="Left" />
+                                    <ItemTemplate>
+                                        <%-- <asp:Label ID="btnPreviewDoc" runat="server">Preview</asp:Label>--%>
+                                         <asp:LinkButton ID="btnPreviewDoc" runat="server" CausesValidation="false" Text="Preview"/>
+                                    </ItemTemplate>
+                                </asp:TemplateField>                               
+                            </Columns>
+                        </asp:GridView>
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+            
+
+         </section>
+
+    </asp:Panel>
 </asp:Content>

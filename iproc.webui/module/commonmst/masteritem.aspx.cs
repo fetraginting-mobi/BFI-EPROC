@@ -250,6 +250,27 @@ public partial class module_commonmst_masteritem : BasePage
         }
  
     }
+    protected void btnAddUploadDoc_Click(object sender, EventArgs e)
+    {
+        
+    }
+     protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
+    {
+        
+    }
+    protected void btnSearchDocReq_Click(object sender, EventArgs e)
+    {
+        BindDataDocRequest();
+    }
+    private void BindDataDocRequest()
+    {
+        
+    }
+    protected void btnUploadMemoItem_Click(object sender, EventArgs e)
+    {
+        
+    }
+    
 
 
 }
