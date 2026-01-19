@@ -294,7 +294,7 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-sm-4">Remarks</label>
-                            <div class="col-sm-5">
+                            <div class="col-sm-7">
                                 <cc1:XUITextBox ID="txtRemarks" runat="server" CssClass="form-control" placeholder="Remarks" DBColumnName="fa_remarks" SPParameterName="p_fa_remarks" MaxLength="400" DataType="String" BindType="Both" TextMode="MultiLine"></cc1:XUITextBox>
                                 <asp:RegularExpressionValidator runat="server" ID="RegularExpressionValidator2" ControlToValidate="txtRemarks" ValidationExpression="^[\s\S]{0,400}$" ErrorMessage="Exceed maximum length 400" Display="Dynamic"></asp:RegularExpressionValidator>
                             </div>
@@ -302,17 +302,25 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <span>Upload Excel : </span>
-                            <asp:FileUpload ID="FileUploadMemoItem" runat="server"/>
-                            <cc1:XUIButton ID="btnUploadMemoItem" RoleCode="R60000110O" runat="server" CssClass="btn btn-primary disabled" Text="Upload" Enabled="false" Style=" width:auto; margin-top:10px;" OnClick="btnUploadMemoItem_Click" />                        
+                            <label class="col-sm-4">Upload Data / Memo : </label>
+                            <div class="col-sm-7">
+                                <asp:FileUpload ID="FileUploadMemoItem" runat="server" />
+                                <asp:Button
+                                    ID="btnUploadMemoItem"
+                                    runat="server"
+                                    CssClass="btn btn-primary"
+                                    Text="Upload"
+                                    UseSubmitBehavior="true"
+                                    OnClick="btnUploadMemoItem_Click" />
+                            </div>
                         </div>
-
                     </div>
                    </div>  
                 </ContentTemplate>
                 <Triggers>
                     <asp:AsyncPostBackTrigger ControlID="btnSave" EventName="Click" />
                     <asp:AsyncPostBackTrigger ControlID="btnCancel" EventName="Click" />
+                    <asp:PostBackTrigger ControlID="btnUploadMemoItem" />
                 </Triggers>
             </asp:UpdatePanel>
         </div>
@@ -324,7 +332,7 @@
                 <ul class="nav nav-tabs nav-justified">
                     <li class="active">
                         <a href="#UploadDoc" id="poupdoc" onclick="javascript:fnSetTab('poupdoc');" data-toggle="tab" style="padding-bottom:28px">
-                            Upload Doc
+                            History Upload Data / Memo
                         </a>
                     </li>
                 </ul>
@@ -334,10 +342,6 @@
                     <div class="tab-pane active" id="UploadDoc">
                         <div class="panel-heading">
                             <div class="row">
-                            <div class="col-sm-8 ">
-                                <cc1:XUILinkButton RoleCode="R30000150E" ID="btnAddUploadDoc" runat="server" CssClass="btn btn-primary" OnClick="btnAddUploadDoc_Click" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
-                                <cc1:XUILinkButton RoleCode="R50000150E" ID="btnSaveDocumentDetail" runat="server" CssClass="btn btn-primary" OnClick="btnSaveDocumentDetail_Click" CausesValidation="false"><i class="icon-save"></i>  Save</cc1:XUILinkButton> 
-                            </div>
                             <div class="col-sm-4 ">
                                 <asp:Panel ID="pnlSearchDocReq" runat="server" DefaultButton="btnSearchDocReq" class="input-group">
                                 <asp:TextBox ID="txtSearchDocReq" runat="server" CssClass="form-control" ></asp:TextBox>  
@@ -381,7 +385,7 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>                               
                             </Columns>
-                        </asp:GridView>
+                            </asp:GridView>
                     </div>
                     </div>
                 </div>

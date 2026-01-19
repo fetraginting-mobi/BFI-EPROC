@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
+using System.IO;
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
 
@@ -172,7 +172,7 @@ public partial class module_commonmst_masteritem : BasePage
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
-             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
+            MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
             Shared.ApplyDefaultProp(_ht);
 
             if (Request.Params["action"].Equals("add") || Request.Params["action"].Equals("copy"))
@@ -268,7 +268,99 @@ public partial class module_commonmst_masteritem : BasePage
     }
     protected void btnUploadMemoItem_Click(object sender, EventArgs e)
     {
-        
+
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        string sNextItemcode = "";
+
+        if (!FileUploadMemoItem.HasFile)
+        {
+            Shared.ShowValidationError(this, "Please upload file!");
+            return;
+        }      
+            
+        try
+        {
+
+            string sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ITEM_UPLOAD_MEMO/" + Request.Params["codebarcode"]));
+            string sfullname = System.IO.Path.GetFileName(FileUploadMemoItem.FileName);
+
+            int fileSize = FileUploadMemoItem.PostedFile.ContentLength;
+            string contentType = FileUploadMemoItem.PostedFile.ContentType;
+            string[] allowedMime =
+            {
+                "image/jpeg",
+                "image/png",
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/zip",
+                "application/x-zip-compressed",
+                "application/x-rar-compressed",
+                "application/vnd.rar",
+                "application/x-7z-compressed"
+
+            };
+
+            bool mimeValid = false;
+            for (int i = 0; i < allowedMime.Length; i++)
+            {
+                if (contentType == allowedMime[i])
+                {
+                    mimeValid = true;
+                    break;
+                }
+            }
+
+            if (!mimeValid)
+            {
+                throw new Exception("Format file tidak didukung. Gunakan file dengan tipe .pdf .zip .doc .xlx .png .jpg .jpeg");
+            }
+            if (fileSize > 3000000) // (+) Ari 13-09-2022 ket : cek size file Max 3MB.
+            {
+                throw new Exception("Maximum file size allowed is 3 mb.");
+                return;
+            }
+
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
+
+            _ht["p_file"] = sfullname;
+            _ht["p_paths"] = sFileDirectorys;
+            _ht["p_item_code"] = Request.Params["itemcode"];
+            _ht["p_remarks"] = txtRemarks.Text;
+
+            Shared.ApplyDefaultProp(_ht);
+
+            //if (Request.Params["action"].Equals("add") || Request.Params["action"].Equals("copy"))
+            //{
+                _dal.Insert("MASTER_ITEM_DOCUMENT", _ht, ref sNextItemcode);
+                lblItemCode.Text = sNextItemcode.ToString();
+
+                if (!System.IO.Directory.Exists(sFileDirectorys))
+                    System.IO.Directory.CreateDirectory(sFileDirectorys);
+
+                if (!System.IO.File.Exists(sFileDirectorys + sfullname))
+                    FileUploadMemoItem.SaveAs(sFileDirectorys + sfullname);
+
+            //}
+            //else
+            //    _dal.Update("MASTER_ITEM_DOCUMENT", _ht);
+
+            //// Shared.ShowSuccessGritter(this, string.Format("masteritem.aspx?action=edit&itemcode={0}", lblItemCode.Text));
+            //Shared.ShowSuccessGritter(this, string.Format("masteritemlist.aspx")); 
+
+            
+
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
     }
     
 

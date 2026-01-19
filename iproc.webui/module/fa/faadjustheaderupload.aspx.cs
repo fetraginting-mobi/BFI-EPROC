@@ -97,7 +97,6 @@ public partial class module_fa_faadjustheaderupload : BasePage
                                )
                 {
                     sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
-
                     sFilePath = Shared.GetUploadPath("FA_ADJUST_UPLOAD_DOC/" + Request.Params["codebarcode"]) + sfullname;
                 }
                 else
