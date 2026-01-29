@@ -291,109 +291,156 @@
                             </div>
                         </div>                            
                      </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-4">Remarks</label>
-                            <div class="col-sm-7">
-                                <cc1:XUITextBox ID="txtRemarks" runat="server" CssClass="form-control" placeholder="Remarks" DBColumnName="fa_remarks" SPParameterName="p_fa_remarks" MaxLength="400" DataType="String" BindType="Both" TextMode="MultiLine"></cc1:XUITextBox>
-                                <asp:RegularExpressionValidator runat="server" ID="RegularExpressionValidator2" ControlToValidate="txtRemarks" ValidationExpression="^[\s\S]{0,400}$" ErrorMessage="Exceed maximum length 400" Display="Dynamic"></asp:RegularExpressionValidator>
-                            </div>
-                        </div>                            
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-4">Upload Data / Memo : </label>
-                            <div class="col-sm-7">
-                                <asp:FileUpload ID="FileUploadMemoItem" runat="server" />
-                                <asp:Button
-                                    ID="btnUploadMemoItem"
-                                    runat="server"
-                                    CssClass="btn btn-primary"
-                                    Text="Upload"
-                                    UseSubmitBehavior="true"
-                                    OnClick="btnUploadMemoItem_Click" />
-                            </div>
-                        </div>
-                    </div>
                    </div>  
                 </ContentTemplate>
                 <Triggers>
                     <asp:AsyncPostBackTrigger ControlID="btnSave" EventName="Click" />
                     <asp:AsyncPostBackTrigger ControlID="btnCancel" EventName="Click" />
-                    <asp:PostBackTrigger ControlID="btnUploadMemoItem" />
                 </Triggers>
             </asp:UpdatePanel>
+            <legend></legend>
         </div>
     </section>
     <asp:Panel runat="server" ID="pnlDetail">
-         <section class="panel">
-            <header class="panel-heading tab-bg-dark-navy-blue">
-                <asp:TextBox ID="txtTabCode" runat="server" style="display:none"></asp:TextBox>
-                <ul class="nav nav-tabs nav-justified">
-                    <li class="active">
-                        <a href="#UploadDoc" id="poupdoc" onclick="javascript:fnSetTab('poupdoc');" data-toggle="tab" style="padding-bottom:28px">
-                            History Upload Data / Memo
-                        </a>
-                    </li>
-                </ul>
-            </header>
-            <div class="panel-body">
-                <div class="tab-content tasi-tab">
-                    <div class="tab-pane active" id="UploadDoc">
-                        <div class="panel-heading">
-                            <div class="row">
-                            <div class="col-sm-4 ">
-                                <asp:Panel ID="pnlSearchDocReq" runat="server" DefaultButton="btnSearchDocReq" class="input-group">
-                                <asp:TextBox ID="txtSearchDocReq" runat="server" CssClass="form-control" ></asp:TextBox>  
-                                <div class="input-group-btn">
-                                    <asp:LinkButton ID="btnSearchDocReq" runat="server" CssClass="btn btn-info" OnClick="btnSearchDocReq_Click"><i class="icon-search"></i> Search</asp:LinkButton>
-                                </div>
-                           </asp:Panel>
+    <section class="panel">
+
+        <!-- ================= HEADER TAB ================= -->
+        <header class="panel-heading tab-bg-dark-navy-blue">
+
+            <!-- HiddenField untuk simpan tab aktif -->
+            <asp:HiddenField ID="txtTabCode" runat="server" />
+
+            <ul class="nav nav-tabs nav-justified">
+                <li>
+                    <a href="#itemhistory"
+                       id="itemhistorylist"
+                       onclick="fnSetTab('itemhistorylist');"
+                       data-toggle="tab"
+                       style="padding-bottom:28px">
+                        History Item
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#uploaddoc"
+                       id="uploadmemodoc"
+                       onclick="fnSetTab('uploadmemodoc');"
+                       data-toggle="tab"
+                       style="padding-bottom:28px">
+                        Upload Memo
+                    </a>
+                </li>
+            </ul>
+        </header>
+
+        <!-- ================= BODY ================= -->
+        <div class="panel-body">
+            <div class="tab-content tasi-tab">
+
+                <!-- ========== TAB HISTORY ITEM ========== -->
+                <div class="tab-pane" id="itemhistory">
+                    <div class="panel-heading" id="itemhistoryheader" runat="server">
+                        <div class="row">
+                            <div class="col-sm-8"></div>
+                            <div class="col-sm-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== TAB UPLOAD DOC ========== -->
+                <div class="tab-pane active" id="uploaddoc">
+
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <cc1:XUILinkButton
+                                    RoleCode="R30000150E"
+                                    ID="btnAddUploadDoc"
+                                    runat="server"
+                                    CssClass="btn btn-primary"
+                                    OnClick="btnAddUploadDoc_Click"
+                                    CausesValidation="false">
+                                    <i class="icon-plus"></i> Create
+                                </cc1:XUILinkButton>
                             </div>
                         </div>
-                        </div>
-                        <div class="panel-body">
-                        <asp:GridView ID="gvwListDocReq" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                        AllowPaging="true" PageSize="10"
-                            <!-- OnPageIndexChanging="gvwListDocReq_PageIndexChanging" OnRowDataBound="gvwListDocReq_OnRowDataBound" OnRowCommand="gvwListDocReq_RowCommand"
-                            onselectedindexchanged="gvwListDocReq_SelectedIndexChanged" EmptyDataText="There is no data"  AllowSorting="true"> -->
+                    </div>
+
+                    <div class="panel-body">
+                        <asp:GridView
+                            ID="gvwListDocReq"
+                            runat="server"
+                            AutoGenerateColumns="false"
+                            CssClass="display table table-bordered table-striped"
+                            AllowPaging="true"
+                            PageSize="10"
+                            DataKeyNames="GENERAL_DOC_CODE,PO_CODE,PATHS,FILE,ID"
+                            AllowSorting="true"
+                            EmptyDataText="There is no data"
+                            OnPageIndexChanging="gvwListDocReq_PageIndexChanging"
+                            OnRowDataBound="gvwListDocReq_OnRowDataBound"
+                            OnRowCommand="gvwListDocReq_RowCommand"
+                            OnSelectedIndexChanged="gvwListDocReq_SelectedIndexChanged">
+
                             <Columns>
+
                                 <asp:TemplateField>
-                                    <HeaderTemplate>
-                                        <span>No</span>
-                                    </HeaderTemplate>
-                                    <%--<ItemTemplate>
+                                    <HeaderTemplate>No</HeaderTemplate>
+                                    <ItemTemplate>
                                         <%# Container.DataItemIndex + 1 %>
-                                    </ItemTemplate>--%>
+                                    </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="DESCRIPTION" HeaderText="Document">
+
+                                <asp:BoundField
+                                    DataField="DESCRIPTION"
+                                    HeaderText="Document">
                                     <ItemStyle Width="40%" HorizontalAlign="Center" />
                                 </asp:BoundField>
+
                                 <asp:TemplateField HeaderText="File Name">
-                                <ItemStyle Width="60%" HorizontalAlign="Left" />
-                                <%--<ItemTemplate>
-                                     <asp:Label runat="server" Text='<%# Eval("PATHS") %>' ID="lblFileName"/>
-                                     <br />
-                                    <asp:FileUpload runat="server" ID="fupFilename" />
-                                </ItemTemplate>--%>
-                            </asp:TemplateField>
-                                <asp:TemplateField HeaderText="">
-                                    <ItemStyle Width="10%" HorizontalAlign="Left" />
+                                    <ItemStyle Width="60%" HorizontalAlign="Left" />
                                     <ItemTemplate>
-                                        <%-- <asp:Label ID="btnPreviewDoc" runat="server">Preview</asp:Label>--%>
-                                         <asp:LinkButton ID="btnPreviewDoc" runat="server" CausesValidation="false" Text="Preview"/>
+                                        <asp:Label
+                                            runat="server"
+                                            ID="lblFileName"
+                                            Text='<%# Eval("PATHS") %>' />
+                                        <br />
+                                        <asp:FileUpload
+                                            runat="server"
+                                            ID="fupFilename" />
                                     </ItemTemplate>
-                                </asp:TemplateField>                               
+                                </asp:TemplateField>
+
+                                <asp:TemplateField>
+                                    <ItemStyle Width="10%" />
+                                    <ItemTemplate>
+                                        <asp:LinkButton
+                                            ID="btnPreviewDoc"
+                                            runat="server"
+                                            Text="Preview"
+                                            CausesValidation="false" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:TemplateField>
+                                    <ItemStyle Width="10%" />
+                                    <ItemTemplate>
+                                        <asp:LinkButton
+                                            ID="btnDeleteDoc"
+                                            runat="server"
+                                            Text="Delete"
+                                            CommandName="del"
+                                            CausesValidation="false" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
                             </Columns>
-                            </asp:GridView>
-                    </div>
+                        </asp:GridView>
                     </div>
                 </div>
 
             </div>
-            
+        </div>
 
-         </section>
-
-    </asp:Panel>
+    </section>
+</asp:Panel>
 </asp:Content>
