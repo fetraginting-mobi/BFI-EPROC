@@ -252,7 +252,7 @@ public partial class module_commonmst_masteritem : BasePage
     }
     protected void btnAddUploadDoc_Click(object sender, EventArgs e)
     {
-        Response.Redirect("purchaserequestdocument.aspx?action=add&codebarcode=" + lblItemCode.Text + "&code=" + txtItemName.Text + "&flagprocess=" + lblTypeName.Text);
+        Response.Redirect("masteritemdocument.aspx?action=add&code=" + lblItemCode.Text + "&name=" + txtItemName.Text);
     }
     protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
     {

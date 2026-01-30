@@ -26,13 +26,21 @@
                                 </div>
                             </div>                            
                         </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3">Item Name</label>
+                                <div class="col-sm-5">
+                                    <cc1:XUILabel ID="lblName" runat="server" DBColumnName="PR_CODE" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>                                    
+                                </div>
+                            </div>                            
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-sm-3">Remark</label>
                                 <div class="col-sm-5">
-                                    <cc1:XUITextBox ID="txtRemark" runat="server" CssClass="form-control" placeholder="Description" DBColumnName="GENERAL_DOC_CODE" MaxLength="50" SPParameterName="p_general_doc_code" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUITextBox ID="txtremark" runat="server" CssClass="form-control" placeholder="Description" DBColumnName="GENERAL_DOC_CODE" MaxLength="50" SPParameterName="p_general_doc_code" DataType="String" BindType="Both"></cc1:XUITextBox>
                                 </div>
                             </div>                            
                         </div>
