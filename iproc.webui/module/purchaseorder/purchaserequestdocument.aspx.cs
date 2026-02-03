@@ -5,9 +5,10 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
+using System.Text.RegularExpressions;
+using System.IO;
 
 public partial class module_purchaseorder_purchaserequestdocument : BasePage
 {
@@ -134,6 +135,14 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
                     )
                 {
                     sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
+                    Regex regexFileName = new Regex(@"^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$");
+
+                    if (!regexFileName.IsMatch(sfullname))
+                    {
+                        throw new Exception(
+                            "Nama file tidak valid. Nama file hanya boleh berisi huruf (A–Z, a–z), angka (0–9), underscore (_), dash (-)"
+                        );
+                    }
 
                     sFilePath = Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["codebarcode"]) + sfullname;
                 }

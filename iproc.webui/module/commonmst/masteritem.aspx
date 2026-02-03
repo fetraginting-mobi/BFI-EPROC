@@ -335,17 +335,6 @@
         <!-- ================= BODY ================= -->
         <div class="panel-body">
             <div class="tab-content tasi-tab">
-
-                <!-- ========== TAB HISTORY ITEM ========== -->
-                <div class="tab-pane" id="itemhistory">
-                    <div class="panel-heading" id="itemhistoryheader" runat="server">
-                        <div class="row">
-                            <div class="col-sm-8"></div>
-                            <div class="col-sm-4"></div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- ========== TAB UPLOAD DOC ========== -->
                 <div class="tab-pane active" id="uploaddoc">
 
@@ -366,23 +355,10 @@
                     </div>
 
                     <div class="panel-body">
-                        <asp:GridView
-                            ID="gvwListDocReq"
-                            runat="server"
-                            AutoGenerateColumns="false"
-                            CssClass="display table table-bordered table-striped"
-                            AllowPaging="true"
-                            PageSize="10"
-                            DataKeyNames="GENERAL_DOC_CODE,PO_CODE,PATHS,FILE,ID"
-                            AllowSorting="true"
-                            EmptyDataText="There is no data"
-                            OnPageIndexChanging="gvwListDocReq_PageIndexChanging"
-                            OnRowDataBound="gvwListDocReq_OnRowDataBound"
-                            OnRowCommand="gvwListDocReq_RowCommand"
-                            OnSelectedIndexChanged="gvwListDocReq_SelectedIndexChanged">
-
+                        <asp:GridView ID="gvwListDocReq" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped" AllowPaging="true"
+                            PageSize="10" DataKeyNames="REMARKS,ITEM_CODE,PATHS,FILE,ID"  AllowSorting="true" EmptyDataText="There is no data" OnPageIndexChanging="gvwListDocReq_PageIndexChanging"
+                            OnRowDataBound="gvwListDocReq_OnRowDataBound" OnRowCommand="gvwListDocReq_RowCommand" OnSelectedIndexChanged="gvwListDocReq_SelectedIndexChanged">
                             <Columns>
-
                                 <asp:TemplateField>
                                     <HeaderTemplate>No</HeaderTemplate>
                                     <ItemTemplate>
@@ -392,7 +368,7 @@
 
                                 <asp:BoundField
                                     DataField="DESCRIPTION"
-                                    HeaderText="Document">
+                                    HeaderText="REMARK">
                                     <ItemStyle Width="40%" HorizontalAlign="Center" />
                                 </asp:BoundField>
 
@@ -403,10 +379,6 @@
                                             runat="server"
                                             ID="lblFileName"
                                             Text='<%# Eval("PATHS") %>' />
-                                        <br />
-                                        <asp:FileUpload
-                                            runat="server"
-                                            ID="fupFilename" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
@@ -420,19 +392,6 @@
                                             CausesValidation="false" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
-
-                                <asp:TemplateField>
-                                    <ItemStyle Width="10%" />
-                                    <ItemTemplate>
-                                        <asp:LinkButton
-                                            ID="btnDeleteDoc"
-                                            runat="server"
-                                            Text="Delete"
-                                            CommandName="del"
-                                            CausesValidation="false" />
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
                             </Columns>
                         </asp:GridView>
                     </div>

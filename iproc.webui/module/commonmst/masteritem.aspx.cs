@@ -12,6 +12,7 @@ using MPF23.Shared.Mapper;
 public partial class module_commonmst_masteritem : BasePage
 {
     private static string TABLE_NAME    = "MASTER_ITEM";
+    private static string TABLE_NAME_DOC_DETAIL ="MASTER_ITEM_DOCUMENT";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -51,6 +52,7 @@ public partial class module_commonmst_masteritem : BasePage
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
+                BindDataDocRequest();
                 
                 lblItemCode.Enabled = false;
                 ddlJenisItem.Enabled = false;
@@ -62,14 +64,12 @@ public partial class module_commonmst_masteritem : BasePage
             else if (Request.Params["action"].Equals("copy"))
             {
                 LoadData();
-
+                BindDataDocRequest();
                 lblItemCode.Text = "";
                 ddlJenisItem.Enabled = true;
                 txtPOAverageCost.Text = "0";
                 txtPOLatestCost.Text = "0";
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
-
-
             }
 
             if (ddlJenisItem.SelectedValue.Equals("IT") || ddlJenisItem.SelectedValue.Equals("ET"))
@@ -260,7 +260,7 @@ public partial class module_commonmst_masteritem : BasePage
     }
     protected void gvwListDocReq_SelectedIndexChanged(object sender, EventArgs e)
     {
-        Response.Redirect(string.Format("auditdetail.aspx?action=edit&auditno={0}&id={1}&idartarget={2}", gvwListDocReq.SelectedDataKey["BATCH_NO"].ToString(), gvwListDocReq.SelectedDataKey["GENERAL_DOC_CODE"].ToString(), Request.Params["idartarget"]));
+        Response.Redirect(string.Format("auditdetail.aspx?action=edit&auditno={0}&id={1}&idartarget={2}", gvwListDocReq.SelectedDataKey["BATCH_NO"].ToString(), gvwListDocReq.SelectedDataKey["REMARKS"].ToString(), Request.Params["idartarget"]));
     }
     protected void gvwListDocReq_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
@@ -269,10 +269,146 @@ public partial class module_commonmst_masteritem : BasePage
     }
     protected void gvwListDocReq_OnRowDataBound(object sender, GridViewRowEventArgs e)
     {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Label lblFileName = (Label)e.Row.FindControl("lblFileName");
+            LinkButton btnPreview = (LinkButton)e.Row.FindControl("btnPreviewDoc");
+
+            if (lblFileName == null || string.IsNullOrEmpty(lblFileName.Text))
+            {
+                btnPreview.Visible = false;
+                return;
+            }
+            string paths = gvwListDocReq.DataKeys[e.Row.RowIndex]["PATHS"].ToString();
+            string file = gvwListDocReq.DataKeys[e.Row.RowIndex]["FILE"].ToString();
+
+            string filePath = gvwListDocReq.DataKeys[e.Row.RowIndex]["PATHS"].ToString();
+
+            btnPreview.Attributes["onclick"] =
+                "window.open('../../" + filePath +
+                "', 'viewer', 'width=600,height=400,scrollbars=1'); return false;";
+        }
     }
     protected void gvwListDocReq_RowCommand(object sender, GridViewCommandEventArgs e)
-    {}
+    {
+        LinkButton btn = null;
+        GridViewRow row = null;
+        int rowIndex = 0;
+
+        try
+        {
+            //dapatkan tombol mana yang diklik
+            btn = ((LinkButton)e.CommandSource);
+
+            //dapatkan row dimana tombol tersebut terletak
+            row = (GridViewRow)(btn.NamingContainer);
+
+            if (row.RowType == DataControlRowType.DataRow)
+            {
+                rowIndex = row.RowIndex;
+
+                if (e.CommandName == "del")
+                {
+                    try
+                    {
+                        //string ApplicationNo = lblApplicationNo.Text;
+                        string ITEM_CODE = (string)gvwListDocReq.DataKeys[rowIndex][1];
+                        //string GENERAL_DOC_CODE = (string)gvwListDocReq.DataKeys[rowIndex][0];
+                        string FileName = ((Label)row.Cells[2].Controls[1]).Text;
+                        int ID = (int)gvwListDocReq.DataKeys[rowIndex][4];
+
+
+                        //delete data di database server
+                        //DeleteDoc(ID);
+
+                        //delete file di app server 
+                        //DeleteDocFile(ApplicationNo, FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        Shared.ShowErrorDialog(this, ex);
+                    }
+
+                    BindDataDocRequest();
+                }
+            }
+        }
+        catch (Exception)
+        {
+        }
+    }
     private void BindDataDocRequest()
-    {}
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        DataView dvItemDoc = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = "";
+            _ht["p_item_code"] = lblItemCode.Text;
+            _ht["p_id"] = Request.Params["id"];
+
+            dvItemDoc = _dal.GetRows(TABLE_NAME_DOC_DETAIL, _ht).DefaultView;
+
+            if (dirItemDoc == SortDirection.Ascending)
+                dvItemDoc.Sort = ExpressionItemDoc + " ASC";
+            else
+                dvItemDoc.Sort = ExpressionItemDoc + " DESC";
+
+            gvwListDocReq.DataSource = dvItemDoc;
+            gvwListDocReq.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+    public SortDirection dirItemDoc
+    {
+
+        get
+        {
+            if (ViewState["dirStateQUOTATIONDOC"] == null)
+            {
+                ViewState["dirStateQUOTATIONDOC"] = SortDirection.Descending;
+            }
+
+            return (SortDirection)ViewState["dirStateQUOTATIONDOC"];
+        }
+
+        set { ViewState["dirStateQUOTATIONDOC"] = value; }
+    }
+    public string ExpressionItemDoc
+    {
+
+        get
+        {
+            if (ViewState["expressionStateQUOTATIONDOC"] == null)
+            {
+                ViewState["expressionStateQUOTATIONDOC"] = "MOD_DATE";
+            }
+
+            return (string)ViewState["expressionStateQUOTATIONDOC"];
+        }
+
+        set { ViewState["expressionStateQUOTATIONDOC"] = value; }
+    }
+    private string CombinePath(object paths, object file)
+    {
+        string p = paths == null ? "" : paths.ToString();
+        string f = file == null ? "" : file.ToString();
+
+        if (p.Length == 0) return f;
+        if (f.Length == 0) return p;
+
+        if (!p.EndsWith("\\"))
+            p += "\\";
+
+        return p + f;
+    }
 
 }

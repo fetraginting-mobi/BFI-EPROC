@@ -12,6 +12,8 @@ using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
+using System.Text.RegularExpressions;
+using System.IO;
 
 public partial class module_commonmst_masteritemdocument : BasePage
 {
@@ -51,18 +53,28 @@ public partial class module_commonmst_masteritemdocument : BasePage
         GeneralDAL _dal = null;
         Hashtable _ht = null;
         string sNextItemcode = "";
+        string sFileDirectorys;
+        String sFilePath = string.Empty;
 
         if (!fupFilename.HasFile)
         {
             Shared.ShowValidationError(this, "Please upload file!");
             return;
         }
-
+        
         try
         {
 
-            string sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ITEM_UPLOAD_MEMO/" + Request.Params["code"]));
+            sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ITEM_UPLOAD_MEMO/" + Request.Params["code"]));
             string sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
+            Regex regexFileName = new Regex(@"^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$");
+
+            if (!regexFileName.IsMatch(sfullname))
+            {
+                throw new Exception(
+                    "Nama file tidak valid. Nama file hanya boleh berisi huruf (A–Z, a–z), angka (0–9), underscore (_), dash (-)"
+                );
+            }
 
             int fileSize = fupFilename.PostedFile.ContentLength;
             string contentType = fupFilename.PostedFile.ContentType;
@@ -104,33 +116,32 @@ public partial class module_commonmst_masteritemdocument : BasePage
 
             _dal = new GeneralDAL();
             _ht = new Hashtable();
-
+            sFilePath = Shared.GetUploadPath("ITEM_UPLOAD_MEMO/" + Request.Params["code"]) + sfullname;
             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
 
             _ht["p_file"] = sfullname;
-            _ht["p_paths"] = sFileDirectorys;
+            _ht["p_paths"] = sFilePath;
             _ht["p_item_code"] = Request.Params["code"];
             _ht["p_remarks"] = txtremark.Text;
 
             Shared.ApplyDefaultProp(_ht);
 
-            //if (Request.Params["action"].Equals("add") || Request.Params["action"].Equals("copy"))
-            //{
-            _dal.Insert("MASTER_ITEM_DOCUMENT", _ht, ref sNextItemcode);
-            lblCode.Text = sNextItemcode.ToString();
+            if (Request.Params["action"].Equals("add") || Request.Params["action"].Equals("copy"))
+            {
+                _dal.Insert("MASTER_ITEM_DOCUMENT", _ht, ref sNextItemcode);
+                lblCode.Text = sNextItemcode.ToString();
 
-            if (!System.IO.Directory.Exists(sFileDirectorys))
-                System.IO.Directory.CreateDirectory(sFileDirectorys);
+                if (!System.IO.Directory.Exists(sFileDirectorys))
+                    System.IO.Directory.CreateDirectory(sFileDirectorys);
 
-            if (!System.IO.File.Exists(sFileDirectorys + sfullname))
-                fupFilename.SaveAs(sFileDirectorys + sfullname);
+                if (!System.IO.File.Exists(sFileDirectorys + sfullname))
+                    fupFilename.SaveAs(sFileDirectorys + sfullname);
+            }
+            else
+                _dal.Update("MASTER_ITEM_DOCUMENT", _ht);
 
-            //}
-            //else
-            //    _dal.Update("MASTER_ITEM_DOCUMENT", _ht);
-
-            //// Shared.ShowSuccessGritter(this, string.Format("masteritem.aspx?action=edit&itemcode={0}", lblItemCode.Text));
-            //Shared.ShowSuccessGritter(this, string.Format("masteritemlist.aspx")); 
+            Shared.ShowSuccessGritter(this, string.Format("masteritem.aspx?action=edit&itemcode={0}", lblCode.Text));
+            Shared.ShowSuccessGritter(this, string.Format("masteritemlist.aspx")); 
 
         }
         catch (Exception ex)

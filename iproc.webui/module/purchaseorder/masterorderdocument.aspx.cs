@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
+using System.IO;
 
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
@@ -138,7 +140,14 @@ public partial class module_commonmst_masterorderdocument : BasePage
                     )
                 {
                     sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
+                    Regex regexFileName = new Regex(@"^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$");
 
+                    if (!regexFileName.IsMatch(sfullname))
+                    {
+                        throw new Exception(
+                            "Nama file tidak valid. Nama file hanya boleh berisi huruf (A–Z, a–z), angka (0–9), underscore (_), dash (-)"
+                        );
+                    }
                     sFilePath = Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["code"]) + sfullname;
 
                 }
@@ -152,7 +161,6 @@ public partial class module_commonmst_masterorderdocument : BasePage
             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
 
             int fileSize = fupFilename.PostedFile.ContentLength;
-
             if (fupFilename.PostedFile.ContentLength > 3000000) // (+) Ari 13-09-2022 ket : cek size file Max 3MB.
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "fx", "fnShowErrorNotif('Maximum file size allowed is 3 mb.', '');", true);
@@ -163,7 +171,6 @@ public partial class module_commonmst_masterorderdocument : BasePage
             _ht["p_paths"] = sFilePath;
             _ht["p_po_code"] = Request.Params["codebarcode"];
             _ht["p_general_doc_code"] = txtDocumentName.Text;
-            //_ht["p_id"] = lblId.Text;
             _ht["p_id"] = Request.Params["id"];
 
             Shared.ApplyDefaultProp(_ht);
