@@ -68,7 +68,30 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                
                 txtReceiveDate.Enabled = false;
 
-                if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CLOSED")
+                if (lblTransFlagCode.Text == "POST")
+                {
+                    btnDeleteRequestDetail.Visible = false;
+                    btnSave.Visible = btnPost.Visible = false;
+                    txtReceiveDate.Enabled = false;
+                    btnLookUpPurchaseOrderCode.Enabled = false;
+                    txtRemarks.Enabled = false;
+                    gvwList.Columns[1].Visible = false;
+                    ddlRating.Enabled = false;
+                    ddlBranch.Enabled = ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = ddlUnits.Enabled = false;
+                    btnPrint.Visible = true;
+                    btnAddUploadDoc.Visible = false;
+                    btnSaveDocumentDetail.Visible = false;
+
+                    if (lblOrderType.Text == "SPK")
+                    {
+                        btnPrintBAST.Visible = true;
+                    }
+                    else
+                    {
+                        btnPrintBAST.Visible = false;
+                    }
+                }
+                else if (lblTransFlagCode.Text == "CLOSED")
                 {
                     btnDeleteRequestDetail.Visible = false;
                     btnSave.Visible = btnPost.Visible = btnReject.Visible = false;
@@ -90,7 +113,6 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                     {
                         btnPrintBAST.Visible = false;
                     }
-
                 }
                 else if (lblTransFlagCode.Text == "CANCEL")
                 {
@@ -170,7 +192,7 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
         btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000023&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblBranch.ClientID, lblAmount.ClientID, lblBranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
         //btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000023&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblBranch.ClientID, lblAmount.ClientID, lblBranch.ClientID, txtRemarks.ClientID);
         btnApprovalTiered.Attributes["href"] = String.Format("javascript:fnShowApprovalTieredDialog('../../approval/generictiered.aspx?parc_id_ar_target={0}&nexturl={1}&spname={2}');", lblApprovalRequestTargetID.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert");
-        btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000024&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblBranch.ClientID);
+        //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000024&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblBranch.ClientID);
         LoadAfterInit();
     }
 
@@ -739,5 +761,25 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
         set { ViewState["expressionStateQUOTATIONDOC"] = value; }
     }
     #endregion
+
+    protected void btnReject_Click(object sender, EventArgs e)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        { 
+            _dal=new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht[lblPOCode]= Request.Params[]
+            
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+
+    }
 
 }
