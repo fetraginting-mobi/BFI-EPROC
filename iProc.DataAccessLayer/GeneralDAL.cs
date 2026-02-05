@@ -397,6 +397,29 @@ namespace iProc.DataAccessLayer
 
             return ds.Tables[0].Rows[0];
         }
+
+        #region Cancel
+        public void Cancel(string TableName, string SPName, Hashtable parameters)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+            if (!dbw.ExecuteSP(SPName, parameters))
+            {
+                throw new Exception("Fail to execute " + SPName, new Exception(dbw.DBErrorMessage));
+            }
+        }
+
+        public void Cancel(string TableName, Hashtable parameters)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+            if (!dbw.ExecuteSP("xsp_" + TableName + "_cancel", parameters))
+            {
+
+                throw new Exception("Fail to execute xsp_" + TableName + "_cancel", new Exception(dbw.DBErrorMessage));
+            }
+        }
+        #endregion
         
     }
 }

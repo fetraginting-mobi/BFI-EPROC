@@ -8,46 +8,7 @@
     <section class="panel">
         <header class="panel-heading">
             <span>Good Receipt Note Info</span>
-        </header>
-                    <asp:GridView ID="gvwListDocReq" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                        AllowPaging="true" PageSize="10" DataKeyNames="GENERAL_DOC_CODE, GRN_CODE, PATHS, FILE, ID"
-                        OnPageIndexChanging="gvwListDocReq_PageIndexChanging" OnRowDataBound="gvwListDocReq_OnRowDataBound" OnRowCommand="gvwListDocReq_RowCommand"
-                        onselectedindexchanged="gvwListDocReq_SelectedIndexChanged" EmptyDataText="There is no data"  AllowSorting="true">
-                        <Columns>
-                            <asp:TemplateField>
-                                <HeaderTemplate>
-                                    <span>No</span>
-                                </HeaderTemplate>
-                                <ItemTemplate>
-                                    <%# Container.DataItemIndex + 1 %>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:BoundField DataField="DESCRIPTION" HeaderText="Document">
-                                <ItemStyle Width="40%" HorizontalAlign="Center" />
-                            </asp:BoundField>
-                            <asp:TemplateField HeaderText="File Name">
-                                <ItemStyle Width="60%" HorizontalAlign="Left" />
-                                <ItemTemplate>
-                                     <asp:Label runat="server" Text='<%# Eval("PATHS") %>' ID="lblFileName"/>
-                                     <br />
-                                    <asp:FileUpload runat="server" ID="fupFilename" />
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="">
-                                <ItemStyle Width="10%" HorizontalAlign="Left" />
-                                <ItemTemplate>
-                                    <%--<asp:Label ID="btnPreviewDoc" runat="server">Preview</asp:Label>--%>
-                                     <asp:LinkButton ID="btnPreviewDoc" runat="server" CausesValidation="false" Text="Preview"/>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                               <asp:TemplateField HeaderText="">
-                                <ItemStyle Width="10%" HorizontalAlign="Left" />
-                                <ItemTemplate>
-                                    <asp:LinkButton ID="btnDeleteDoc" runat="server" CausesValidation="false" Text="Delete" CommandName="del"/>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                        </Columns>
-                    </asp:GridView>
+        </header>                    
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-12">
@@ -397,6 +358,45 @@
                     </div>
                 </div>
                 <div class="panel-body">
+                <asp:GridView ID="gvwListDocReq" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
+                        AllowPaging="true" PageSize="10" DataKeyNames="GENERAL_DOC_CODE, GRN_CODE, PATHS, FILE, ID"
+                        OnPageIndexChanging="gvwListDocReq_PageIndexChanging" OnRowDataBound="gvwListDocReq_OnRowDataBound" OnRowCommand="gvwListDocReq_RowCommand"
+                        onselectedindexchanged="gvwListDocReq_SelectedIndexChanged" EmptyDataText="There is no data"  AllowSorting="true">
+                        <Columns>
+                            <asp:TemplateField>
+                                <HeaderTemplate>
+                                    <span>No</span>
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <%# Container.DataItemIndex + 1 %>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="DESCRIPTION" HeaderText="Document">
+                                <ItemStyle Width="40%" HorizontalAlign="Center" />
+                            </asp:BoundField>
+                            <asp:TemplateField HeaderText="File Name">
+                                <ItemStyle Width="60%" HorizontalAlign="Left" />
+                                <ItemTemplate>
+                                     <asp:Label runat="server" Text='<%# Eval("PATHS") %>' ID="lblFileName"/>
+                                     <br />
+                                    <asp:FileUpload runat="server" ID="fupFilename" />
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="">
+                                <ItemStyle Width="10%" HorizontalAlign="Left" />
+                                <ItemTemplate>
+                                    <%--<asp:Label ID="btnPreviewDoc" runat="server">Preview</asp:Label>--%>
+                                     <asp:LinkButton ID="btnPreviewDoc" runat="server" CausesValidation="false" Text="Preview"/>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                               <asp:TemplateField HeaderText="">
+                                <ItemStyle Width="10%" HorizontalAlign="Left" />
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="btnDeleteDoc" runat="server" CausesValidation="false" Text="Delete" CommandName="del"/>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
                 </div>
             </div>
          </div>
