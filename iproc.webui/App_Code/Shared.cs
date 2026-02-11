@@ -2393,7 +2393,7 @@ public class Shared
             _ht["p_code"] = Shared.CurrentUID;
 
             //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
-            ddl.DataSource = _dal.GetRows("", "xsp_master_branch_filter_sort_custom_getrows", _ht);
+            ddl.DataSource = _dal.GetRows("master_branch_filter_sort", _ht);
             ddl.DataTextField = "DESCRIPTION";
             ddl.DataValueField = "CODE";
             ddl.DataBind();

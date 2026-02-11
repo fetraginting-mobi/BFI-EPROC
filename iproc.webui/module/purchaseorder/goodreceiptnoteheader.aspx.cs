@@ -803,22 +803,22 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                  if (paymentStatusBayar == "1")
                  {
                      throw new Exception(
-                         "GRN tidak dapat dibatalkan, karena sudah dilakukan pembayaran.");
+                         "GRN tidak dapat dibatalkan, karena sudah dilakukan pembayaran dengan nomor invoice "+ invCode);
                  }
                  if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("POST", StringComparison.OrdinalIgnoreCase))
                  {
                      throw new Exception(
-                         "GRN tidak dapat dibatalkan, karena invoice telah diposting dengan nomor invoice " + invCode + ".");
+                         "GRN tidak dapat dibatalkan, Invoice telah diposting dengan nomor invoice " + invCode);
                  }
                  if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("NEW", StringComparison.OrdinalIgnoreCase))
                  {
                      throw new Exception(
-                         "Telah terdapat invoice dengan nomor " + invCode +". Silahkan melakukan cancel invoice terlebih dahulu.");
+                         "Terdapat invoice dengan nomor " + invCode +". Silahkan melakukan cancel invoice terlebih dahulu.");
                  }
                  if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("ONPROGRESS", StringComparison.OrdinalIgnoreCase))
                  {
                      throw new Exception(
-                         "Telah terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
+                         "Terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
                  }
                  //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000024&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblBranch.ClientID);
                  _dal.Cancel("good_receipt_note_header", _ht);
