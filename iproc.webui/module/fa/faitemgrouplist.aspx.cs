@@ -18,7 +18,7 @@ public partial class module_fa_fagrouplist : BasePageList
 
     protected void btnAddFaGroup_Click(object sender, EventArgs e)
     {
-        Response.Redirect("masteritemgroup.aspx?action=add&type=FA");
+        Response.Redirect("faitemgroup.aspx?action=add");
 
     }
     protected void btnDeleteFaGroup_Click(object sender, EventArgs e)
