@@ -25,7 +25,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Group Code.</label>
                                 <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblItemGroupCode" runat="server" DBColumnName="FA_ITEM_GROUP_CODE" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblItemGroupCode" runat="server" DBColumnName="FA_ITEM_GROUP_CODE" SPParameterName="p_fa_item_group_code" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
                                 </div>
                             </div>
                         </div>
@@ -70,30 +70,13 @@
                                 </div>
                             </div>                             
                         </div>
-                        <div class="row">  
-                        <div class="col-sm-6" style="display:none;">
-                            <div class="form-group">
-                                <label class="col-sm-4"></label>
-                                <div class="col-sm-6">
-                                   <asp:UpdatePanel ID="UpSubBranch" runat="server">
-                                        <ContentTemplate>
-                                            <cc1:XUIDropDownList ID="ddlSubBranch" runat="server" CssClass="form-control" DBColumnName="SUB_BRANCH_CODE" SPParameterName="p_sub_branch_code"  DataType="String" BindType="Both" style="display:none;"></cc1:XUIDropDownList>
-                                        </ContentTemplate>
-                                         <Triggers>
-                                            <asp:AsyncPostBackTrigger ControlID="ddlBranch" EventName="SelectedIndexChanged" />
-                                       </Triggers>
-                                    </asp:UpdatePanel>
-                                </div>
-                            </div>                             
-                        </div> 
-                     </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-sm-4">Created  </label>
                                 <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblCreby" runat="server" DBColumnName= "EMP_CRE" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblCreby" runat="server" DBColumnName= "cre_by" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
                                     <span>@</span>
                                     <cc1:XUILabel ID="lblCreDate" runat="server" DBColumnName= "CRE_DATE" DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss"></cc1:XUILabel>
                                 </div>
@@ -103,7 +86,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Modified </label>
                                 <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "EMP_MOD" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "mod_by" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
                                     <span>@</span>
                                     <cc1:XUILabel ID="lblModDate" runat="server" DBColumnName= "MOD_DATE" DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss"></cc1:XUILabel>
                                 </div>

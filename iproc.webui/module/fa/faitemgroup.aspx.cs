@@ -23,11 +23,32 @@ public partial class module_fa_faitemgroup : BasePage
         if(!Page.IsPostBack)
         {
             Shared.BindBranchEmployeeSort(ddlBranch);
-            Shared.BindSubBranch(ddlSubBranch, ddlBranch.SelectedValue);
             Shared.BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
+            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FAITGROUP&gvw={0}&parc_p_branch_code={1}&parc_location={2}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue);
+            if (Request.Params["action"].Equals("edit"))
+            {
+                LoadData();
+            }
         }
+    }
+    private void LoadData()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
 
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();  
 
+            _ht["p_fa_item_group_code"] = Request.Params["faitemgroupcode"];
+            DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
+            DBToUI.Map(this.Controls, _dr);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
     }
     protected void btnSave_Click(object sender, EventArgs e)
     {
@@ -72,32 +93,8 @@ public partial class module_fa_faitemgroup : BasePage
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
 
-        Shared.BindSubBranch(ddlSubBranch, ddlBranch.SelectedValue);
         Shared.BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
         //updDep.Update();
-    }
-    public static void BindSubBranch(DropDownList ddl, String CODE)
-    {
-        GeneralDAL _dal = null;
-        Hashtable _ht = null;
-
-        try
-        {
-            _dal = new GeneralDAL();
-            _ht = new Hashtable();
-
-            _ht["p_keywords"] = "";
-            _ht["p_branch_code"] = CODE;
-
-            ddl.DataSource = _dal.GetRows("", "xsp_sub_branch_filter_getrows", _ht);
-            ddl.DataTextField = "DESCRIPTION";
-            ddl.DataValueField = "CODE";
-            ddl.DataBind();
-            //ddl.Enabled = false;
-        }
-        catch (Exception ex)
-        {
-        }
     }
     public static void BindFaLocationAllMut(DropDownList ddl, string Branch)
     {

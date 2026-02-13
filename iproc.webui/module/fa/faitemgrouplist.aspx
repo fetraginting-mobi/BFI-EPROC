@@ -33,12 +33,12 @@
                     <div class="form-group"></div>
                 </div>
             </div>
-            <%--<asp:UpdatePanel ID="upd" runat="server">
+            <asp:UpdatePanel ID="upd" runat="server">
                 <ContentTemplate>
-                    <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                    AllowPaging="true" PageSize="10" DataKeyNames="CODE_BARCODE"
+                    <asp:GridView ID="gvwListFaItemGroup" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
+                    AllowPaging="true" PageSize="10" DataKeyNames="FA_ITEM_GROUP_CODE"
                         OnPageIndexChanging="gvwList_PageIndexChanging" 
-                        onselectedindexchanged="SelectedIndexChanged" EmptyDataText="There Is No Data" Width="100%">
+                        onselectedindexchanged="gvwList_SelectedIndexChanged" EmptyDataText="There Is No Data" Width="100%">
                         <Columns>
                             <asp:TemplateField>
                                 <HeaderTemplate>
@@ -56,16 +56,21 @@
                                 <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
                             </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField DataField="CODE" HeaderText="FA Entry No.">
-                                <ItemStyle Width="25%" HorizontalAlign="Center" />
-                            </asp:BoundField>
-                            <asp:BoundField DataField="ENTRY_DATE" HeaderText="Date"  DataFormatString="{0:dd/MM/yyyy}">
-                                <ItemStyle Width="25%" HorizontalAlign="Center" />
-                            </asp:BoundField>
-                            <asp:BoundField DataField="REMARKS" HeaderText="Remarks">
+                            <asp:TemplateField>
+                                <HeaderTemplate>
+                                    <asp:Label runat="server" ID="lblHeader" Text="Group Code"></asp:Label>
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:Label runat="server" ID="lblGroupCode" Text='<%# Eval("FA_ITEM_GROUP_CODE") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="FA_ITEM_GROUP_NAME" HeaderText="Group Name">
                                 <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>
-                            <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status">
+                            <asp:BoundField DataField="BRANCH_CODE" HeaderText="Branch Code">
+                                <ItemStyle Width="25%" HorizontalAlign="Center"  />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="FA_LOCATION" HeaderText="Location">
                                 <ItemStyle Width="25%" HorizontalAlign="Center"  />
                             </asp:BoundField>
                             <asp:CommandField ShowSelectButton="true" />
@@ -73,10 +78,9 @@
                     </asp:GridView>
                 </ContentTemplate>
                 <Triggers>
-                    <asp:AsyncPostBackTrigger ControlID="btnSearch" EventName="Click" />
-                    <asp:AsyncPostBackTrigger ControlID="btnDeleteEntryHeader" EventName="Click" />
+                    <asp:AsyncPostBackTrigger ControlID="btnFaGroupSearch" EventName="Click" />
                 </Triggers>
-            </asp:UpdatePanel>--%>
+            </asp:UpdatePanel>
         </div>
     </section>
 </asp:Content>
