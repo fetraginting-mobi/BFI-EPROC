@@ -16,18 +16,22 @@ using System.Collections.Generic;
 
 public partial class module_fa_faitemgroup : BasePage
 {
-    private static string TABLE_NAME    = "FA_ITEM_GROUP";
+    private static string TABLE_NAME    = "fa_item_group";
+    private static string TABLE_NAME_DETAIL ="fa_item_group_detail";
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
         if(!Page.IsPostBack)
         {
+            string itemGroupCode = Request.QueryString["faitemgroupcode"] ?? "";
+
             Shared.BindBranchEmployeeSort(ddlBranch);
-            Shared.BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
-            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FAITGROUP&gvw={0}&parc_p_branch_code={1}&parc_location={2}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue);
+            BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
+            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FAITGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_item_group_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, itemGroupCode);
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
+                BindData();
             }
         }
     }
@@ -93,7 +97,7 @@ public partial class module_fa_faitemgroup : BasePage
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
 
-        Shared.BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
+        BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
         //updDep.Update();
     }
     public static void BindFaLocationAllMut(DropDownList ddl, string Branch)
@@ -114,7 +118,6 @@ public partial class module_fa_faitemgroup : BasePage
             ddl.DataTextField = "LOC_NAME";
             ddl.DataValueField = "LOC_CODE";
             ddl.DataBind();
-            ddl.Items.Insert(0, new ListItem("-=Select=-", "0"));
 
         }
         catch (Exception ex)
@@ -158,6 +161,29 @@ public partial class module_fa_faitemgroup : BasePage
         {
             CheckBox cbSelect = gvr.FindControl("chbChecked") as CheckBox;
             cbSelect.Checked = ((CheckBox)sender).Checked;
+        }
+    }
+    private void BindData()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = txtSearch.Text;
+            _ht["p_fa_item_group_code"] = lblItemGroupCode.Text;
+            //_ht["p_fa_sale_code"] = ll.Text;
+
+
+            gvwList.DataSource = _dal.GetRows(TABLE_NAME_DETAIL, _ht);
+            gvwList.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
         }
     }
 }

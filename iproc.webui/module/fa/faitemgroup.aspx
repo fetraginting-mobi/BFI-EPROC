@@ -61,7 +61,7 @@
                                 <ContentTemplate>
                                     <cc1:XUIDropDownList ID="ddlLocation" runat="server" CssClass="form-control" DBColumnName="FA_LOCATION" SPParameterName="p_fa_location" DataType="String"  BindType="Both" ></cc1:XUIDropDownList>
                                     <cc1:XUILabel ID="lblLocation" runat="server"  DBColumnName="FA_LOCATION" DataType="String" BindType="DBToUIOnly" Text="--" style="display:none;"></cc1:XUILabel>
-                                      <asp:RequiredFieldValidator ID="rvfLocation" runat="server" ErrorMessage="Required Field!" ControlToValidate="ddlLocation" InitialValue = "0" Display="Dynamic"></asp:RequiredFieldValidator>
+                                      <asp:RequiredFieldValidator ID="rvfLocation" runat="server" ErrorMessage="Required Field!" ControlToValidate="ddlLocation" Display="Dynamic"></asp:RequiredFieldValidator>
                                 </ContentTemplate>
                                 <Triggers>
                                 <asp:AsyncPostBackTrigger ControlID="ddlBranch" EventName="SelectedIndexChanged" />
