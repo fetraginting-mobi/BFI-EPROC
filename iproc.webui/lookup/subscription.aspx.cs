@@ -141,18 +141,38 @@ public partial class lookup_subscription : BasePage//System.Web.UI.Page
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-        //add selected data from gridview source to gridview target
+        bool isError = false;
+        //foreach (GridViewRow row in gvwListSource.Rows)
+        //{
+        //    CheckBox chb = (CheckBox)row.Cells[0].Controls[1];
+        //    if (chb.Checked)
+        //    {
+        //        AddDataToTargetGVW(row.Cells[1].Text);
+        //    }
+        //}
+
         foreach (GridViewRow row in gvwListSource.Rows)
         {
-            CheckBox chb = (CheckBox)row.Cells[0].Controls[1];
-            if (chb.Checked)
+            CheckBox chb = (CheckBox)row.Cells[0].FindControl("chbChecked");
+
+            if (chb != null && chb.Checked)
             {
-                AddDataToTargetGVW(row.Cells[1].Text);
+                try
+                {
+                    AddDataToTargetGVW(row.Cells[1].Text);
+                }
+                catch
+                {
+                    isError = true;
+                    break;
+                }
             }
         }
 
-        LoadInit();
+        if (isError)
+            return;
 
+        LoadInit();
         BindDataSource();
         BindDataTarget();
     }
@@ -204,9 +224,20 @@ public partial class lookup_subscription : BasePage//System.Web.UI.Page
             
             ScriptManager.RegisterStartupScript(this, GetType(), "fn2", script, true);
         }
+        //catch (Exception ex)
+        //{
+        //    Shared.ShowErrorDialog(this, ex);
+        //}
         catch (Exception ex)
         {
-            Shared.ShowErrorDialog(this, ex);
+            Exception realEx = ex;
+            while (realEx.InnerException != null)
+            {
+                realEx = realEx.InnerException;
+            }
+            string message = realEx.Message.Replace("'", "\\'");
+            ScriptManager.RegisterStartupScript(this,this.GetType(),"sqlError","alert('" + message + "');",true);
+            return;
         }
     }
 

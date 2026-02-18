@@ -33,6 +33,10 @@ public partial class module_fa_faitemgroup : BasePage
                 LoadData();
                 BindData();
             }
+            else
+            {
+                pnlEntry.Visible = false;
+            }
         }
     }
     private void LoadData()
@@ -124,32 +128,32 @@ public partial class module_fa_faitemgroup : BasePage
         {
         }
     }
-    protected void btnAdd_Click(object sender, EventArgs e)
-    {
-        // Response.Redirect("faentrydetail.aspx?action=add&codebarcode=" + lblCodeBarcode.Text);
-    }
+    //protected void btnAdd_Click(object sender, EventArgs e)
+    //{
+    //    // Response.Redirect("faentrydetail.aspx?action=add&codebarcode=" + lblCodeBarcode.Text);
+    //}
     protected void btnDelete_Click(object sender, EventArgs e)
     {
-        // foreach (GridViewRow row in gvwList.Rows)
-        // {
-        //     CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
-        //     if (chb.Checked)
-        //     {
-        //         DeleteData(gvwList.DataKeys[row.RowIndex][0].ToString());
-        //     }
-        // }
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
+            if (chb.Checked)
+            {
+                DeleteData(gvwList.DataKeys[row.RowIndex][0].ToString());
+            }
+        }
 
-        // BindData();
+        BindData();
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        // if (lblCodeBarcode.Text != string.Empty)
-        //     BindData();
+        if (txtSearch.Text != string.Empty)
+            BindData();
     }
       protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
-        // gvwList.PageIndex = e.NewPageIndex;
-        // BindData();
+        gvwList.PageIndex = e.NewPageIndex;
+        BindData();
     }
     protected void gvwList_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -175,11 +179,28 @@ public partial class module_fa_faitemgroup : BasePage
 
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_fa_item_group_code"] = lblItemGroupCode.Text;
-            //_ht["p_fa_sale_code"] = ll.Text;
-
 
             gvwList.DataSource = _dal.GetRows(TABLE_NAME_DETAIL, _ht);
             gvwList.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+    private void DeleteData(string code)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_id"] = code;
+
+            _dal.Delete(TABLE_NAME_DETAIL, _ht);
         }
         catch (Exception ex)
         {

@@ -105,7 +105,7 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-sm-8">
-                            <cc1:XUILinkButton ID="btnAdd" RoleCode="R90000070E" runat="server" CssClass="btn btn-primary" OnClick="btnAdd_Click" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
+                            <cc1:XUILinkButton ID="btnAdd" RoleCode="R90000070E" runat="server" CssClass="btn btn-primary" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnDelete" RoleCode="R90000070E" runat="server" CssClass="btn btn-danger" OnClick="btnDelete_Click" CausesValidation="false"><i class="icon-trash"></i>  Delete</cc1:XUILinkButton>
                         </div>
                         <div class="col-sm-4">

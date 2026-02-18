@@ -341,14 +341,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     protected void btnPost_Click(object sender, EventArgs e)
     {
         try
-        {
-            //if (ddlStatus.SelectedValue != "NEW" || ddlIsUpload.SelectedValue != "1")
-            //{
-            //    Shared.ShowErrorDialog(this,
-            //        new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE"));
-            //    return;
-            //}
-
+        {     
             ArrayList selectedCodes = new ArrayList();
 
             for (int i = 0; i < gvwList.Rows.Count; i++)
@@ -509,6 +502,11 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             throw new Exception(
                 "Asset sedang dalam proses MUTATION (Ref: " +
                 dr["mutasi"].ToString() + ", baris " + rowNumber + ")"
+            );
+        if (dr["item_group"].ToString() != "")
+            throw new Exception(
+                "Asset terdaftar dalam Item Group (Ref: " +
+                dr["item_group"].ToString() + ", baris " + rowNumber + ")"
             );
     }
 

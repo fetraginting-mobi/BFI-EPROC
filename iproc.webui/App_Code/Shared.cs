@@ -253,7 +253,19 @@ public class Shared
 
     public static void ShowErrorDialog(Page p, Exception ex)
     {
-        ScriptManager.RegisterStartupScript(p, p.GetType(), "fx", "fnShowErrorNotif('', '" + Shared.MakeSingleLine(ex) + "');", true);
+        //ScriptManager.RegisterStartupScript(p, p.GetType(), "fx", "fnShowErrorNotif('', '" + Shared.MakeSingleLine(ex) + "');", true);
+        Exception realEx = ex;
+        while (realEx.InnerException != null)
+        {
+            realEx = realEx.InnerException;
+        }
+        string message = realEx.Message;
+        message = message
+        .Replace("'", "\\'")
+        .Replace("\r", "")
+        .Replace("\n", " ");
+
+        ScriptManager.RegisterStartupScript(p,p.GetType(),"fx","fnShowErrorNotif('', '" + message + "');",true);
     }
 
     public static string GenerateErrorDialogFromApproval(Exception ex)
