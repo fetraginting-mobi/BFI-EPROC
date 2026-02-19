@@ -27,6 +27,16 @@ public partial class module_fa_faitemgroup : BasePage
 
             Shared.BindBranchEmployeeSort(ddlBranch);
             BindFaLocationAllMut(ddlLocation, ddlBranch.SelectedValue);
+            //btnLookUpItem.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=FAMTT&acol_0={0}&bcol_1={1}&parc_branch_code={2}&parc_location={3}');", txtItemCode.ClientID, lblItemName.ClientID,ddlBranch.SelectedValue, ddlLocation.SelectedValue);
+            btnLookUpItem.Attributes["href"] = "#";
+            btnLookUpItem.Attributes["onclick"] = String.Format(
+                "fnShowDialog('../../lookup/genericwithparameter.aspx?code=FAMTT&acol_0={0}&bcol_1={1}&par_branch_code={2}&par_location={3}'); return false;",
+                txtItemCode.ClientID,
+                lblItemName.ClientID,
+                ddlBranch.SelectedValue,
+                ddlLocation.SelectedValue
+            );
+            //btnLookUpItem.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=FAITGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_item_group_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, itemGroupCode);
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FAITGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_item_group_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, itemGroupCode);
             if (Request.Params["action"].Equals("edit"))
             {

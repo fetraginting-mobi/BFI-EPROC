@@ -74,23 +74,22 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label class="col-sm-4">Created  </label>
-                                <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblCreby" runat="server" DBColumnName= "cre_by" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
-                                    <span>@</span>
-                                    <cc1:XUILabel ID="lblCreDate" runat="server" DBColumnName= "CRE_DATE" DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss"></cc1:XUILabel>
-                                </div>
-                            </div>
+                                <label class="col-sm-4">Asset Code Parent.</label>
+                                 <div class="col-sm-8">    
+                                    <asp:LinkButton runat="server" ID="btnLookUpItem" class="btn btn-primary" data-toggle="modal" CausesValidation="false"><i class="icon-table"></i></asp:LinkButton>                           
+                                    <cc1:XUILabel ID="lblItemName" runat="server" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" ></cc1:XUILabel>
+                                    <%--<cc1:XUITextBox ID="txtItemName" runat="server" Enabled = "false" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUITextBox> --%>
+                                    <asp:RequiredFieldValidator ID="rfvItemCode" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtItemCode" Display="Dynamic"></asp:RequiredFieldValidator>    
+                                 </div>
+                            </div>              
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label class="col-sm-4">Modified </label>
-                                <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName= "mod_by" DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
-                                    <span>@</span>
-                                    <cc1:XUILabel ID="lblModDate" runat="server" DBColumnName= "MOD_DATE" DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss"></cc1:XUILabel>
+                                <label class="col-sm-4">Asset Code</label>
+                                <div class="col-sm-6">
+                                    <cc1:XUITextBox ID="txtItemCode" runat="server" Enabled="false" CssClass="form-control" DBColumnName="code_asset" SPParameterName="p_item_code" DataType="String" BindType="Both"></cc1:XUITextBox>
                                 </div>
-                            </div>
+                            </div>                             
                         </div>
                     </div>
                 </ContentTemplate>

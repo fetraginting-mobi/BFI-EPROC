@@ -20,7 +20,7 @@ public partial class module_fa_farequestmutationdetail : BasePage
         {
             txtBranchEmp.Text = Shared.CurrentEmployeeBranchCode;
             txtBranchHeader.Text = Request.Params["branch"];
-             lblIRCode.Text = Request.Params["code"];
+            lblIRCode.Text = Request.Params["code"];
             lblBarcode.Text = Request.Params["codebarcode"];
             txtLocation.Text = Request.Params["location"];
             txtOwner.Text = Request.Params["owner"];
