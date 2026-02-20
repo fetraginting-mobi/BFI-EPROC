@@ -3,6 +3,27 @@
 <%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
+<script type="text/javascript">
+        function openLookupItem(txtId, lblId, branchId, locationId) {
+
+            var branch = document.getElementById(branchId).value;
+            var location = document.getElementById(locationId).value;
+
+            fnShowDialog('../../lookup/genericwithparameter.aspx?code=FAITG&acol_0='
+                + txtId +
+                '&bcol_1=' + lblId +
+                '&par_branch_code=' + branch +
+                '&par_location=' + location);
+        }
+        function setLookupResult(assetId, assetCode, assetName, barcode) {
+            var hdn = document.getElementById('<%= hdnAssetId.ClientID %>');
+            if (hdn != null) {
+                hdn.value = assetId;
+            }
+            document.getElementById('<%= txtItemCode.ClientID %>').value = assetCode;
+            document.getElementById('<%= lblItemName.ClientID %>').innerHTML = assetName;
+        }
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
     <section class="panel">
@@ -18,6 +39,7 @@
             </div>
          </div>
          <div class="panel-body form-horizontal">
+            <asp:HiddenField ID="hdnAssetId" runat="server" />
             <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                 <ContentTemplate> 
                     <div class="row">
@@ -87,7 +109,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Asset Code</label>
                                 <div class="col-sm-6">
-                                    <cc1:XUITextBox ID="txtItemCode" runat="server" Enabled="false" CssClass="form-control" DBColumnName="code_asset" SPParameterName="p_item_code" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                    <cc1:XUITextBox ID="txtItemCode" runat="server" ReadOnly="true" CssClass="form-control" DBColumnName="code_asset" SPParameterName="p_item_code" DataType="String" BindType="Both"></cc1:XUITextBox>
                                 </div>
                             </div>                             
                         </div>
