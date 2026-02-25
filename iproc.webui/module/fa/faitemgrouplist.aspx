@@ -67,11 +67,11 @@
                             <asp:BoundField DataField="FA_ITEM_GROUP_NAME" HeaderText="Group Name">
                                 <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>
-                            <asp:BoundField DataField="BRANCH_CODE" HeaderText="Branch Code">
-                                <ItemStyle Width="25%" HorizontalAlign="Center"  />
+                            <asp:BoundField DataField="BRANCH_NAME" HeaderText="Branch Code">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>
-                            <asp:BoundField DataField="FA_LOCATION" HeaderText="Location">
-                                <ItemStyle Width="25%" HorizontalAlign="Center"  />
+                            <asp:BoundField DataField="LOCATION_NAME" HeaderText="Location">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:CommandField ShowSelectButton="true" />
                         </Columns>

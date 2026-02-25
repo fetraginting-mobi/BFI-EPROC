@@ -156,13 +156,16 @@
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField>
-                                        <HeaderTemplate>
-                                            <asp:CheckBox runat="server" ID="chbCheckedAll" AutoPostBack="true" OnCheckedChanged="chbCheckedAll_CheckedChanged"/>
-                                        </HeaderTemplate>
-                                        <ItemTemplate>
-                                            <asp:CheckBox runat="server" ID="chbChecked"/>
-                                        </ItemTemplate>
+                                    <HeaderTemplate>
+                                       <asp:CheckBox ID="chbSelectAll" runat="server" onclick="checkAll(this)" />
+                                    </HeaderTemplate>
+                                    <ItemTemplate>
+                                        <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
+                                    </ItemTemplate>
                                     </asp:TemplateField>
+                                    <asp:BoundField DataField="IS_PARENT" HeaderText="Parent">
+                                        <ItemStyle Width="10%" />
+                                    </asp:BoundField>
                                     <asp:BoundField DataField="ITEM_NAME" HeaderText="Asset Name">
                                         <ItemStyle Width="30%" />
                                     </asp:BoundField>

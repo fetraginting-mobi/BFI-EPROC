@@ -23,7 +23,7 @@ public partial class module_fa_faitemgroup : BasePage
         LoadInit();
         if(!Page.IsPostBack)
         {
-            string itemGroupCode = Request.QueryString["faitemgroupcode"] ?? "";
+            string itemGroupCode = Request.QueryString["faitemgroupcode"];
 
             Shared.BindBranchEmployeeSort(ddlBranch);
             BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
@@ -34,6 +34,7 @@ public partial class module_fa_faitemgroup : BasePage
             {
                 LoadData();
                 BindData();
+                ddlBranch.Enabled = ddlLocation.Enabled = false;  
             }
             else
             {
@@ -49,7 +50,7 @@ public partial class module_fa_faitemgroup : BasePage
         try
         {
             _dal = new GeneralDAL();
-            _ht = new Hashtable();  
+            _ht = new Hashtable();
 
             _ht["p_fa_item_group_code"] = Request.Params["faitemgroupcode"];
             DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
@@ -72,77 +73,75 @@ public partial class module_fa_faitemgroup : BasePage
         Hashtable _htLookup = null;
         string sNextItemGroupCode = "";
         int detailId = 0;
-
         try
         {
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
             string barcodeValue = Request.Form[txtItemCode.UniqueID];
-             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
-             _ht["p_branch_code"] = ddlBranch.SelectedValue;
-             _ht["p_fa_location"] = ddlLocation.SelectedValue;
-             _ht["p_item_barcode"] = barcodeValue;
-             _ht["p_fa_item_group_code"] = lblItemGroupCode.Text;
+            MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
 
-             Shared.ApplyDefaultProp(_ht);
+            _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_fa_location"] = ddlLocation.SelectedValue;
+            _ht["p_item_barcode"] = barcodeValue;
+            _ht["p_fa_item_group_code"] = lblItemGroupCode.Text;
 
+            Shared.ApplyDefaultProp(_ht);
 
+            if (Request.Params["action"].Equals("add"))
+            {
+                _dal.Insert(TABLE_NAME, _ht, ref sNextItemGroupCode);
+                lblItemGroupCode.Text = sNextItemGroupCode.ToString();
 
-             if (Request.Params["action"].Equals("add"))
-             {
-                 _dal.Insert(TABLE_NAME, _ht, ref sNextItemGroupCode);
-                 lblItemGroupCode.Text = sNextItemGroupCode.ToString();
+                if (!string.IsNullOrEmpty(barcodeValue))
+                {
+                    _htLookup = new Hashtable();
+                    _htLookup["p_item_barcode"] = barcodeValue;
+                    DataRow drLookup = _dal.GetRow("fa_item_group_lookup", _htLookup);
 
-                 // INSERT PARENT DETAIL
-                 if (!string.IsNullOrEmpty(barcodeValue))
-                 {
-                     _htLookup = new Hashtable();
-                     _htLookup["p_item_barcode"] = barcodeValue;
+                    if (drLookup != null)
+                    {
+                        _htDetail = new Hashtable();
+                        _htDetail["p_fa_item_group_code"] = sNextItemGroupCode;
+                        _htDetail["p_fa_asset_id"] = drLookup["fa_asset_id"];
+                        _htDetail["p_code_asset"] = drLookup["code_asset"];
+                        _htDetail["p_name_asset"] = drLookup["name_asset"];
+                        _htDetail["p_barcode"] = drLookup["barcode"];
+                        _htDetail["p_description"] = drLookup["description"];
+                        _htDetail["p_is_parent"] = true;
+                        Shared.ApplyDefaultProp(_htDetail);
+                        _dal.Insert("fa_item_group_detail", _htDetail, ref detailId);
+                    }
+                }
+            }
+            else
+            {
+                ddlBranch.Enabled = ddlLocation.Enabled = false;
+                _dal.Update(TABLE_NAME, _ht);
+                sNextItemGroupCode = lblItemGroupCode.Text;
 
-                     DataRow drLookup = _dal.GetRow("fa_item_group_lookup", _htLookup);
-                     if (drLookup != null)
-                     {
-                         _htDetail = new Hashtable();
+                if (!string.IsNullOrEmpty(barcodeValue))
+                {
+                    _htLookup = new Hashtable();
+                    _htLookup["p_item_barcode"] = barcodeValue;
+                    DataRow drLookup = _dal.GetRow("fa_item_group_lookup", _htLookup);
 
-                         _htDetail["p_fa_item_group_code"] = sNextItemGroupCode;
-                         _htDetail["p_fa_asset_id"] = drLookup["fa_asset_id"];
-                         _htDetail["p_code_asset"] = drLookup["code_asset"];
-                         _htDetail["p_name_asset"] = drLookup["name_asset"];
-                         _htDetail["p_barcode"] = drLookup["barcode"];
-                         _htDetail["p_description"] = drLookup["description"];
-                         _htDetail["p_is_parent"] = true;
-                         Shared.ApplyDefaultProp(_htDetail);
-
-                         _dal.Insert("fa_item_group_detail", _htDetail, ref detailId);
-                     }
-                 }
-
-             }
-             else
-             {
-                 ddlBranch.Enabled = ddlLocation.Enabled = false;                 
-                 _dal.Update(TABLE_NAME, _ht);
-                 sNextItemGroupCode = lblItemGroupCode.Text;
-
-                 if (!string.IsNullOrEmpty(barcodeValue))
-                 {
-                     Hashtable _htParent = new Hashtable();
-                     Shared.ApplyDefaultProp(_htParent);
-
-                     _htParent["p_item_barcode"] = barcodeValue;
-                     _htParent["p_fa_item_group_code"] = sNextItemGroupCode;
-                     _htParent["p_mod_date"] = DateTime.Now;
-                     _htParent["p_mod_by"] = Shared.CurrentUID;
-                     _htParent["p_mod_ip_address"] = Shared.CurrentIPAddress;
-
-                     _dal.Update("fa_item_group_detail", _htParent);
-                     //_dal.ExecuteNonQuery("", "xsp_fa_item_group_detail_upsert_parent", _htParent);
-                 }
-
-             }
-
-            Shared.ShowSuccessGritter(this, string.Format("faitemgroup.aspx?action=edit&itemgroupcode={0}", lblItemGroupCode.Text));
+                    if (drLookup != null)
+                    {
+                        Hashtable _htParent = new Hashtable();
+                        _htParent["p_item_barcode"] = barcodeValue;
+                        _htParent["p_fa_item_group_code"] = sNextItemGroupCode;
+                        _htParent["p_fa_asset_id"] = drLookup["fa_asset_id"];
+                        _htParent["p_code_asset"] = drLookup["code_asset"];
+                        _htParent["p_name_asset"] = drLookup["name_asset"];
+                        _htParent["p_barcode"] = drLookup["barcode"];
+                        _htParent["p_description"] = drLookup["description"];
+                        Shared.ApplyDefaultProp(_htParent);
+                        _dal.Update("fa_item_group_detail", _htParent);
+                    }
+                }
+            }
+            Shared.ShowSuccessGritter(this, string.Format("faitemgroup.aspx?action=edit&faitemgroupcode={0}", lblItemGroupCode.Text));
         }
         catch (Exception ex)
         {
