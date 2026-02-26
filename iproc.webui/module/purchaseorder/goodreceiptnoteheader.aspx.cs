@@ -766,7 +766,6 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        DataRow _dr = null;
 
         try
         {
@@ -833,7 +832,6 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
         {
             _dal = null;
             _ht = null;
-            _dr = null;
         }
     }
     private void ProsesReject(string poCode, string grnCode, string paymentStatus)

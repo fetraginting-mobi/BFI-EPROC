@@ -1,6 +1,7 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/iproc.master" AutoEventWireup="true" CodeFile="faitemgrouplist.aspx.cs" Inherits="module_fa_fagrouplist"%>
 
 <%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
@@ -11,10 +12,8 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-8">
-                    <cc1:XUILinkButton RoleCode="R30000120C" ID="btnAddFaGroup" runat="server" 
-                        CssClass="btn btn-primary" onclick="btnAddFaGroup_Click"><i class="icon-plus"></i>Create</cc1:XUILinkButton>
-                    <cc1:XUILinkButton RoleCode="R30000120D" ID="btnDeleteFaGroup" runat="server" 
-                        CssClass="btn btn-danger" onclick="btnDeleteFaGroup_Click"><i class="icon-trash"></i>Delete</cc1:XUILinkButton>
+                    <cc1:XUILinkButton RoleCode="R30000120C" ID="btnAddFaGroup" runat="server" CssClass="btn btn-primary" onclick="btnAddFaGroup_Click"><i class="icon-plus"></i>Create</cc1:XUILinkButton>
+                    <cc1:XUILinkButton RoleCode="R30000120D" ID="btnDeleteFaGroup" runat="server" CssClass="btn btn-danger" onclick="btnDeleteFaGroup_Click"><i class="icon-trash"></i>Delete</cc1:XUILinkButton>
 
                 </div>
                 <div class="col-sm-4"> 
