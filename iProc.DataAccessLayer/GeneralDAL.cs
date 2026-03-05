@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using System.Data.SqlClient;
 using System.Collections;
 
 using iProc.DataAccessLayer.Utility;
@@ -320,6 +321,25 @@ namespace iProc.DataAccessLayer
                     new Exception(dbw.DBErrorMessage)
                 );
         }
+        public void BulkInsert(DataTable dt, string tableName)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(dbw.ConnectionString))
+            {
+                conn.Open();
+
+                using (SqlBulkCopy bulk = new SqlBulkCopy(conn))
+                {
+                    bulk.DestinationTableName = tableName;
+                    bulk.BatchSize = 5000;
+                    bulk.BulkCopyTimeout = 600;
+
+                    bulk.WriteToServer(dt);
+                }
+            }
+        }
 
         public void InsertProcessErrorLog(Hashtable parameters)
         {
@@ -328,6 +348,14 @@ namespace iProc.DataAccessLayer
 
             if (!dbw.ExecuteSP("xsp_app_process_error_log_upload", parameters))
                 throw new Exception(dbw.DBErrorMessage);
+        }
+        public void UpdateFAMutationUploadStagingProcess(string uploadId,int rowNumber)
+                {
+                    Hashtable ht = new Hashtable();
+                    ht["p_upload_id"] = uploadId;
+                    ht["p_row_number"] = rowNumber;
+ 
+                    ExecuteNonQuery("xsp_fa_mutation_upload_staging_update_process",ht);
         }
 
         public int GetOnhandStock( string itemCode, string locationCode, string branchCode)
