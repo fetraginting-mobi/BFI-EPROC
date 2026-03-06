@@ -383,7 +383,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                     break;
 
                 DataRow row = dt.NewRow();
-                row["upload_id"] = uploadId;
+                row["upload_id"] = uploadId.ToString();
                 row["row_number"] = excelRowIndex - 1;
                 row["from_cost_center"] = GetStringSafe(excelReader, 1);
                 row["from_location"] = GetStringSafe(excelReader, 2);
@@ -396,7 +396,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 dt.Rows.Add(row);
             }
             BulkInsertToStaging(dt);
-            ExecuteBulkProcess(uploadId);
+            ExecuteBulkProcess(uploadId.ToString());
             ClientScript.RegisterStartupScript(this.GetType(),"alert","alert('Upload berhasil diproses.');",true);
         }
         catch (Exception ex)
@@ -408,27 +408,42 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 excelReader.Close();
         }
     }
-    private void LogBulkError(GeneralDAL _dal,Guid uploadId,int rowNumber,string message,string rawData)
+    private void LogBulkError(GeneralDAL _dal,string uploadId,int rowNumber,string message,string rawData)
     {
-        Hashtable htLog = new Hashtable();
+        try
+        {
+            Hashtable ht = new Hashtable();
 
-        htLog["p_process_name"] = "BULK_FA_MUTATION";
-        htLog["p_upload_id"] = uploadId;     
-        htLog["p_row_number"] = rowNumber;
-        htLog["p_error_message"] = message;
-        htLog["p_raw_data"] = rawData;
-        htLog["p_cre_by"] = Shared.CurrentUID;
-        htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+            ht["p_process_name"] = "FA_MUTATION_UPLOAD";
+            ht["p_file_name"] = "UPLOAD_FA_MUTATION";
+            ht["p_row_number"] = rowNumber;
 
-        _dal.InsertProcessErrorLog(htLog);
+            ht["p_error_message"] = message == null
+                ? ""
+                : message;
+
+            ht["p_raw_data"] = rawData == null
+                ? ""
+                : rawData;
+
+            ht["p_upload_id"] = uploadId;
+
+            ht["p_cre_by"] = Shared.CurrentUID;
+            ht["p_cre_ip_address"] = Shared.CurrentIPAddress;
+
+            _dal.InsertProcessErrorLog(ht);
+        }
+        catch
+        {
+        }
     }
 
 
-    private void ExecuteBulkProcess(Guid uploadId)
+    private void ExecuteBulkProcess(string uploadId)
     {
         GeneralDAL _dal = new GeneralDAL();
         Hashtable htParam = new Hashtable();
-        htParam["p_upload_id"] = uploadId;
+        htParam["p_upload_id"] = uploadId.ToString();
 
         DataTable dtStaging =
             _dal.GetRows(
@@ -497,7 +512,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             }
             catch (Exception exHeader)
             {
-                LogBulkError(_dal, uploadId, 0, exHeader.Message, entry.Key.ToString());
+                LogBulkError(_dal, uploadId.ToString(), 0, exHeader.Message, entry.Key.ToString());
                 continue;
             }
             foreach (DataRow row in detailRows)
@@ -534,7 +549,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                     );
 
                     Hashtable htUpdate = new Hashtable();
-                    htUpdate["p_upload_id"] = uploadId;
+                    htUpdate["p_upload_id"] = uploadId.ToString();
                     htUpdate["p_row_number"] = rowNumber;
                     htUpdate["p_mod_by"] = Shared.CurrentUID;
 
@@ -546,8 +561,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 catch (Exception exDetail)
                 {
                     string cleanMessage = exDetail.InnerException != null? exDetail.InnerException.Message: exDetail.Message;
-
-                    LogBulkError(_dal,uploadId,rowNumber,cleanMessage,row.Table.Columns.Contains("asset_code")? row["asset_code"].ToString(): "");
+                    LogBulkError(_dal,uploadId.ToString(),rowNumber,cleanMessage,row.Table.Columns.Contains("asset_code")? row["asset_code"].ToString(): "");
                 }
                 
             }
