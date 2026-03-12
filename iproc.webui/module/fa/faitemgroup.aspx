@@ -67,13 +67,12 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-4">Group Name*</label>
-                            <div class="col-sm-7">
-                                <cc1:XUITextBox ID="txtGroupName" runat="server" CssClass="form-control" placeholder ="Group Name" DBColumnName="FA_ITEM_GROUP_NAME" SPParameterName="p_fa_item_group_name" MaxLength="200" DataType="String" BindType="Both" ></cc1:XUITextBox>
-                                <asp:RequiredFieldValidator ID="rfvItemName" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtGroupName" Display="Dynamic"></asp:RequiredFieldValidator>
-                            </div>
-                        </div>                            
+                            <div class="form-group">
+                                <label class="col-sm-4"></label>
+                                <div class="col-sm-4">
+                                    <cc1:XUITextBox ID="txtItemCode" runat="server" ReadOnly="true" CssClass="form-control" DBColumnName="code_asset" SPParameterName="p_item_code" DataType="String" BindType="Both"></cc1:XUITextBox>
+                                </div>
+                            </div>                         
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -96,7 +95,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label class="col-sm-4">Asset Code Parent.</label>
+                                <label class="col-sm-4">Asset Parent Code</label>
                                  <div class="col-sm-8">    
                                     <asp:LinkButton runat="server" ID="btnLookUpItem" class="btn btn-primary" data-toggle="modal" CausesValidation="false"><i class="icon-table"></i></asp:LinkButton>                           
                                     <cc1:XUILabel ID="lblItemName" runat="server" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" ></cc1:XUILabel>
@@ -104,15 +103,7 @@
                                     <asp:RequiredFieldValidator ID="rfvItemCode" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtItemCode" Display="Dynamic"></asp:RequiredFieldValidator>    
                                  </div>
                             </div>              
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-sm-4">Asset Code</label>
-                                <div class="col-sm-6">
-                                    <cc1:XUITextBox ID="txtItemCode" runat="server" ReadOnly="true" CssClass="form-control" DBColumnName="code_asset" SPParameterName="p_item_code" DataType="String" BindType="Both"></cc1:XUITextBox>
-                                </div>
-                            </div>                             
-                        </div>
+                        </div>                        
                     </div>
                 </ContentTemplate>
             </asp:UpdatePanel>
@@ -126,7 +117,7 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-sm-8">
-                            <cc1:XUILinkButton ID="btnAdd" RoleCode="R90000070E" runat="server" CssClass="btn btn-primary" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
+                            <cc1:XUILinkButton ID="btnAdd" RoleCode="R90000070E" runat="server" CssClass="btn btn-primary" OnClick="btnAdd_Click" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnDelete" RoleCode="R90000070E" runat="server" CssClass="btn btn-danger" OnClick="btnDelete_Click" CausesValidation="false"><i class="icon-trash"></i>  Delete</cc1:XUILinkButton>
                         </div>
                         <div class="col-sm-4">

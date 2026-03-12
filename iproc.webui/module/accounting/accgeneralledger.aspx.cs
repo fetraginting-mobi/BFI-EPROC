@@ -450,7 +450,7 @@ public partial class module_accounting_accgeneralledger : BasePage
                             GeneralDAL _dal = null;
                             _dal = new GeneralDAL();
                             Hashtable _htParameters = new Hashtable();
-                            ExportFormatType eftreport = new ExportFormatType();
+                            //ExportFormatType eftreport = new ExportFormatType();
                             _htParameters.Clear();
                             _htParameters["p_user_id"] = Shared.CurrentUID.Trim();
                             _htParameters["p_voucher_no"] = row.Cells[1].Text;

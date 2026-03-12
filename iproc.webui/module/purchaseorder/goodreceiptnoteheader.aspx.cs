@@ -781,8 +781,6 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
             {
                 throw new Exception("Data tidak ditemukan");
             }
-
-             bool isSudahDibayar = false;
              foreach (DataRow dr in dt.Rows)
              {
                  string poCode = Convert.ToString(dr["PO_CODE"]);

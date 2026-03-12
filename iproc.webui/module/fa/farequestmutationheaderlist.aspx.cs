@@ -392,8 +392,13 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 row["owner"] = GetStringSafe(excelReader, 5);
                 row["asset_code"] = GetStringSafe(excelReader, 6);
                 row["description"] = GetStringSafe(excelReader, 7);
+                //row["department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
+                //row["division_code"] = Shared.CurrentEmployeeDivCode;
+                //row["sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
+                //row["units_code"] = Shared.CurrentEmployeeUnitsCode;
 
                 dt.Rows.Add(row);
+                
             }
             BulkInsertToStaging(dt);
             ExecuteBulkProcess(uploadId);
@@ -419,16 +424,9 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             ht["p_file_name"] = "UPLOAD_FA_MUTATION";
             ht["p_row_number"] = rowNumber;
 
-            ht["p_error_message"] = message == null
-                ? ""
-                : message;
-
-            ht["p_raw_data"] = rawData == null
-                ? ""
-                : rawData;
-
+            ht["p_error_message"] = message == null? "": message;
+            ht["p_raw_data"] = rawData == null? "": rawData;
             ht["p_upload_id"] = uploadId;
-
             ht["p_cre_by"] = Shared.CurrentUID;
             ht["p_cre_ip_address"] = Shared.CurrentIPAddress;
 
@@ -448,7 +446,6 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         ht["p_upload_id"] = uploadId;
         ht["p_cre_by"] = Shared.CurrentUID;
         ht["p_cre_ip_address"] = Shared.CurrentIPAddress;
-
         ht["p_department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
         ht["p_division_code"] = Shared.CurrentEmployeeDivCode;
         ht["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
@@ -477,6 +474,10 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         dt.Columns.Add("owner", typeof(string));
         dt.Columns.Add("asset_code", typeof(string));
         dt.Columns.Add("description", typeof(string));
+        dt.Columns.Add("department_code", typeof(string));
+        dt.Columns.Add("division_code", typeof(string));
+        dt.Columns.Add("sub_department_code", typeof(string));
+        dt.Columns.Add("units_code", typeof(string));
         return dt;
     }
     private string GetStringSafe(IExcelDataReader reader, int index)

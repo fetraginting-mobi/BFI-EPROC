@@ -63,9 +63,6 @@
                                     <asp:Label runat="server" ID="lblGroupCode" Text='<%# Eval("FA_ITEM_GROUP_CODE") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField DataField="FA_ITEM_GROUP_NAME" HeaderText="Group Name">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
-                            </asp:BoundField>
                             <asp:BoundField DataField="BRANCH_NAME" HeaderText="Branch Code">
                                 <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>

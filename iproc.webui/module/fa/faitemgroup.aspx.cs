@@ -30,6 +30,7 @@ public partial class module_fa_faitemgroup : BasePage
             btnLookUpItem.Attributes["href"] = "#";
             btnLookUpItem.Attributes["onclick"] = String.Format("openLookupItem('{0}','{1}','{2}','{3}'); return false;",txtItemCode.ClientID,lblItemName.ClientID,ddlBranch.ClientID,ddlLocation.ClientID);
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FAITGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_item_group_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, itemGroupCode);
+            
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
@@ -141,7 +142,8 @@ public partial class module_fa_faitemgroup : BasePage
                     }
                 }
             }
-            Shared.ShowSuccessGritter(this, string.Format("faitemgroup.aspx?action=edit&faitemgroupcode={0}", lblItemGroupCode.Text));
+            string redirectUrl = string.Format("faitemgroup.aspx?action=edit&faitemgroupcode={0}", sNextItemGroupCode);
+            Response.Redirect(redirectUrl);
         }
         catch (Exception ex)
         {
@@ -182,10 +184,11 @@ public partial class module_fa_faitemgroup : BasePage
         {
         }
     }
-    //protected void btnAdd_Click(object sender, EventArgs e)
-    //{
-    //    // Response.Redirect("faentrydetail.aspx?action=add&codebarcode=" + lblCodeBarcode.Text);
-    //}
+    protected void btnAdd_Click(object sender, EventArgs e)
+    {
+        string redirectUrl = string.Format("faitemgroup.aspx?action=add&faitemgroupcode={0}", lblItemGroupCode.Text);
+        Response.Redirect(redirectUrl);
+    }
     protected void btnDelete_Click(object sender, EventArgs e)
     {
         foreach (GridViewRow row in gvwList.Rows)
