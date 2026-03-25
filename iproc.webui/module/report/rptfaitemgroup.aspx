@@ -32,14 +32,7 @@
                                 </asp:UpdatePanel>
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label runat="server" id="Category" class="col-sm-3">Category</label>
-                                <div class="col-sm-6">
-                                    <cc1:XUIDropDownList ID="ddlCategory" runat="server" CssClass="form-control" SPParameterName="p_category" BindType="Both" DataType="String"></cc1:XUIDropDownList>
-                                </div>
-                            </div>                            
-                        </div>
+                        
                     </div>
                     <div class="row">
                         <div class="form-group">
@@ -56,6 +49,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3">Category</label>
+                            <div class="col-sm-6">
+                                <asp:UpdatePanel ID="updCat" runat="server">
+                                    <ContentTemplate>  
+                                        <cc1:XUIDropDownList ID="ddlCategory" runat="server" CssClass="form-control" SPParameterName="p_category" BindType="Both" DataType="String"></cc1:XUIDropDownList>
+                                    </ContentTemplate> 
+                                </asp:UpdatePanel>
+                        </div>
+                    </div>                    
                 </ContentTemplate>
             </asp:UpdatePanel>
         </div>
