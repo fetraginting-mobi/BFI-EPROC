@@ -95,6 +95,25 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label class="col-sm-4">Item List</label>
+                                <%--<div class="col-sm-5">    
+                                    <cc1:XUITextBox ID="txtItemList" runat="server" placeholder="Item" CssClass="form-control" DBColumnName="PERCENTAGE" SPParameterName="p_percentage" DataType="Number" MaxLength="10" Format="N0"  AutoPostBack="true" BindType="Both"></cc1:XUITextBox> 
+                                </div>--%>
+                                <div class="col-sm-8">
+                                 <asp:LinkButton runat="server" ID="btnLookUpItem" class="btn btn-primary" 
+                                        data-toggle="modal" CausesValidation="false" onclick="btnLookUpItem_Click">
+                                    <i class="icon-table"></i>
+                                 </asp:LinkButton>
+                                 <%--<cc1:XUITextBox ID="txtItemCode" runat="server" style="display:none;" CssClass="form-control" DBColumnName="ITEM_CODE" SPParameterName="p_item_code" DataType="String" BindType="Both" AutoPostBack="true" OnTextChanged="txtItemCode_TextChanged"></cc1:XUITextBox>
+                                 <cc1:XUITextBox ID="txtItemName" runat="server" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" Text="--" TextMode="MultiLine" style="border:0; background:inherit;"></cc1:XUITextBox>
+                                 <asp:RequiredFieldValidator ID="rfvItemCode" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtItemCode" Display="Dynamic"></asp:RequiredFieldValidator>--%>
+                              </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label class="col-sm-4">Reference No.</label>
                                 <div class="col-sm-5">
                                     <cc1:XUITextBox ID="txtReferenceNo" runat="server" CssClass="form-control" placeholder="Reference No" DBColumnName="REFF_CODE" Enabled="false" SPParameterName="p_reff_code" MaxLength="10" DataType="String" BindType="Both"></cc1:XUITextBox>

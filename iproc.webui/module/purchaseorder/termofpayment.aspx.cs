@@ -23,11 +23,31 @@ public partial class module_purchaseorder_termofpayment : BasePage
         if (!Page.IsPostBack)
         {
             Shared.BindGeneralSubCode(ddlTRX, "TRX");
+            var items = new System.Collections.Generic.List<System.Web.UI.WebControls.ListItem>();
+            foreach (System.Web.UI.WebControls.ListItem item in ddlTRX.Items)
+            {
+                items.Add(item);
+            }
+
+            items.Sort(delegate(ListItem x, ListItem y)
+            {
+                int xNum = GetNumberFromText(x.Text);
+                int yNum = GetNumberFromText(y.Text);
+
+                return xNum.CompareTo(yNum);
+            });
+
+            ddlTRX.Items.Clear();
+            foreach (ListItem sortedItem in items)
+            {
+                ddlTRX.Items.Add(sortedItem);
+            }
 
             //Shared.BindUnit(ddlUnit);
             lblCodeBarcode.Text = Request.Params["code"];
             txtCodeBarcode.Text = Request.Params["codebarcode"];
             TotalAmount();
+            btnLookUpItem.Attributes["href"] = null;// String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=POITM&acol_0={0}&bcol_1={1}&ccol_2={2}&parc_unit_code={3}&parc_branch={4}&parc_supplier_code={5}');", txtItemCode.ClientID, txtItemName.ClientID, ddlUnit.ClientID, txtUnit.ClientID, txtBranch.ClientID, txtSupplier.ClientID);
 
             if (Request.Params["action"].Equals("edit"))
             {
@@ -223,12 +243,25 @@ public partial class module_purchaseorder_termofpayment : BasePage
         {
             txtAmount.Enabled = false;
             txtPercentage.Enabled = true;
+            btnLookUpItem.Enabled = false;
         }
         if (ddlTerminType.SelectedValue == "AMT")
         {
             txtAmount.Enabled = true;
             txtPercentage.Enabled = false;
+            btnLookUpItem.Enabled = true;
         }
+    }
+
+    private int GetNumberFromText(string input)
+    {
+        // Menggunakan Regex untuk mencari angka pertama yang muncul
+        System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(input, @"\d+");
+        if (match.Success)
+        {
+            return int.Parse(match.Value);
+        }
+        return 0;
     }
 
 }
