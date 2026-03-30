@@ -44,6 +44,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
             }
 
             //Shared.BindUnit(ddlUnit);
+            btnLookUpItem.Enabled = false;
             lblCodeBarcode.Text = Request.Params["code"];
             txtCodeBarcode.Text = Request.Params["codebarcode"];
             TotalAmount();
@@ -264,4 +265,8 @@ public partial class module_purchaseorder_termofpayment : BasePage
         return 0;
     }
 
+    protected void btnLookUpItem_Click(object sender, EventArgs e)
+    {
+
+    }
 }
