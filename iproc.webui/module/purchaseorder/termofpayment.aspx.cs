@@ -48,8 +48,10 @@ public partial class module_purchaseorder_termofpayment : BasePage
             lblCodeBarcode.Text = Request.Params["code"];
             txtCodeBarcode.Text = Request.Params["codebarcode"];
             TotalAmount();
-            btnLookUpItem.Attributes["href"] = null;// String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=POITM&acol_0={0}&bcol_1={1}&ccol_2={2}&parc_unit_code={3}&parc_branch={4}&parc_supplier_code={5}');", txtItemCode.ClientID, txtItemName.ClientID, ddlUnit.ClientID, txtUnit.ClientID, txtBranch.ClientID, txtSupplier.ClientID);
 
+            string refreshID = btnRefreshAmount.UniqueID;
+            string baseUrl = String.Format("../../lookup/subscription.aspx?code=POTERMIT&par_code_barcode={0}&gvw={1}&par_po_barcode={2}", txtCodeBarcode.Text, refreshID, txtCodeBarcode.Text);
+            btnLookUpItem.Attributes["onclick"] = String.Format("var e = document.getElementById('{0}'); " + "var trx = e.options[e.selectedIndex].value; " + "fnShowDialog('{1}&par_trx_code=' + trx); return false;",ddlTRX.ClientID, baseUrl);
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
@@ -268,5 +270,32 @@ public partial class module_purchaseorder_termofpayment : BasePage
     protected void btnLookUpItem_Click(object sender, EventArgs e)
     {
 
+    }
+    protected void btnRefreshAmount_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            GeneralDAL _dal = new GeneralDAL();
+            Hashtable _ht = new Hashtable();
+            _ht["p_code_barcode"] = txtCodeBarcode.Text;
+            _ht["p_trx_code"] = ddlTRX.SelectedValue;
+
+            DataTable dt = _dal.GetRows("", "xsp_total_po_termin_item_getrows", _ht);
+
+            decimal total = 0;
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    total += Convert.ToDecimal(dr["total_amount"]);
+                }
+            }
+            txtAmount.Text = total.ToString("N2");
+            TotalAmount();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
     }
 }

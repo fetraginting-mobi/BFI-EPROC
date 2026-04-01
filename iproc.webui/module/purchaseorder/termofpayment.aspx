@@ -3,36 +3,6 @@
 <%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
-<script type="text/javascript">
-//    function ChangeAccrueValue(evt) {
-
-//        var obj = evt.target;
-//        var charCode = evt.keyCode;
-//        
-//        
-//        var amount = document.getElementById("ctl00_cpb_txtAmount").value;
-//        var percentage = document.getElementById("ctl00_cpb_txtPercentage").value;
-//        var totalamount = document.getElementById("ctl00_cpb_txtTotalAmount").value;
-////        var pct = document.getElementById("ctl00_cpb_txtAccruePct").value;
-////        var accAmount = document.getElementById("ctl00_cpb_txtAccrueAmount").value;
-//        
-//        if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) {
-
-//            if (obj.id == "<%= txtAmount.ClientID %>") {
-//                
-//                var pctreal = amount / totalamount * 100;
-//                 
-//                $("#<%= txtPercentage.ClientID %>").val(pctreal);
-//            }
-//            else if (obj.id == "<%= txtPercentage.ClientID %>") {
-//                var amoutreal = totalamount / percentage * 100;
-//                 
-//                $("#<%= txtAmount.ClientID %>").val(amoutreal);
-//            }
-
-//        }
-//    }
-</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">    
     <section class="panel">
@@ -96,17 +66,11 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-sm-4">Item List</label>
-                                <%--<div class="col-sm-5">    
-                                    <cc1:XUITextBox ID="txtItemList" runat="server" placeholder="Item" CssClass="form-control" DBColumnName="PERCENTAGE" SPParameterName="p_percentage" DataType="Number" MaxLength="10" Format="N0"  AutoPostBack="true" BindType="Both"></cc1:XUITextBox> 
-                                </div>--%>
                                 <div class="col-sm-8">
                                  <asp:LinkButton runat="server" ID="btnLookUpItem" class="btn btn-primary" 
                                         data-toggle="modal" CausesValidation="false" onclick="btnLookUpItem_Click">
                                     <i class="icon-table"></i>
                                  </asp:LinkButton>
-                                 <%--<cc1:XUITextBox ID="txtItemCode" runat="server" style="display:none;" CssClass="form-control" DBColumnName="ITEM_CODE" SPParameterName="p_item_code" DataType="String" BindType="Both" AutoPostBack="true" OnTextChanged="txtItemCode_TextChanged"></cc1:XUITextBox>
-                                 <cc1:XUITextBox ID="txtItemName" runat="server" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" Text="--" TextMode="MultiLine" style="border:0; background:inherit;"></cc1:XUITextBox>
-                                 <asp:RequiredFieldValidator ID="rfvItemCode" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtItemCode" Display="Dynamic"></asp:RequiredFieldValidator>--%>
                               </div>
                             </div>                            
                         </div>
@@ -117,23 +81,10 @@
                                 <label class="col-sm-4">Reference No.</label>
                                 <div class="col-sm-5">
                                     <cc1:XUITextBox ID="txtReferenceNo" runat="server" CssClass="form-control" placeholder="Reference No" DBColumnName="REFF_CODE" Enabled="false" SPParameterName="p_reff_code" MaxLength="10" DataType="String" BindType="Both"></cc1:XUITextBox>
-                                    <%--<asp:RequiredFieldValidator ID="rfvReferenceNo" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtReferenceNo" Display="Dynamic"></asp:RequiredFieldValidator>--%>
                                 </div>
                             </div>                            
                         </div>
                     </div>
-                   <%-- <div class="row">
-                         <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-sm-4">Date *</label>
-                                <div class="col-sm-4">
-                                    <cc1:XUITextBox ID="txtReceiveDate" runat="server"  CssClass="form-control default-date-picker"  placeholder="Receive Date" DBColumnName="TRX_DATE" SPParameterName="p_trx_date" MaxLength="10" DataType="Datetime" BindType="Both" Format="dd/MM/yyyy"></cc1:XUITextBox>
-                                    <asp:RequiredFieldValidator ID="rfvReceiveDate" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtReceiveDate" Display="Dynamic"></asp:RequiredFieldValidator>
-                                </div>
-                                    <asp:RegularExpressionValidator ID="revDisbursementDate" runat="server" ErrorMessage="Format Date Invalid! Format = dd/MM/yyyy" ControlToValidate="txtReceiveDate" ValidationExpression="(^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$)" Display="Dynamic"></asp:RegularExpressionValidator>
-                            </div>                            
-                        </div>
-                    </div>--%>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -153,9 +104,9 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Amount</label>
                                 <div class="col-sm-5">
+                                    <asp:LinkButton ID="btnRefreshAmount" runat="server" OnClick="btnRefreshAmount_Click" style="display:none;" />
                                     <cc1:XUITextBox ID="txtAmount" runat="server" CssClass="form-control" placeholder="Amount" DBColumnName="AMOUNT" SPParameterName="p_amount" DataType="Number" BindType="Both" MaxLength="15"  AutoPostBack="true" Format="N2"></cc1:XUITextBox> 
                                     <cc1:XUITextBox ID="txtTotalAmount" runat="server" CssClass="form-control" placeholder="Total Amount" DBColumnName="TOTAL_AMOUNT" DataType="Number" BindType="DBToUIOnly" MaxLength="15"  Style="display:none"></cc1:XUITextBox>
-                                    <%--<asp:RequiredFieldValidator ID="rfvAmount" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtAmount" Display="Dynamic"></asp:RequiredFieldValidator>--%>
                                     <asp:RegularExpressionValidator ID="revAmount" runat="server" ErrorMessage="Format Invalid!" ControlToValidate="txtAmount" ValidationExpression="[0-9 .,]*[0-9 .,]" Display="Dynamic" ></asp:RegularExpressionValidator>
                                 </div>
                             </div>
@@ -175,6 +126,7 @@
                 <Triggers>
                     <asp:AsyncPostBackTrigger ControlID="btnSave" EventName="Click" />
                     <asp:AsyncPostBackTrigger ControlID="btnCancel" EventName="Click" />
+                    <asp:AsyncPostBackTrigger ControlID="btnRefreshAmount" EventName="Click" />
                 </Triggers>
             </asp:UpdatePanel>
         </div>

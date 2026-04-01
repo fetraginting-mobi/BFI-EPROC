@@ -121,7 +121,7 @@
                                     <label class="col-sm-4 ">Invoice Date *</label>
                                     <div class="col-sm-7">
                                         <%--<cc1:XUITextBox ID="txtInvoiceDate" runat="server" CssClass="form-control default-date-picker" placeholder="Invoice Date" DBColumnName="INVOICE_DATE" SPParameterName="p_invoice_date" MaxLength="10" DataType="DateTime" BindType="Both" Format ="dd/MM/yyyy"></cc1:XUITextBox>--%>
-                                        <cc1:XUITextBox ID="txtInvoiceDate" runat="server" CssClass="form-control default-date-picker" placeholder="Invoice Date" DBColumnName="INVOICE_DATE" SPParameterName="p_invoice_date" MaxLength="14" DataType="DateTime" BindType="UItoDBOnly" Format ="dd/MM/yyyy"></cc1:XUITextBox>
+                                        <cc1:XUITextBox ID="txtInvoiceDate" runat="server" CssClass="form-control default-date-picker-all" placeholder="Invoice Date" DBColumnName="INVOICE_DATE" SPParameterName="p_invoice_date" MaxLength="14" DataType="DateTime" BindType="Both" Format ="dd/MM/yyyy"></cc1:XUITextBox>
                                         <asp:RequiredFieldValidator ID="rfvInvoiceDate" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtInvoiceDate" Display="Dynamic"></asp:RequiredFieldValidator>
                                         <asp:RegularExpressionValidator ID="revDisbursementDate" runat="server" ErrorMessage="Format Date Invalid! Format = dd/MM/yyyy" ControlToValidate="txtInvoiceDate" ValidationExpression="(^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$)" Display="Dynamic"></asp:RegularExpressionValidator>
                                     </div>
