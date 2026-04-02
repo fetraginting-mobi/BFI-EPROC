@@ -22,36 +22,58 @@ public partial class module_purchaseorder_termofpayment : BasePage
         LoadInit();
         if (!Page.IsPostBack)
         {
+            lblCodeBarcode.Text = Request.Params["code"];
+            txtCodeBarcode.Text = Request.Params["codebarcode"];
+
             Shared.BindGeneralSubCode(ddlTRX, "TRX");
-            var items = new System.Collections.Generic.List<System.Web.UI.WebControls.ListItem>();
-            foreach (System.Web.UI.WebControls.ListItem item in ddlTRX.Items)
+            var existingTrx = GetUsedTrxCodes(txtCodeBarcode.Text);
+            var filteredItems = new System.Collections.Generic.List<ListItem>();
+            foreach (ListItem item in ddlTRX.Items)
             {
-                items.Add(item);
+                if (!existingTrx.Contains(item.Value))
+                {
+                    filteredItems.Add(item);
+                }
             }
 
-            items.Sort(delegate(ListItem x, ListItem y)
+            filteredItems.Sort(delegate(ListItem x, ListItem y)
             {
                 int xNum = GetNumberFromText(x.Text);
                 int yNum = GetNumberFromText(y.Text);
-
                 return xNum.CompareTo(yNum);
             });
 
-            ddlTRX.Items.Clear();
-            foreach (ListItem sortedItem in items)
-            {
-                ddlTRX.Items.Add(sortedItem);
-            }
-
             //Shared.BindUnit(ddlUnit);
-            btnLookUpItem.Enabled = false;
-            lblCodeBarcode.Text = Request.Params["code"];
-            txtCodeBarcode.Text = Request.Params["codebarcode"];
+            btnLookUpItem.Enabled = false;            
+            string existingType = GetExistingTerminType(txtCodeBarcode.Text);
             TotalAmount();
 
             string refreshID = btnRefreshAmount.UniqueID;
             string baseUrl = String.Format("../../lookup/subscription.aspx?code=POTERMIT&par_code_barcode={0}&gvw={1}&par_po_barcode={2}", txtCodeBarcode.Text, refreshID, txtCodeBarcode.Text);
-            btnLookUpItem.Attributes["onclick"] = String.Format("var e = document.getElementById('{0}'); " + "var trx = e.options[e.selectedIndex].value; " + "fnShowDialog('{1}&par_trx_code=' + trx); return false;",ddlTRX.ClientID, baseUrl);
+            //btnLookUpItem.Attributes["onclick"] = String.Format("var e = document.getElementById('{0}'); " + "var trx = e.options[e.selectedIndex].value; " + "fnShowDialog('{1}&par_trx_code=' + trx); return false;",ddlTRX.ClientID, baseUrl);
+            btnLookUpItem.Attributes["onclick"] = String.Format( "var eTermin = document.getElementById('{0}'); " + "var terminVal = eTermin.options[eTermin.selectedIndex].value; " + 
+                    "if(terminVal !== 'AMT') {{ " + "   alert('LookUp hanya tersedia untuk tipe Amount (AMT)'); " + "   return false; " +"}} " +
+                        "var eTrx = document.getElementById('{1}'); " + "var trx = eTrx.options[eTrx.selectedIndex].value; " + "if(trx == '0') {{ alert('Pilih Trx Code terlebih dahulu!'); return false; }} " +
+                        "fnShowDialog('{2}&par_trx_code=' + trx); return false;", ddlTerminType.ClientID, ddlTRX.ClientID, baseUrl);
+            btnLookUpItem.Enabled = true;
+
+            if (Request.Params["action"].Equals("add"))
+            {
+                ddlTRX.Items.Clear();
+                ddlTRX.Items.Add(new ListItem("-=Select=-", "0"));
+                foreach (ListItem item in filteredItems)
+                {
+                    ddlTRX.Items.Add(item);
+                }
+                if (!string.IsNullOrEmpty(existingType))
+                {
+                    ddlTerminType.SelectedValue = existingType;
+                    ddlTerminType.Enabled = false; 
+                    // Jalankan logika UI untuk mengaktifkan Percentage/Amount box
+                    ToggleAmountPercentageFields(existingType);
+                }
+            }
+
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
@@ -69,17 +91,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 txtTotalAmount.Enabled = false;
                 txtRemarks.Enabled = false;
                 btnSave.Visible = false; //nirmala(13-12-2019) no ticket : 1912000132
-
-                if (ddlTerminType.SelectedValue == "PCT")
-                {
-                    txtAmount.Enabled = false;
-                    txtPercentage.Enabled = true;
-                }
-                if (ddlTerminType.SelectedValue == "AMT")
-                {
-                    txtAmount.Enabled = true;
-                    txtPercentage.Enabled = false;
-                }
+                ToggleAmountPercentageFields(existingType);
                 
             }
             if (lblStatus.Text == "POST" || lblStatus.Text == "CLOSED")
@@ -178,6 +190,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 _dal.Update(TABLE_NAME, _ht);
 
             Shared.ShowSuccessGritter(this, string.Format("purchaseorderheader.aspx?action=edit&codebarcode={0}&code={1}", txtCodeBarcode.Text, lblBarcode.Text));
+            Response.Redirect("purchaseorderheader.aspx?action=edit&codebarcode=" + txtCodeBarcode.Text + "&code=" + lblBarcode.Text);
         }
         catch (Exception ex)
         {
@@ -192,8 +205,6 @@ public partial class module_purchaseorder_termofpayment : BasePage
 
     protected void btnCancel_Click(object sender, EventArgs e)
     {
-        //Response.Redirect("purchaseorderheader.aspx?action=edit&codebarcode=" + txtCodeBarcode.Text + "&code=" + lblBarcode.Text);
-
         int idTarget = 0;
         String Type_app = "";
 
@@ -220,24 +231,6 @@ public partial class module_purchaseorder_termofpayment : BasePage
             Response.Redirect("purchaseorderheader.aspx?action=edit&codebarcode=" + txtCodeBarcode.Text + "&code=" + lblBarcode.Text);
         }
     }
-
-    //protected void txtAmount_TextChanged(object sender, EventArgs e)
-    //{
-    //    decimal pct = 0;
-         
-    //    pct = Decimal.Parse(txtAmount.Text.Replace(".00", "")) / Decimal.Parse(txtTotalAmount.Text.Replace(".00", "")) * 100;
-    //    txtPercentage.Text = pct.ToString();
-    //   // txtPercentage.Enabled = false;
-    //}
-
-    //protected void txtPersen_TextChanged(object sender, EventArgs e)
-    //{
-    //    decimal amount  = 0;
-        
-    //    amount = Decimal.Parse(txtPercentage.Text.Replace(".00", "")) / 100 * Decimal.Parse(txtTotalAmount.Text.Replace(".00", "")) ;
-    //    txtAmount.Text = amount.ToString();
-    //   // txtAmount.Enabled = false;
-    //}
 
     protected void ddlTerminType_SelectedIndex(object sender, EventArgs e)
     {
@@ -297,5 +290,65 @@ public partial class module_purchaseorder_termofpayment : BasePage
         {
             Shared.ShowErrorDialog(this, ex);
         }
+    }
+    private void ToggleAmountPercentageFields(string type)
+    {
+        if (type == "PCT")
+        {
+            txtAmount.Enabled = false;
+            txtPercentage.Enabled = true;
+        }
+        else if (type == "AMT")
+        {
+            txtAmount.Enabled = true;
+            txtPercentage.Enabled = false;
+        }
+    }
+    private string GetExistingTerminType(string codeBarcode)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        _ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+        try
+        {
+            DataRow dr = _dal.GetRow("po_termin_check_type", _ht);
+            if (dr != null && dr["termin_type"] != DBNull.Value)
+            {
+                return dr["termin_type"].ToString();
+            }
+
+        }
+        catch (IndexOutOfRangeException)
+        {
+            return string.Empty;
+        }
+        catch (Exception ex)
+        {
+            return string.Empty;
+        }
+        return string.Empty;            
+    }
+
+    private System.Collections.Generic.List<string> GetUsedTrxCodes(string codeBarcode)
+    {
+        System.Collections.Generic.List<string> usedCodes = new System.Collections.Generic.List<string>();
+        Hashtable _ht = new Hashtable();
+        _ht["p_code_barcode"] = codeBarcode;
+
+        try
+        {
+            DataTable dt = new GeneralDAL().GetRows("po_termin_check_type", _ht);
+            foreach (DataRow dr in dt.Rows)
+            {
+                usedCodes.Add(dr["TRX_CODE"].ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+
+        return usedCodes;
     }
 }
