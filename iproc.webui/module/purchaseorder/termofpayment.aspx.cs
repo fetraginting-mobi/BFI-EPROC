@@ -60,7 +60,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
             if (Request.Params["action"].Equals("add"))
             {
                 ddlTRX.Items.Clear();
-                ddlTRX.Items.Add(new ListItem("-=Select=-", "0"));
+                //ddlTRX.Items.Add(new ListItem("-=Select=-", "0"));
                 foreach (ListItem item in filteredItems)
                 {
                     ddlTRX.Items.Add(item);

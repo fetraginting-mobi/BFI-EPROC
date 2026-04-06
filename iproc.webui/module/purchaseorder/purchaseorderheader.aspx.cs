@@ -581,6 +581,20 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
             DataRow _dr = _dal.GetRow(TABLE_NAME_HEADER, _ht);
 
+            //(+) fetra 2060406 ket : Iproc Phase III
+            if (_dr != null && _dr.Table.Columns.Contains("is_termin"))
+            {
+                string isTermin = _dr["is_termin"].ToString();
+                if (isTermin == "0" || isTermin.ToLower() == "false")
+                {
+                    liTermin.Visible = false;
+                }
+                else
+                {
+                    liTermin.Visible = true;
+                }
+            }
+
             DBToUI.Map(this.Controls, _dr);
 
             Shared.BindDivision(ddlDivision);

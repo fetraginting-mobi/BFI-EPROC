@@ -478,9 +478,8 @@
                   <a href="#itemlist" id="poitemlist" onclick="javascript:fnSetTab('poitemlist');" data-toggle="tab" style="padding-bottom:28px">
                       Item List 
                   </a>
-              </li>
-              
-              <li class="">
+              </li>              
+              <li class="" id="liTermin" runat="server">
                   <a href="#TOP" id="poTOP" onclick="javascript:fnSetTab('poTOP');" data-toggle="tab" style="padding-bottom:28px">
                       Term of Payment
                   </a>
