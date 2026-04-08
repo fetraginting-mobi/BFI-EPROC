@@ -3,6 +3,18 @@
 <%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
+<style type="text/css">
+        .fixed-table {
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        .col-shrink {
+            width: 35px !important; 
+            white-space: nowrap;
+            text-align: center;
+        }
+    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">    
     <section class="panel">
@@ -131,4 +143,91 @@
             </asp:UpdatePanel>
         </div>
     </section>
+
+    <asp:Panel runat="server" ID="pnlItemList">
+        <section class="panel">
+            <header class="panel-heading">
+                <span>Detail Item List</span>
+            </header>
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <cc1:XUILinkButton ID="btnAdd" RoleCode="90000065E" runat="server" CssClass="btn btn-primary" style="display:none;"><i class="icon-plus"></i></cc1:XUILinkButton>
+                        <cc1:XUILinkButton ID="btnSaveItemList" RoleCode="R80000010E" runat="server" 
+                            CssClass="btn btn-primary" onclick="btnSaveItemList_Click"><i class="icon-save"></i>  Save</cc1:XUILinkButton>
+                        <cc1:XUILinkButton ID="btnDeleteItemList" RoleCode="90000065E" runat="server" CssClass="btn btn-danger"><i class="icon-trash"></i>  Delete</cc1:XUILinkButton>
+                    </div>
+                </div>
+            </div>
+           <div class="panel-body">
+                <asp:UpdatePanel ID="updItemList" runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" 
+                            CssClass="display table table-bordered table-striped fixed-table"
+                            AllowPaging="true" PageSize="10" DataKeyNames="ID" 
+                            EmptyDataText="There Is No Data" Width="100%">
+                            <Columns>
+                                <%-- Kolom No --%>
+                                <asp:TemplateField>
+                                    <HeaderTemplate><span>No</span></HeaderTemplate>
+                                    <HeaderStyle Width="50px" HorizontalAlign="Center" />
+                                    <ItemStyle HorizontalAlign="Center" />
+                                    <ItemTemplate>
+                                        <%# Container.DataItemIndex + 1 %>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <%-- Kolom Checkbox --%>
+                                <asp:TemplateField>
+                                    <HeaderTemplate>
+                                        <asp:CheckBox runat="server" ID="chbCheckedAll" AutoPostBack="true" OnCheckedChanged="chbCheckedAll_CheckedChanged" />
+                                    </HeaderTemplate>
+                                    <HeaderStyle Width="35px" HorizontalAlign="Center" />
+                                    <ItemStyle HorizontalAlign="Center" />
+                                    <ItemTemplate>
+                                        <asp:CheckBox runat="server" ID="chbChecked"/>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:BoundField DataField="ITEM_CODE" HeaderText="Item Code">
+                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                </asp:BoundField>
+
+                                <asp:BoundField DataField="ITEM_NAME" HeaderText="Item Name">
+                                    <ItemStyle Width="30%" />
+                                </asp:BoundField>
+
+                                <asp:BoundField DataField="ORDER_QTY" HeaderText="QTY">
+                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                </asp:BoundField>
+
+                                <asp:BoundField DataField="TOTAL_AMOUNT_TERMIN" HeaderText="Purchase Amount">
+                                    <ItemStyle Width="10%" HorizontalAlign="Right" />
+                                </asp:BoundField>   
+
+                                <%-- Kolom Input Termin --%>
+                                <asp:TemplateField HeaderText="Termin Amount">
+                                    <ItemStyle Width="15%" HorizontalAlign="Left" />
+                                    <ItemTemplate>
+                                        <asp:TextBox runat="server" ID="txtTerminAmount" CssClass="form-control" 
+                                            Text='<%# Bind("TOTAL_AMOUNT_TERMIN") %>' />
+                                        <asp:RegularExpressionValidator ID="revAmount" runat="server" 
+                                            ErrorMessage="Format Invalid!" 
+                                            ControlToValidate="txtTerminAmount" 
+                                            ValidationExpression="^[0-9.,]*$" 
+                                            Display="Dynamic" ForeColor="Red" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>                          
+                            </Columns>
+                        </asp:GridView>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="btnDeleteItemList" EventName="Click" />
+                        <asp:AsyncPostBackTrigger ControlID="btnRefreshAmount" EventName="Click" />
+                    </Triggers>
+                </asp:UpdatePanel>
+            </div>
+        </section>
+
+    </asp:Panel>
 </asp:Content>

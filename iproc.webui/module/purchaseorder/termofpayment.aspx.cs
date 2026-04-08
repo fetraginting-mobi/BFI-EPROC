@@ -60,7 +60,6 @@ public partial class module_purchaseorder_termofpayment : BasePage
             if (Request.Params["action"].Equals("add"))
             {
                 ddlTRX.Items.Clear();
-                //ddlTRX.Items.Add(new ListItem("-=Select=-", "0"));
                 foreach (ListItem item in filteredItems)
                 {
                     ddlTRX.Items.Add(item);
@@ -91,7 +90,9 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 txtTotalAmount.Enabled = false;
                 txtRemarks.Enabled = false;
                 btnSave.Visible = false; //nirmala(13-12-2019) no ticket : 1912000132
+                btnLookUpItem.Enabled = false;
                 ToggleAmountPercentageFields(existingType);
+                LoadItemList();
                 
             }
             if (lblStatus.Text == "POST" || lblStatus.Text == "CLOSED")
@@ -284,6 +285,8 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 }
             }
             txtAmount.Text = total.ToString("N2");
+            LoadItemList();
+            updItemList.Update();
             TotalAmount();
         }
         catch (Exception ex)
@@ -350,5 +353,66 @@ public partial class module_purchaseorder_termofpayment : BasePage
         }
 
         return usedCodes;
+    }
+
+    private void LoadItemList()
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+        _ht["p_code_barcode"] = txtCodeBarcode.Text;
+        _ht["p_trx_code"] = ddlTRX.SelectedValue;
+
+        try
+        {
+            DataTable dt = _dal.GetRows("term_of_payment_item", _ht);
+            gvwList.DataSource = dt;
+            gvwList.DataBind();
+            pnlItemList.Visible = true;
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+        
+    }
+    protected void btnSaveItemList_Click(object sender, EventArgs e)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            if (row.RowType == DataControlRowType.DataRow)
+            {
+                string id = gvwList.DataKeys[row.RowIndex].Value.ToString();
+                TextBox txtAmount = (TextBox)row.FindControl("txtTerminAmount");
+
+                if (txtAmount != null)
+                {
+                    Hashtable _ht = new Hashtable();
+                    _ht["p_id"] = id;
+                    _ht["p_total_amount_term"] = decimal.Parse(txtAmount.Text);
+
+                    _dal.Update("TERM_OF_PAYMENT_ITEM", "xsp_term_of_payment_item_update_amount", _ht);
+                }
+            }
+        }
+
+        btnRefreshAmount_Click(null, null);
+    }
+    protected void chbCheckedAll_CheckedChanged(object sender, EventArgs e)
+    {
+        CheckBox chkAll = (CheckBox)sender;
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            if (row.RowType == DataControlRowType.DataRow)
+            {
+                CheckBox chkRow = (CheckBox)row.FindControl("chbChecked");
+                if (chkRow != null)
+                {
+                    chkRow.Checked = chkAll.Checked;
+                }
+            }
+        }
+        updItemList.Update();
     }
 }

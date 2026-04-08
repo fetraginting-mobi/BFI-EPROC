@@ -4752,3 +4752,13 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 .site-min-height {
     min-height: 900px;
 }
+.fixed-table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+.col-shrink {
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+}
