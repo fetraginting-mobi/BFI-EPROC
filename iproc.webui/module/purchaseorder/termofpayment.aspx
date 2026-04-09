@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="panel-body form-horizontal"> 
-            <asp:UpdatePanel ID="upd" runat="server">
+            <asp:UpdatePanel ID="upd" runat="server" UpdateMode="Conditional">
                 <ContentTemplate>
                     <%--ID--%>
                     <cc1:XUILabel ID="lblID" runat="server" DBColumnName="ID" SPParameterName="p_id" DataType="Integer" BindType="Both" Text= "0" Style="display:none"></cc1:XUILabel>
@@ -117,7 +117,7 @@
                                 <label class="col-sm-4">Amount</label>
                                 <div class="col-sm-5">
                                     <asp:LinkButton ID="btnRefreshAmount" runat="server" OnClick="btnRefreshAmount_Click" style="display:none;" />
-                                    <cc1:XUITextBox ID="txtAmount" runat="server" CssClass="form-control" placeholder="Amount" DBColumnName="AMOUNT" SPParameterName="p_amount" DataType="Number" BindType="Both" MaxLength="15"  AutoPostBack="true" Format="N2"></cc1:XUITextBox> 
+                                    <cc1:XUITextBox ID="txtAmount" runat="server" CssClass="form-control" ReadOnly="true" placeholder="Amount" DBColumnName="AMOUNT" SPParameterName="p_amount" DataType="Number" BindType="Both" MaxLength="15"  AutoPostBack="true" Format="N2"></cc1:XUITextBox> 
                                     <cc1:XUITextBox ID="txtTotalAmount" runat="server" CssClass="form-control" placeholder="Total Amount" DBColumnName="TOTAL_AMOUNT" DataType="Number" BindType="DBToUIOnly" MaxLength="15"  Style="display:none"></cc1:XUITextBox>
                                     <asp:RegularExpressionValidator ID="revAmount" runat="server" ErrorMessage="Format Invalid!" ControlToValidate="txtAmount" ValidationExpression="[0-9 .,]*[0-9 .,]" Display="Dynamic" ></asp:RegularExpressionValidator>
                                 </div>
@@ -164,7 +164,8 @@
                     <ContentTemplate>
                         <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" 
                             CssClass="display table table-bordered table-striped fixed-table"
-                            AllowPaging="true" PageSize="10" DataKeyNames="ID" 
+                            AllowPaging="true" PageSize="10" DataKeyNames="ID"
+                            OnRowDataBound="gvwList_RowDataBound" 
                             EmptyDataText="There Is No Data" Width="100%">
                             <Columns>
                                 <%-- Kolom No --%>
@@ -201,9 +202,12 @@
                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                 </asp:BoundField>
 
-                                <asp:BoundField DataField="TOTAL_AMOUNT_TERMIN" HeaderText="Purchase Amount">
+                                <asp:BoundField DataField="TOTAL_PO_AMOUNT" HeaderText="Purchase Amount">
                                     <ItemStyle Width="10%" HorizontalAlign="Right" />
-                                </asp:BoundField>   
+                                </asp:BoundField> 
+                                <asp:BoundField DataField="OUTSTANDING_PO_AMOUNT" HeaderText="Outstanding Amount">
+                                    <ItemStyle Width="10%" HorizontalAlign="Right" />
+                                </asp:BoundField>  
 
                                 <%-- Kolom Input Termin --%>
                                 <asp:TemplateField HeaderText="Termin Amount">

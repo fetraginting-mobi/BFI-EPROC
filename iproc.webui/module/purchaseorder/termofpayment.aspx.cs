@@ -25,62 +25,53 @@ public partial class module_purchaseorder_termofpayment : BasePage
             lblCodeBarcode.Text = Request.Params["code"];
             txtCodeBarcode.Text = Request.Params["codebarcode"];
 
+            string action = Request.Params["action"] != null ? Request.Params["action"].ToLower() : "";
+
             Shared.BindGeneralSubCode(ddlTRX, "TRX");
             var existingTrx = GetUsedTrxCodes(txtCodeBarcode.Text);
-            var filteredItems = new System.Collections.Generic.List<ListItem>();
-            foreach (ListItem item in ddlTRX.Items)
-            {
-                if (!existingTrx.Contains(item.Value))
-                {
-                    filteredItems.Add(item);
-                }
-            }
-
-            filteredItems.Sort(delegate(ListItem x, ListItem y)
-            {
-                int xNum = GetNumberFromText(x.Text);
-                int yNum = GetNumberFromText(y.Text);
-                return xNum.CompareTo(yNum);
-            });
-
-            //Shared.BindUnit(ddlUnit);
-            btnLookUpItem.Enabled = false;            
             string existingType = GetExistingTerminType(txtCodeBarcode.Text);
-            TotalAmount();
 
-            string refreshID = btnRefreshAmount.UniqueID;
-            string baseUrl = String.Format("../../lookup/subscription.aspx?code=POTERMIT&par_code_barcode={0}&gvw={1}&par_po_barcode={2}", txtCodeBarcode.Text, refreshID, txtCodeBarcode.Text);
-            //btnLookUpItem.Attributes["onclick"] = String.Format("var e = document.getElementById('{0}'); " + "var trx = e.options[e.selectedIndex].value; " + "fnShowDialog('{1}&par_trx_code=' + trx); return false;",ddlTRX.ClientID, baseUrl);
-            btnLookUpItem.Attributes["onclick"] = String.Format( "var eTermin = document.getElementById('{0}'); " + "var terminVal = eTermin.options[eTermin.selectedIndex].value; " + 
-                    "if(terminVal !== 'AMT') {{ " + "   alert('LookUp hanya tersedia untuk tipe Amount (AMT)'); " + "   return false; " +"}} " +
-                        "var eTrx = document.getElementById('{1}'); " + "var trx = eTrx.options[eTrx.selectedIndex].value; " + "if(trx == '0') {{ alert('Pilih Trx Code terlebih dahulu!'); return false; }} " +
-                        "fnShowDialog('{2}&par_trx_code=' + trx); return false;", ddlTerminType.ClientID, ddlTRX.ClientID, baseUrl);
-            btnLookUpItem.Enabled = true;
-
-            if (Request.Params["action"].Equals("add"))
+            if (action == "add")
             {
+                var filteredItems = new System.Collections.Generic.List<ListItem>();
+                foreach (ListItem item in ddlTRX.Items)
+                {
+                    if (!existingTrx.Contains(item.Value) && item.Value != "0")
+                    {
+                        filteredItems.Add(new ListItem(item.Text, item.Value));
+                    }
+                }
+
+                filteredItems.Sort(delegate(ListItem x, ListItem y)
+                {
+                    return GetNumberFromText(x.Text).CompareTo(GetNumberFromText(y.Text));
+                });
+
                 ddlTRX.Items.Clear();
-                foreach (ListItem item in filteredItems)
+                foreach (var item in filteredItems)
                 {
                     ddlTRX.Items.Add(item);
+                }
+                if (filteredItems.Count > 0)
+                {
+                    ddlTRX.SelectedIndex = 0; 
                 }
                 if (!string.IsNullOrEmpty(existingType))
                 {
                     ddlTerminType.SelectedValue = existingType;
-                    ddlTerminType.Enabled = false; 
-                    // Jalankan logika UI untuk mengaktifkan Percentage/Amount box
+                    ddlTerminType.Enabled = false;
                     ToggleAmountPercentageFields(existingType);
                 }
             }
-
-            if (Request.Params["action"].Equals("edit"))
+            if (action == "edit")
             {
-                LoadData();
+                LoadData();                 
                 lblID.Enabled = false;
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
-                btnSave.Enabled = false;
-                lblCodeBarcode.Enabled = false;
+                btnSave.Visible = false; 
+                btnSaveItemList.Enabled = false; 
+                btnLookUpItem.Enabled = false;                
                 txtCodeBarcode.Enabled = false;
                 ddlTerminType.Enabled = false;
                 ddlTRX.Enabled = false;
@@ -89,34 +80,162 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 txtAmount.Enabled = false;
                 txtTotalAmount.Enabled = false;
                 txtRemarks.Enabled = false;
-                btnSave.Visible = false; //nirmala(13-12-2019) no ticket : 1912000132
-                btnLookUpItem.Enabled = false;
+
                 ToggleAmountPercentageFields(existingType);
                 LoadItemList();
-                
             }
+
+            if (action != "edit")
+            {
+                string refreshID = btnRefreshAmount.UniqueID;
+                string baseUrl = String.Format("../../lookup/subscription.aspx?code=POTERMIT&par_code_barcode={0}&gvw={1}&par_po_barcode={2}", 
+                                 txtCodeBarcode.Text, refreshID, txtCodeBarcode.Text);
+
+                btnLookUpItem.Attributes["onclick"] = String.Format(
+                    "var eTermin = document.getElementById('{0}'); " +
+                    "var terminVal = eTermin.options[eTermin.selectedIndex].value; " +
+                    "if(terminVal !== 'AMT') {{ alert('LookUp hanya tersedia untuk tipe Amount (AMT)'); return false; }} " +
+                    "var eTrx = document.getElementById('{1}'); " +
+                    "var trx = eTrx.options[eTrx.selectedIndex].value; " +
+                    "if(trx == '0') {{ alert('Pilih Trx Code terlebih dahulu!'); return false; }} " +
+                    "fnShowDialog('{2}&par_trx_code=' + trx); return false;", 
+                    ddlTerminType.ClientID, ddlTRX.ClientID, baseUrl);
+                
+                btnLookUpItem.Enabled = true;
+            }
+
+            TotalAmount();
             if (lblStatus.Text == "POST" || lblStatus.Text == "CLOSED")
             {
                 btnSave.Visible = false;
                 ddlTRX.Enabled = false;
                 txtPercentage.Enabled = false;
-                //txtReceiveDate.Enabled = false;
                 txtReferenceNo.Enabled = false;
             }
-            
-           if (ddlTerminType.SelectedValue == "PCT")
+
+            if (ddlTerminType.SelectedValue == "PCT")
             {
                 txtAmount.Enabled = false;
-                txtPercentage.Enabled = true;
+                txtPercentage.Enabled = (action != "edit");
             }
-            if (ddlTerminType.SelectedValue == "AMT")
+            else if (ddlTerminType.SelectedValue == "AMT")
             {
-                txtAmount.Enabled = true;
+                txtAmount.Enabled = (action != "edit");
                 txtPercentage.Enabled = false;
             }
-            
-        }
+         }
         LoadAfterInit();
+
+
+        //    Shared.BindGeneralSubCode(ddlTRX, "TRX");
+        //    var existingTrx = GetUsedTrxCodes(txtCodeBarcode.Text);
+        //    var filteredItems = new System.Collections.Generic.List<ListItem>();
+        //    foreach (ListItem item in ddlTRX.Items)
+        //    {
+        //        if (!existingTrx.Contains(item.Value) && item.Value != "0")
+        //        {
+        //            filteredItems.Add(new ListItem(item.Text, item.Value));
+        //        }
+        //    }
+
+        //    filteredItems.Sort(delegate(ListItem x, ListItem y)
+        //    {
+        //        int xNum = GetNumberFromText(x.Text);
+        //        int yNum = GetNumberFromText(y.Text);
+        //        return xNum.CompareTo(yNum);
+        //    });
+
+        //    ddlTRX.Items.Clear();
+        //    foreach (var item in filteredItems)
+        //    {
+        //        ddlTRX.Items.Add(item);
+        //    }
+
+        //    if (filteredItems.Count > 0)
+        //    {
+        //        // Karena sudah di-sort, filteredItems[0] adalah termin urutan berikutnya
+        //        ddlTRX.SelectedValue = filteredItems[0].Value;
+        //    }
+
+
+
+
+        //    //Shared.BindUnit(ddlUnit);
+        //    btnLookUpItem.Enabled = false;            
+        //    string existingType = GetExistingTerminType(txtCodeBarcode.Text);
+        //    TotalAmount();
+
+        //    string refreshID = btnRefreshAmount.UniqueID;
+        //    string baseUrl = String.Format("../../lookup/subscription.aspx?code=POTERMIT&par_code_barcode={0}&gvw={1}&par_po_barcode={2}", txtCodeBarcode.Text, refreshID, txtCodeBarcode.Text);
+        //    //btnLookUpItem.Attributes["onclick"] = String.Format("var e = document.getElementById('{0}'); " + "var trx = e.options[e.selectedIndex].value; " + "fnShowDialog('{1}&par_trx_code=' + trx); return false;",ddlTRX.ClientID, baseUrl);
+        //    btnLookUpItem.Attributes["onclick"] = String.Format( "var eTermin = document.getElementById('{0}'); " + "var terminVal = eTermin.options[eTermin.selectedIndex].value; " + 
+        //            "if(terminVal !== 'AMT') {{ " + "   alert('LookUp hanya tersedia untuk tipe Amount (AMT)'); " + "   return false; " +"}} " +
+        //                "var eTrx = document.getElementById('{1}'); " + "var trx = eTrx.options[eTrx.selectedIndex].value; " + "if(trx == '0') {{ alert('Pilih Trx Code terlebih dahulu!'); return false; }} " +
+        //                "fnShowDialog('{2}&par_trx_code=' + trx); return false;", ddlTerminType.ClientID, ddlTRX.ClientID, baseUrl);
+        //    btnLookUpItem.Enabled = true;
+
+        //    if (Request.Params["action"].Equals("add"))
+        //    {
+        //        ddlTRX.Items.Clear();
+        //        foreach (ListItem item in filteredItems)
+        //        {
+        //            ddlTRX.Items.Add(item);
+        //        }
+        //        if (!string.IsNullOrEmpty(existingType))
+        //        {
+        //            ddlTerminType.SelectedValue = existingType;
+        //            ddlTerminType.Enabled = false; 
+        //            // Jalankan logika UI untuk mengaktifkan Percentage/Amount box
+        //            ToggleAmountPercentageFields(existingType);
+        //        }
+        //    }
+
+        //    if (Request.Params["action"].Equals("edit"))
+        //    {
+        //        LoadData();
+        //        lblID.Enabled = false;
+        //        btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
+        //        btnCancel.CssClass = "btn btn-custome";
+        //        btnSave.Enabled = false;
+        //        lblCodeBarcode.Enabled = false;
+        //        txtCodeBarcode.Enabled = false;
+        //        ddlTerminType.Enabled = false;
+        //        ddlTRX.Enabled = false;
+        //        txtReferenceNo.Enabled = false;
+        //        txtPercentage.Enabled = false;
+        //        txtAmount.Enabled = false;
+        //        txtTotalAmount.Enabled = false;
+        //        txtRemarks.Enabled = false;
+        //        btnSave.Visible = false; //nirmala(13-12-2019) no ticket : 1912000132
+        //        btnLookUpItem.Enabled = false;
+
+        //        btnSaveItemList.Enabled = false;
+        //        ToggleAmountPercentageFields(existingType);
+        //        LoadItemList();
+                
+        //    }
+        //    if (lblStatus.Text == "POST" || lblStatus.Text == "CLOSED")
+        //    {
+        //        btnSave.Visible = false;
+        //        ddlTRX.Enabled = false;
+        //        txtPercentage.Enabled = false;
+        //        //txtReceiveDate.Enabled = false;
+        //        txtReferenceNo.Enabled = false;
+        //    }
+            
+        //   if (ddlTerminType.SelectedValue == "PCT")
+        //    {
+        //        txtAmount.Enabled = false;
+        //        txtPercentage.Enabled = true;
+        //    }
+        //    if (ddlTerminType.SelectedValue == "AMT")
+        //    {
+        //        txtAmount.Enabled = true;
+        //        txtPercentage.Enabled = false;
+        //    }
+            
+        //}
+        //LoadAfterInit();
     }
 
     private void LoadData()
@@ -252,11 +371,16 @@ public partial class module_purchaseorder_termofpayment : BasePage
 
     private int GetNumberFromText(string input)
     {
-        // Menggunakan Regex untuk mencari angka pertama yang muncul
+        if (string.IsNullOrEmpty(input)) return 0;
         System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(input, @"\d+");
+
         if (match.Success)
         {
-            return int.Parse(match.Value);
+            int result;
+            if (int.TryParse(match.Value, out result))
+            {
+                return result;
+            }
         }
         return 0;
     }
@@ -269,25 +393,10 @@ public partial class module_purchaseorder_termofpayment : BasePage
     {
         try
         {
-            GeneralDAL _dal = new GeneralDAL();
-            Hashtable _ht = new Hashtable();
-            _ht["p_code_barcode"] = txtCodeBarcode.Text;
-            _ht["p_trx_code"] = ddlTRX.SelectedValue;
-
-            DataTable dt = _dal.GetRows("", "xsp_total_po_termin_item_getrows", _ht);
-
-            decimal total = 0;
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    total += Convert.ToDecimal(dr["total_amount"]);
-                }
-            }
-            txtAmount.Text = total.ToString("N2");
+            txtAmount.Text = "0.00";
             LoadItemList();
-            updItemList.Update();
-            TotalAmount();
+            upd.Update();
+            updItemList.Update();            
         }
         catch (Exception ex)
         {
@@ -378,26 +487,47 @@ public partial class module_purchaseorder_termofpayment : BasePage
     protected void btnSaveItemList_Click(object sender, EventArgs e)
     {
         GeneralDAL _dal = new GeneralDAL();
+        decimal totalKeseluruhan = 0;
 
-        foreach (GridViewRow row in gvwList.Rows)
+        if (Request.QueryString["action"] == "edit")
         {
-            if (row.RowType == DataControlRowType.DataRow)
+            return;
+        }
+        try
+        {
+            foreach (GridViewRow row in gvwList.Rows)
             {
-                string id = gvwList.DataKeys[row.RowIndex].Value.ToString();
-                TextBox txtAmount = (TextBox)row.FindControl("txtTerminAmount");
-
-                if (txtAmount != null)
+                if (row.RowType == DataControlRowType.DataRow)
                 {
-                    Hashtable _ht = new Hashtable();
-                    _ht["p_id"] = id;
-                    _ht["p_total_amount_term"] = decimal.Parse(txtAmount.Text);
+                    string idItem = gvwList.DataKeys[row.RowIndex].Value.ToString();
+                    TextBox txtAmountItem = (TextBox)row.FindControl("txtTerminAmount");
 
-                    _dal.Update("TERM_OF_PAYMENT_ITEM", "xsp_term_of_payment_item_update_amount", _ht);
+                    if (txtAmountItem != null)
+                    {
+                        decimal nilaiInput = 0;
+                        if (!string.IsNullOrEmpty(txtAmountItem.Text))
+                        {
+                            nilaiInput = decimal.Parse(txtAmountItem.Text);
+                        }
+                        totalKeseluruhan += nilaiInput;
+
+                        Hashtable _ht = new Hashtable();
+                        _ht["p_id"] = idItem;
+                        _ht["p_total_amount_termin"] = nilaiInput;
+                        _dal.Update("TERM_OF_PAYMENT_DETAIL", "xsp_term_of_payment_detail_update", _ht);
+                    }
                 }
             }
+            txtAmount.Text = totalKeseluruhan.ToString("N2");
+            LoadItemList();
+            upd.Update();
+            updItemList.Update();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
         }
 
-        btnRefreshAmount_Click(null, null);
     }
     protected void chbCheckedAll_CheckedChanged(object sender, EventArgs e)
     {
@@ -414,5 +544,25 @@ public partial class module_purchaseorder_termofpayment : BasePage
             }
         }
         updItemList.Update();
+    }
+
+    protected void gvwList_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            string action = Request.QueryString["action"];
+
+            if (action == "edit")
+            {
+                TextBox txtTermin = (TextBox)e.Row.FindControl("txtTerminAmount");
+                if (txtTermin != null)
+                {
+                    txtTermin.ReadOnly = true; 
+
+                }
+                CheckBox chk = (CheckBox)e.Row.FindControl("chbChecked");
+                if (chk != null) chk.Enabled = false;
+            }
+        }
     }
 }
