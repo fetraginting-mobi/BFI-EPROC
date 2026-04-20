@@ -9,12 +9,13 @@ using iProc.DataAccessLayer;
 
 public partial class module_fa_fagrouplist : BasePageList
 {
-    private static string TABLE_NAME_HEADER = "fa_item_group";
+    private static string TABLE_NAME_HEADER = "FA_GROUPING_ASSET";
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
         if (!Page.IsPostBack)
         {
+            Shared.BindBranchEmployeeSort(ddlCostCenter);
             BindDataFaItemGroup();
             btnDeleteFaGroup.OnClientClick = "return confirm('Delete selected data?');";
         }
@@ -74,6 +75,13 @@ public partial class module_fa_fagrouplist : BasePageList
             Shared.ShowErrorDialog(this, ex);
         }
     }
+      protected void ddlStatus_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDataFaItemGroup();
+    }
+    protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+    }
 
     #region FaItemGroup
     private void BindDataFaItemGroup()
@@ -87,6 +95,8 @@ public partial class module_fa_fagrouplist : BasePageList
             _ht = new Hashtable();
         
          _ht["p_keywords"] = txtFaGroupSearch.Text;
+         _ht["p_status"] = ddlStatus.SelectedValue;
+         _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
          gvwListFaItemGroup.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
          gvwListFaItemGroup.DataBind();
         }

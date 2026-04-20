@@ -7,7 +7,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
     <section class="panel">
         <header class="panel-heading">
-            <span>Asset Grouping</span>
+            <span>FA Grouping Asset List</span>
         </header>
         <div class="panel-heading">
             <div class="row">
@@ -28,6 +28,31 @@
         </div>
         <div class="panel-body">
             <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                    <label class="col-sm-3">Status</label>
+                        <div class="col-sm-2">
+                            <cc1:XUIDropDownList ID="ddlStatus" Width="150px" runat="server" CssClass="form-control"  SPParameterName="p_status"  BindType="Both" DataType="String" AutoPostBack="true" OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged">
+                                         <asp:ListItem Text="ALL" Value="ALL"></asp:ListItem>
+                                        <asp:ListItem Text="Active" Value="1"></asp:ListItem>
+                                        <asp:ListItem Text="Not Active" Value="0"></asp:ListItem>
+                           </cc1:XUIDropDownList>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                    <label class="col-sm-3">Cost Center</label>
+                        <div class="col-sm-5">
+                            <cc1:XUIDropDownList ID="ddlCostCenter" runat="server" Width="200px" CssClass="form-control" DBColumnName="BRANCH_CODE" SPParameterName="p_branch_code" DataType="String" BindType="Both" AutoPostBack="true" OnSelectedIndexChanged="ddlBranch_SelectedIndexChanged" ></cc1:XUIDropDownList>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group"></div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group"></div>
                 </div>
@@ -35,7 +60,7 @@
             <asp:UpdatePanel ID="upd" runat="server">
                 <ContentTemplate>
                     <asp:GridView ID="gvwListFaItemGroup" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                    AllowPaging="true" PageSize="10" DataKeyNames="FA_ITEM_GROUP_CODE"
+                    AllowPaging="true" PageSize="10" DataKeyNames="ASSET_GROUP_CODE"
                         OnPageIndexChanging="gvwList_PageIndexChanging" 
                         onselectedindexchanged="gvwList_SelectedIndexChanged" EmptyDataText="There Is No Data" Width="100%">
                         <Columns>
@@ -57,18 +82,41 @@
                             </asp:TemplateField>
                             <asp:TemplateField>
                                 <HeaderTemplate>
-                                    <asp:Label runat="server" ID="lblHeader" Text="Group Code"></asp:Label>
+                                    <asp:Label runat="server" ID="lblHeader" Text="Asset Group Code"></asp:Label>
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" ID="lblGroupCode" Text='<%# Eval("FA_ITEM_GROUP_CODE") %>'></asp:Label>
+                                    <asp:Label runat="server" ID="lblGroupCode" Text='<%# Eval("ASSET_GROUP_CODE") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField DataField="BRANCH_NAME" HeaderText="Branch Code">
+                            <asp:TemplateField>
+                                <HeaderTemplate>
+                                    <asp:Label runat="server" ID="lblHeader" Text="Asset Group Name"></asp:Label>
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:Label runat="server" ID="lblGroupCode" Text='<%# Eval("ASSET_GROUP_NAME") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="CRE_DATE" HeaderText="Date">
                                 <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>
-                            <asp:BoundField DataField="LOCATION_NAME" HeaderText="Location">
+                            <asp:BoundField DataField="COST_CENTER" HeaderText="Cost Center">
                                 <ItemStyle Width="25%" HorizontalAlign="Left"  />
                             </asp:BoundField>
+                            <asp:BoundField DataField="LOCATION" HeaderText="Location">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="TOTAL_ASSET" HeaderText="Total Asset">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="STATUS" HeaderText="Status">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="MOD_DATE" HeaderText="Modified Date">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="MOD_BY" HeaderText="Modified By">
+                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                            </asp:BoundField>                            
                             <asp:CommandField ShowSelectButton="true" />
                         </Columns>
                     </asp:GridView>
