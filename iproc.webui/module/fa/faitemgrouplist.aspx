@@ -3,6 +3,17 @@
 <%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
+<style>
+    .grid-auto {
+        table-layout: auto !important;
+        width: 100% !important;
+    }
+
+    .grid-auto th,
+    .grid-auto td {
+        white-space: nowrap;
+    }
+</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
     <section class="panel">
@@ -59,10 +70,8 @@
             </div>
             <asp:UpdatePanel ID="upd" runat="server">
                 <ContentTemplate>
-                    <asp:GridView ID="gvwListFaItemGroup" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                    AllowPaging="true" PageSize="10" DataKeyNames="ASSET_GROUP_CODE"
-                        OnPageIndexChanging="gvwList_PageIndexChanging" 
-                        onselectedindexchanged="gvwList_SelectedIndexChanged" EmptyDataText="There Is No Data" Width="100%">
+                    <asp:GridView ID="gvwListFaItemGroup" runat="server" CssClass="display table table-bordered table-striped grid-auto" AutoGenerateColumns="false"
+                        AllowPaging="true" PageSize="10" Width="100%">
                         <Columns>
                             <asp:TemplateField>
                                 <HeaderTemplate>
@@ -90,32 +99,32 @@
                             </asp:TemplateField>
                             <asp:TemplateField>
                                 <HeaderTemplate>
-                                    <asp:Label runat="server" ID="lblHeader" Text="Asset Group Name"></asp:Label>
+                                    <asp:Label runat="server" ID="lblAssetGroupName" Text="Asset Group Name"></asp:Label>
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" ID="lblGroupCode" Text='<%# Eval("ASSET_GROUP_NAME") %>'></asp:Label>
+                                    <asp:Label runat="server" ID="lblAssetGroupName" Text='<%# Eval("ASSET_GROUP_NAME") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:BoundField DataField="CRE_DATE" HeaderText="Date">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="COST_CENTER" HeaderText="Cost Center">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="LOCATION" HeaderText="Location">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="TOTAL_ASSET" HeaderText="Total Asset">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="STATUS" HeaderText="Status">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="MOD_DATE" HeaderText="Modified Date">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="MOD_BY" HeaderText="Modified By">
-                                <ItemStyle Width="25%" HorizontalAlign="Left"  />
+                                <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>                            
                             <asp:CommandField ShowSelectButton="true" />
                         </Columns>

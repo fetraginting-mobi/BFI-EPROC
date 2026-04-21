@@ -17,7 +17,7 @@ using System.Collections.Generic;
 public partial class module_fa_faitemgroup : BasePage
 {
     private static string TABLE_NAME = "fa_grouping_asset";
-    //private static string TABLE_NAME_DETAIL ="fa_item_group_detail";
+    private static string TABLE_NAME_DETAIL = "fa_grouping_asset_detail";
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
@@ -27,12 +27,10 @@ public partial class module_fa_faitemgroup : BasePage
         if(!Page.IsPostBack)
         {
             string GroupingAssetCode = Request.QueryString["faGroupingAssetCode"];
-
             Shared.BindBranchEmployeeSort(ddlBranch);
             BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
-            btnLookUpItem.Attributes["href"] = "#";
-            btnLookUpItem.Attributes["onclick"] = String.Format("openLookupItem('{0}','{1}','{2}','{3}'); return false;",txtItemCode.ClientID,lblItemName.ClientID,ddlBranch.ClientID,ddlLocation.ClientID);
-            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FAITGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_item_group_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, GroupingAssetCode);
+
+            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_group_asset_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, GroupingAssetCode);
             
             if (Request.Params["action"].Equals("edit"))
             {
@@ -73,16 +71,12 @@ public partial class module_fa_faitemgroup : BasePage
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        // Hashtable _htDetail = null;
-        // Hashtable _htLookup = null;
         string sNextGroupingAssetCode = "";
-        // int detailId = 0;
         try
         {
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
-            string barcodeValue = Request.Form[txtItemCode.UniqueID];
             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
 
             _ht["p_fa_group_asset_code"] = lblGroupAssetCode.Text;
@@ -101,54 +95,11 @@ public partial class module_fa_faitemgroup : BasePage
             {
                 _dal.Insert(TABLE_NAME, _ht, ref sNextGroupingAssetCode);
                 lblGroupAssetCode.Text = sNextGroupingAssetCode.ToString();
-
-                // if (!string.IsNullOrEmpty(barcodeValue))
-                // {
-                //     _htLookup = new Hashtable();
-                //     _htLookup["p_item_barcode"] = barcodeValue;
-                //     DataRow drLookup = _dal.GetRow("fa_item_group_lookup", _htLookup);
-
-                //     if (drLookup != null)
-                //     {
-                //         _htDetail = new Hashtable();
-                //         _htDetail["p_fa_item_group_code"] = sNextGroupingAssetCode;
-                //         _htDetail["p_fa_asset_id"] = drLookup["fa_asset_id"];
-                //         _htDetail["p_code_asset"] = drLookup["code_asset"];
-                //         _htDetail["p_name_asset"] = drLookup["name_asset"];
-                //         _htDetail["p_barcode"] = drLookup["barcode"];
-                //         _htDetail["p_description"] = drLookup["description"];
-                //         _htDetail["p_is_parent"] = true;
-                //         Shared.ApplyDefaultProp(_htDetail);
-                //         _dal.Insert("fa_item_group_detail", _htDetail, ref detailId);
-                //     }
-                // }
+               
             }
             else
             {
-                // ddlBranch.Enabled = ddlLocation.Enabled = false;
-                // _dal.Update(TABLE_NAME, _ht);
-                // sNextGroupingAssetCode = lblGroupingAssetCode.Text;
-
-                // if (!string.IsNullOrEmpty(barcodeValue))
-                // {
-                //     _htLookup = new Hashtable();
-                //     _htLookup["p_item_barcode"] = barcodeValue;
-                //     DataRow drLookup = _dal.GetRow("fa_item_group_lookup", _htLookup);
-
-                //     if (drLookup != null)
-                //     {
-                //         Hashtable _htParent = new Hashtable();
-                //         _htParent["p_item_barcode"] = barcodeValue;
-                //         _htParent["p_fa_item_group_code"] = sNextGroupingAssetCode;
-                //         _htParent["p_fa_asset_id"] = drLookup["fa_asset_id"];
-                //         _htParent["p_code_asset"] = drLookup["code_asset"];
-                //         _htParent["p_name_asset"] = drLookup["name_asset"];
-                //         _htParent["p_barcode"] = drLookup["barcode"];
-                //         _htParent["p_description"] = drLookup["description"];
-                //         Shared.ApplyDefaultProp(_htParent);
-                //         _dal.Update("fa_item_group_detail", _htParent);
-                //     }
-                // }
+                
             }
             string redirectUrl = string.Format("faitemgroup.aspx?action=edit&faGroupingAssetCode={0}", sNextGroupingAssetCode);
             Response.Redirect(redirectUrl);
@@ -239,14 +190,14 @@ public partial class module_fa_faitemgroup : BasePage
 
         try
         {
-            //_dal = new GeneralDAL();
-            //_ht = new Hashtable();
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
 
-            //_ht["p_keywords"] = txtSearch.Text;
-            //_ht["p_fa_group_asset_code"] = lblGroupAssetCode.Text;
+            _ht["p_keywords"] = txtSearch.Text;
+            _ht["p_fa_group_asset_code"] = lblGroupAssetCode.Text;
 
-            //gvwList.DataSource = _dal.GetRows(TABLE_NAME_DETAIL, _ht);
-            //gvwList.DataBind();
+            gvwList.DataSource = _dal.GetRows(TABLE_NAME_DETAIL, _ht);
+            gvwList.DataBind();
         }
         catch (Exception ex)
         {

@@ -15,14 +15,6 @@
                 '&par_branch_code=' + branch +
                 '&par_location=' + location);
         }
-        function setLookupResult(assetId, assetCode, assetName, barcode) {
-            var hdn = document.getElementById('<%= hdnAssetId.ClientID %>');
-            if (hdn != null) {
-                hdn.value = assetId;
-            }
-            document.getElementById('<%= txtItemCode.ClientID %>').value = assetCode;
-            document.getElementById('<%= lblItemName.ClientID %>').innerHTML = assetName;
-        }
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
@@ -57,8 +49,8 @@
                                 <div class="col-sm-6">
                                 <asp:UpdatePanel ID="updDep" runat="server">
                                    <ContentTemplate>                                    
-                                    <cc1:XUIDropDownList ID="ddlBranch" runat="server" CssClass="form-control" DBColumnName="BRANCH_CODE" SPParameterName="p_cost_center" DataType="String" AutoPostBack="true"  OnSelectedIndexChanged= "ddlBranch_SelectedIndexChanged" BindType="Both" ></cc1:XUIDropDownList>
-                                    <cc1:XUILabel ID="lblbranch" runat="server"  DBColumnName="BRANCH_CODE" DataType="String" BindType="DBToUIOnly" Text="--" style="display:none;"></cc1:XUILabel>
+                                    <cc1:XUIDropDownList ID="ddlBranch" runat="server" CssClass="form-control" DBColumnName="cost_center" SPParameterName="p_cost_center" DataType="String" AutoPostBack="true"  OnSelectedIndexChanged= "ddlBranch_SelectedIndexChanged" BindType="Both" ></cc1:XUIDropDownList>
+                                    <cc1:XUILabel ID="lblbranch" runat="server"  DBColumnName="cost_center" DataType="String" BindType="DBToUIOnly" Text="--" style="display:none;"></cc1:XUILabel>
                                    </ContentTemplate>
                                 </asp:UpdatePanel>
                                 </div>
@@ -66,14 +58,6 @@
                         </div>
                     </div>
                     <div class="row">
-                        <!-- <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-sm-4"></label>
-                                <div class="col-sm-4">
-                                    <cc1:XUITextBox ID="txtItemCode" runat="server" ReadOnly="true" CssClass="form-control" DBColumnName="code_asset" SPParameterName="p_item_code" DataType="String" BindType="Both"></cc1:XUITextBox>
-                                </div>
-                            </div>                         
-                        </div> -->
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-sm-4">Asset Group Name *</label>
@@ -102,24 +86,11 @@
                         </div>
                     </div>
                     <div class="row">
-                        <!-- <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-sm-4">Asset Parent Code</label>
-                                 <div class="col-sm-8">    
-                                    <asp:LinkButton runat="server" ID="btnLookUpItem" class="btn btn-primary" data-toggle="modal" CausesValidation="false"><i class="icon-table"></i></asp:LinkButton>                           
-                                    <cc1:XUILabel ID="lblItemName" runat="server" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" ></cc1:XUILabel>
-                                    <%--<cc1:XUITextBox ID="txtItemName" runat="server" Enabled = "false" DBColumnName="ITEM_NAME" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUITextBox> --%>
-                                    <asp:RequiredFieldValidator ID="rfvItemCode" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtItemCode" Display="Dynamic"></asp:RequiredFieldValidator>    
-                                 </div>
-                            </div>              
-                        </div>                         -->
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-sm-4">Date *</label>
                                 <div class="col-sm-6">
                                     <cc1:XUITextBox ID="txtAssetGroupDate" runat="server" CssClass="form-control default-date-picker" placeholder="Asset Group Name" DBColumnName="CRE_DATE" SPParameterName="p_cre_date" MaxLength="10" DataType="Datetime" BindType="Both" Format="dd/MM/yyyy"></cc1:XUITextBox>
-                                    <asp:RequiredFieldValidator ID="rfvAssetGroupDate" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtAssetGroupName" Display="Dynamic"></asp:RequiredFieldValidator>
-                                    <asp:RegularExpressionValidator ID="revAssetGroupDate" runat="server" ErrorMessage="Format Date Invalid! Format = dd/MM/yyyy" ControlToValidate="txtAssetGroupName" ValidationExpression="(^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$)" Display="Dynamic"></asp:RegularExpressionValidator>
                                 </div>
                             </div>
                         </div>
@@ -159,6 +130,22 @@
             </asp:UpdatePanel>
          </div>
     </section>
+    <section class="panel">
+    <header class="panel-heading tab-bg-dark-navy-blue">
+            <asp:TextBox ID="txtTabCode" runat="server" style="display:none"></asp:TextBox>
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active">
+                        <a href="#AssetList" id="assetlist" onclick="javascript:fnSetTab('assetspec');" style="padding-bottom:28px" data-toggle="tab">
+                      Asset List
+                  </a>
+                    </li>
+                     <li class="">
+                        <a href="#MovementHistory" id="movementhistory" onclick="javascript:fnSetTab('insuranc');" style="padding-bottom:28px" data-toggle="tab">
+                            Movement History 
+                        </a>
+                    </li>
+                </ul>
+            </header>
     <asp:Panel runat="server" ID="pnlEntry">
         <section class="panel">
             <header class="panel-heading">
@@ -220,5 +207,6 @@
                 </div>          
         </section>
     </asp:Panel>
+    </section>    
 </asp:Content>
 

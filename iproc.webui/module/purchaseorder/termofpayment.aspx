@@ -14,7 +14,7 @@
             white-space: nowrap;
             text-align: center;
         }
-    </style>
+</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">    
     <section class="panel">
