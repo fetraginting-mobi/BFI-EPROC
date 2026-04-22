@@ -71,7 +71,7 @@
             <asp:UpdatePanel ID="upd" runat="server">
                 <ContentTemplate>
                     <asp:GridView ID="gvwListFaItemGroup" runat="server" CssClass="display table table-bordered table-striped grid-auto" AutoGenerateColumns="false"
-                        AllowPaging="true" PageSize="10" Width="100%">
+                        AllowPaging="true" PageSize="10" DataKeyNames="ASSET_GROUP_CODE" onselectedindexchanged="gvwList_SelectedIndexChanged" Width="100%">
                         <Columns>
                             <asp:TemplateField>
                                 <HeaderTemplate>

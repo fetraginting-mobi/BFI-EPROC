@@ -99,10 +99,14 @@ public partial class module_fa_faitemgroup : BasePage
             }
             else
             {
+                _ht["p_fa_group_asset_name"] = txtAssetGroupName.Text;
+                ddlBranch.Enabled = ddlLocation.Enabled = false;
+                _dal.Update(TABLE_NAME, _ht);
+                sNextGroupingAssetCode = lblGroupAssetCode.Text;
                 
             }
             string redirectUrl = string.Format("faitemgroup.aspx?action=edit&faGroupingAssetCode={0}", sNextGroupingAssetCode);
-            Response.Redirect(redirectUrl);
+            Response.Redirect(redirectUrl, false);
         }
         catch (Exception ex)
         {
@@ -115,9 +119,7 @@ public partial class module_fa_faitemgroup : BasePage
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
-
         BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
-        //updDep.Update();
     }
     public static void BindFaLocationAll(DropDownList ddl, string Branch)
     {

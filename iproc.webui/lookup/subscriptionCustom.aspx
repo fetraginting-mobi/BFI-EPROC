@@ -1,12 +1,11 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/iproc.master" AutoEventWireup="true" CodeFile="subscriptionCustom.aspx.cs" Inherits="lookup_subscriptionCustom" Title="Subscription Lookup" %>
 
-<%-- Ganti ID ContentPlaceHolderID di bawah ini sesuai dengan yang ada di iproc.master --%>
 <asp:Content ID="Content1" ContentPlaceHolderID="cpb" runat="Server">
-    <style>
+<%--    <style>
         .table-responsive { overflow-x: auto; }
         .grid-header { background-color: #f9f9f9; font-weight: bold; }
         .panel-body { padding: 15px; }
-    </style>
+    </style>--%>
 
     <section class="panel">
         <div class="panel-body">
@@ -25,8 +24,15 @@
                         <ContentTemplate>
                             <asp:GridView ID="gvwListSource" runat="server" AutoGenerateColumns="true" 
                                 CssClass="table table-bordered table-striped" AllowPaging="true" PageSize="5"
-                                OnPageIndexChanging="gvwListSource_PageIndexChanging" 
-                                OnRowDataBound="gvwListSource_RowDataBound" EmptyDataText="No data">
+                                OnPageIndexChanging="gvwListSource_PageIndexChanging" EmptyDataText="No data">
+                                <Columns>
+                                    <asp:TemplateField HeaderText="Pick">
+                                        <ItemStyle Width="50px" HorizontalAlign="Center" />
+                                        <ItemTemplate>
+                                            <asp:CheckBox runat="server" ID="chbChecked"/>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                </Columns>
                                 <HeaderStyle CssClass="grid-header" />
                             </asp:GridView>
                         </ContentTemplate>
@@ -37,12 +43,14 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-4">
-                </div>
-                <div class="col-sm-8">
-                    <asp:LinkButton ID="btnAdd" runat="server" CssClass="btn btn-primary" OnClick="btnAdd_Click" CausesValidation="false"><i class="icon-plus"></i>  Add</asp:LinkButton>
-                    <asp:LinkButton ID="btnRemove" runat="server" CssClass="btn btn-primary" OnClick="btnRemove_Click" CausesValidation="false"><i class="icon-minus"></i>  Remove</asp:LinkButton>
+            <div class="row" style="margin: 15px 0; text-align: left;">
+                <div class="col-sm-12">
+                    <asp:LinkButton ID="btnAdd" runat="server" CssClass="btn btn-primary" OnClick="btnAdd_Click" CausesValidation="false">
+                        Add <i class="icon-arrow-down"></i>
+                    </asp:LinkButton>
+                    <asp:LinkButton ID="btnRemove" runat="server" CssClass="btn btn-danger" OnClick="btnRemove_Click" CausesValidation="false">
+                        Remove <i class="icon-arrow-up"></i>
+                    </asp:LinkButton>
                 </div>
             </div>
 
@@ -61,8 +69,15 @@
                         <ContentTemplate>
                             <asp:GridView ID="gvwListTarget" runat="server" AutoGenerateColumns="true" 
                                 CssClass="table table-bordered table-striped" AllowPaging="true" PageSize="5"
-                                OnPageIndexChanging="gvwListTarget_PageIndexChanging" 
-                                OnRowDataBound="gvwListTarget_RowDataBound" EmptyDataText="No data">
+                                OnPageIndexChanging="gvwListTarget_PageIndexChanging" EmptyDataText="No data">
+                                <Columns>
+                                    <asp:TemplateField HeaderText="Pick">
+                                        <ItemStyle Width="50px" HorizontalAlign="Center" />
+                                        <ItemTemplate>
+                                            <asp:CheckBox runat="server" ID="chbChecked"/>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                </Columns>
                                 <HeaderStyle CssClass="grid-header" />
                             </asp:GridView>
                         </ContentTemplate>

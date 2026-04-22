@@ -9,7 +9,7 @@ using iProc.DataAccessLayer;
 
 public partial class module_fa_fagrouplist : BasePageList
 {
-    private static string TABLE_NAME_HEADER = "FA_GROUPING_ASSET";
+    private static string TABLE_NAME_HEADER = "fa_grouping_asset";
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
@@ -53,7 +53,7 @@ public partial class module_fa_fagrouplist : BasePageList
     }
     protected void gvwList_SelectedIndexChanged(object sender, EventArgs e)
     {
-         Response.Redirect("faitemgroup.aspx?action=edit&faitemgroupcode=" +gvwListFaItemGroup.SelectedValue.ToString());
+        Response.Redirect("faitemgroup.aspx?action=edit&faGroupingAssetCode=" + gvwListFaItemGroup.SelectedValue.ToString());
     }
 
     private void DeleteData(string code)
@@ -66,7 +66,7 @@ public partial class module_fa_fagrouplist : BasePageList
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
-            _ht["p_fa_item_group_code"] = code;
+            _ht["p_fa_group_asset_code"] = code;
 
             _dal.Delete(TABLE_NAME_HEADER, _ht);
         }
@@ -97,6 +97,7 @@ public partial class module_fa_fagrouplist : BasePageList
          _ht["p_keywords"] = txtFaGroupSearch.Text;
          _ht["p_status"] = ddlStatus.SelectedValue;
          _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
+         //_ht["p_fa_group_asset_code"] = ASSET_GROUP_CODE.Text;
          gvwListFaItemGroup.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
          gvwListFaItemGroup.DataBind();
         }

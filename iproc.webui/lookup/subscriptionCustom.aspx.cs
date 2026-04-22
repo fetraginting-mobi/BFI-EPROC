@@ -7,6 +7,7 @@ using iProc.DataAccessLayer;
 
 public partial class lookup_subscriptionCustom : BasePage
 {
+    // Variabel konfigurasi tetap di ViewState agar tidak hilang saat Postback
     private string SP_TABLE_SOURCE { get { return (string)ViewState["SPSource"]; } set { ViewState["SPSource"] = value; } }
     private string SP_TABLE_TARGET { get { return (string)ViewState["SPTarget"]; } set { ViewState["SPTarget"] = value; } }
     private string SP_SOURCE_TO_TARGET { get { return (string)ViewState["SPSTT"]; } set { ViewState["SPSTT"] = value; } }
@@ -17,6 +18,7 @@ public partial class lookup_subscriptionCustom : BasePage
     {
         if (!Page.IsPostBack)
         {
+            // Ambil settingan dari MASTER_SUBSCRIPTION via fungsi asli Anda
             string tblSrc = "", tblTrg = "", saveName = "", srcTrg = "", trgSrc = "", pCode = "";
             Shared.BindSubscription(Request.Params["code"], ref tblSrc, ref tblTrg, ref saveName, ref srcTrg, ref trgSrc, ref pCode);
 
@@ -70,27 +72,14 @@ public partial class lookup_subscriptionCustom : BasePage
         catch (Exception ex) { Shared.ShowErrorDialog(this, ex); }
     }
 
-    protected void gvwListSource_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowType == DataControlRowType.Header)
-        {
-            TableCell tc = new TableCell();e.Row.Cells.AddAt(0, tc);
-        }
-        else if (e.Row.RowType == DataControlRowType.DataRow)
-        {
-            TableCell tc = new TableCell(); CheckBox chb = new CheckBox(); chb.ID = "chbChecked";
-            tc.Controls.Add(chb); tc.HorizontalAlign = HorizontalAlign.Center; e.Row.Cells.AddAt(0, tc);
-        }
-    }
-
-    protected void gvwListTarget_RowDataBound(object sender, GridViewRowEventArgs e) { gvwListSource_RowDataBound(sender, e); }
-
     protected void btnAdd_Click(object sender, EventArgs e)
-    { 
-        ExecuteMovement(gvwListSource, SP_SOURCE_TO_TARGET); 
+    {
+        ExecuteMovement(gvwListSource, SP_SOURCE_TO_TARGET);
     }
-    protected void btnRemove_Click(object sender, EventArgs e) 
-    { ExecuteMovement(gvwListTarget, SP_TARGET_TO_SOURCE); 
+
+    protected void btnRemove_Click(object sender, EventArgs e)
+    {
+        ExecuteMovement(gvwListTarget, SP_TARGET_TO_SOURCE);
     }
 
     private void ExecuteMovement(GridView gvw, string spName)
@@ -98,46 +87,65 @@ public partial class lookup_subscriptionCustom : BasePage
         try
         {
             GeneralDAL dal = new GeneralDAL();
+            bool hasChanged = false;
             int codeIdx = -1;
+
             for (int i = 0; i < gvw.HeaderRow.Cells.Count; i++)
             {
-                if (gvw.HeaderRow.Cells[i].Text.ToUpper() == "CODE") { codeIdx = i; break; }
+                string headerText = gvw.HeaderRow.Cells[i].Text.ToUpper();
+                if (headerText == "CODE") { codeIdx = i; break; }
             }
-            if (codeIdx == -1) return;
+
+            if (codeIdx == -1) codeIdx = 1;
 
             foreach (GridViewRow row in gvw.Rows)
             {
                 CheckBox chb = (CheckBox)row.FindControl("chbChecked");
+
                 if (chb != null && chb.Checked)
                 {
                     Hashtable ht = GetCommonParams();
-                    ht[SP_PARAMETER_CODE] = row.Cells[codeIdx].Text;
-                    Shared.ApplyDefaultProp(ht);
-                    dal.Insert("", spName, ht);
+                    string codeValue = Server.HtmlDecode(row.Cells[codeIdx].Text).Trim();
+
+                    if (!string.IsNullOrEmpty(codeValue))
+                    {
+                        ht[SP_PARAMETER_CODE] = codeValue;
+                        Shared.ApplyDefaultProp(ht);
+
+                        dal.Insert("", spName, ht);
+                        hasChanged = true;
+                    }
                 }
             }
-            BindDataSource();
-            BindDataTarget();
-            string pGvw = Request.Params["gvw"] ?? "ctl00$cpb$btnSearch";
-            ScriptManager.RegisterStartupScript(this, GetType(), "refresh", "parent.__doPostBack('" + pGvw + "','');", true);
+
+            if (hasChanged)
+            {
+                BindDataSource();
+                BindDataTarget();
+
+                string pGvw = Request.Params["gvw"] ?? "ctl00$cpb$btnSearch";
+                ScriptManager.RegisterStartupScript(this, GetType(), "refresh", "parent.__doPostBack('" + pGvw + "','');", true);
+            }
         }
         catch (Exception ex) { Shared.ShowErrorDialog(this, ex); }
     }
 
-    protected void btnSearchSource_Click(object sender, EventArgs e) 
-    { 
-        BindDataSource(); 
+    protected void btnSearchSource_Click(object sender, EventArgs e)
+    {
+        BindDataSource();
     }
-    protected void btnSearchTarget_Click(object sender, EventArgs e) 
-    { 
-        BindDataTarget(); 
+    protected void btnSearchTarget_Click(object sender, EventArgs e)
+    {
+        BindDataTarget();
     }
-    protected void gvwListSource_PageIndexChanging(object sender, GridViewPageEventArgs e) 
-    { 
-        gvwListSource.PageIndex = e.NewPageIndex; BindDataSource(); 
+    protected void gvwListSource_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListSource.PageIndex = e.NewPageIndex;
+        BindDataSource();
     }
-    protected void gvwListTarget_PageIndexChanging(object sender, GridViewPageEventArgs e) 
-    { 
-        gvwListTarget.PageIndex = e.NewPageIndex; BindDataTarget(); 
+    protected void gvwListTarget_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListTarget.PageIndex = e.NewPageIndex;
+        BindDataTarget();
     }
 }
