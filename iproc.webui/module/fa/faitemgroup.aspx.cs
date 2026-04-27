@@ -26,12 +26,15 @@ public partial class module_fa_faitemgroup : BasePage
 
         if(!Page.IsPostBack)
         {
+            chbIsActive.Checked = true;
             string GroupingAssetCode = Request.QueryString["faGroupingAssetCode"];
             Shared.BindBranchEmployeeSort(ddlBranch);
             BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
 
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_group_asset_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, GroupingAssetCode);
-            
+            btnMove.Attributes["href"] = "#";
+
+
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
@@ -225,4 +228,7 @@ public partial class module_fa_faitemgroup : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
+    //protected void btnMove_Click(object sender, EventArgs e)
+    //{
+    //}
 }

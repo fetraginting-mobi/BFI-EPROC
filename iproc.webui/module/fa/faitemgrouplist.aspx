@@ -116,14 +116,14 @@
                             </asp:BoundField>
                             <asp:BoundField DataField="TOTAL_ASSET" HeaderText="Total Asset">
                                 <ItemStyle HorizontalAlign="Left"  />
-                            </asp:BoundField>
-                            <asp:BoundField DataField="STATUS" HeaderText="Status">
-                                <ItemStyle HorizontalAlign="Left"  />
-                            </asp:BoundField>
+                            </asp:BoundField>                            
                             <asp:BoundField DataField="MOD_DATE" HeaderText="Modified Date">
                                 <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="MOD_BY" HeaderText="Modified By">
+                                <ItemStyle HorizontalAlign="Left"  />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="STATUS" HeaderText="Status">
                                 <ItemStyle HorizontalAlign="Left"  />
                             </asp:BoundField>                            
                             <asp:CommandField ShowSelectButton="true" />
