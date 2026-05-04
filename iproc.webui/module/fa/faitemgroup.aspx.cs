@@ -18,13 +18,14 @@ public partial class module_fa_faitemgroup : BasePage
 {
     private static string TABLE_NAME = "fa_grouping_asset";
     private static string TABLE_NAME_DETAIL = "fa_grouping_asset_detail";
+    private static string TABLE_NAME_HISTORY = "fa_grouping_asset_history";
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
         txtAssetGroupDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
         txtAssetGroupDate.Enabled = false;
 
-        if(!Page.IsPostBack)
+        if (!Page.IsPostBack)
         {
             chbIsActive.Checked = true;
             string GroupingAssetCode = Request.QueryString["faGroupingAssetCode"];
@@ -32,18 +33,17 @@ public partial class module_fa_faitemgroup : BasePage
             BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
 
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_group_asset_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, GroupingAssetCode);
-            btnMove.Attributes["href"] = "#";
-
+            // btnMove.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparametercustom.aspx?code=FGAMV&parc_cost_center={0}&par_location={1}');", ddlBranch.SelectedValue, ddlLocation.SelectedValue);
 
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
                 BindData();
-                ddlBranch.Enabled = ddlLocation.Enabled = false;  
+                ddlBranch.Enabled = ddlLocation.Enabled = false;
             }
             else
             {
-                pnlEntry.Visible = false;
+                pnlAssetList.Visible = false;
             }
         }
     }
@@ -90,7 +90,7 @@ public partial class module_fa_faitemgroup : BasePage
             chbIsActive.Checked = true;
             _ht["p_status"] = chbIsActive.Checked ? 1 : 0;
             // _ht["p_item_barcode"] = barcodeValue;
-            
+
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -98,7 +98,7 @@ public partial class module_fa_faitemgroup : BasePage
             {
                 _dal.Insert(TABLE_NAME, _ht, ref sNextGroupingAssetCode);
                 lblGroupAssetCode.Text = sNextGroupingAssetCode.ToString();
-               
+
             }
             else
             {
@@ -106,7 +106,7 @@ public partial class module_fa_faitemgroup : BasePage
                 ddlBranch.Enabled = ddlLocation.Enabled = false;
                 _dal.Update(TABLE_NAME, _ht);
                 sNextGroupingAssetCode = lblGroupAssetCode.Text;
-                
+
             }
             string redirectUrl = string.Format("faitemgroup.aspx?action=edit&faGroupingAssetCode={0}", sNextGroupingAssetCode);
             Response.Redirect(redirectUrl, false);
@@ -171,12 +171,21 @@ public partial class module_fa_faitemgroup : BasePage
         if (txtSearch.Text != string.Empty)
             BindData();
     }
-      protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwList.PageIndex = e.NewPageIndex;
         BindData();
     }
+    protected void gvwMovementHistory_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwMovementHistory.PageIndex = e.NewPageIndex;
+        BindData();
+    }
     protected void gvwList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        // Response.Redirect(string.Format("faentrydetail.aspx?action=edit&codebarcode={0}&id={1}&idartarget={2}", lblCodeBarcode.Text, gvwList.SelectedDataKey[0].ToString(), Request.Params["idartarget"]));
+    }
+    protected void gvwMovementHistory_SelectedIndexChanged(object sender, EventArgs e)
     {
         // Response.Redirect(string.Format("faentrydetail.aspx?action=edit&codebarcode={0}&id={1}&idartarget={2}", lblCodeBarcode.Text, gvwList.SelectedDataKey[0].ToString(), Request.Params["idartarget"]));
     }
@@ -203,6 +212,9 @@ public partial class module_fa_faitemgroup : BasePage
 
             gvwList.DataSource = _dal.GetRows(TABLE_NAME_DETAIL, _ht);
             gvwList.DataBind();
+
+            gvwMovementHistory.DataSource = _dal.GetRows(TABLE_NAME_HISTORY, _ht);
+            gvwMovementHistory.DataBind();
         }
         catch (Exception ex)
         {
@@ -228,7 +240,41 @@ public partial class module_fa_faitemgroup : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
-    //protected void btnMove_Click(object sender, EventArgs e)
-    //{
-    //}
+    protected void btnMove_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            // 1. Validasi Server Side (Contoh: pastikan DDL terpilih)
+            if (string.IsNullOrEmpty(ddlBranch.SelectedValue))
+            {
+                // Gunakan script alert sederhana jika gagal
+                ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Pilih Branch!');", true);
+                return;
+            }
+
+            // 2. Susun URL
+            string baseUrl = "../../lookup/genericwithparametercustom.aspx";
+            string code = "FGAMV";
+            string url = string.Format("{0}?code={1}&parc_cost_center={2}&par_location={3}",
+                         baseUrl, code, ddlBranch.SelectedValue, ddlLocation.SelectedValue);
+
+            // 3. Daftarkan Script
+            // Kami menggunakan setTimeout agar browser menyelesaikan update DOM UpdatePanel sebelum memicu popup
+            string script = string.Format("setTimeout(function() {{ tryOpenPopup('{0}'); }}, 200);", url);
+
+            // KRITIKAL: Gunakan ScriptManager.RegisterStartupScript 
+            // Parameter pertama harus UpdatePanel jika tombol ada di dalam UpdatePanel, 
+            // atau 'this.Page' jika ingin lebih general.
+            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "OpenPopupKey", script, true);
+        }
+        catch (Exception ex)
+        {
+            // Error handling
+        }
+    }
+    protected void btnSearchHistory_Click(object sender, EventArgs e)
+    {
+        //string redirectUrl = string.Format("faitemgrouphistory.aspx?faitemgroupcode={0}", lblItemGroupCode.Text);
+        //Response.Redirect(redirectUrl);
+    }
 }

@@ -357,6 +357,14 @@
                                     </div>
                                 </div>                            
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 ">Grouping Asset Name</label>
+                                    <div class="col-sm-8">
+                                         <cc1:XUILabel ID="XUILabel1" runat="server" DBColumnName="grouping_asset_name"  DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                                    </div>
+                                </div>                            
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-6">

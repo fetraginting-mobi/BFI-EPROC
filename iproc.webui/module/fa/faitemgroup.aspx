@@ -32,6 +32,33 @@
                         }
                     }
                 }
+                function handleMovePopup() {
+                    // 1. Ambil nilai dari DropDown menggunakan ClientID
+                    var ddlBranch = document.getElementById('<%= ddlBranch.ClientID %>');
+                    var ddlLoc = document.getElementById('<%= ddlLocation.ClientID %>');
+
+                    // 2. Validasi sederhana di Client Side
+                    if (!ddlBranch.value || ddlBranch.value === "") {
+                        alert("Pilih Cost Center terlebih dahulu!");
+                        return false;
+                    }
+
+                    // 3. Susun URL secara dinamis
+                    var url = "../../lookup/genericwithparametercustom.aspx?code=FGAMV" +
+                        "&parc_cost_center=" + ddlBranch.value +
+                        "&par_location=" + ddlLoc.value;
+
+                    // 4. Panggil fungsi popup bawaan sistem
+                    if (typeof fnShowDialog === 'function') {
+                        fnShowDialog(url);
+                    } else {
+                        window.open(url, '_blank', 'width=900,height=600,scrollbars=yes');
+                    }
+
+                    // 5. Kembalikan false agar TIDAK terjadi postback ke server
+                    // (Karena kita hanya ingin buka popup, tidak perlu refresh halaman)
+                    return false;
+                }
             </script>
         </asp:Content>
         <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
@@ -82,6 +109,7 @@
                                                     <cc1:XUILabel ID="lblbranch" runat="server"
                                                         DBColumnName="cost_center" DataType="String"
                                                         BindType="DBToUIOnly" Text="--" style="display:none;">
+                                                        &nbsp;&nbsp;&nbsp;
                                                     </cc1:XUILabel>
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
@@ -117,6 +145,7 @@
                                                     <cc1:XUILabel ID="lblLocation" runat="server"
                                                         DBColumnName="FA_LOCATION" DataType="String"
                                                         BindType="DBToUIOnly" Text="--" style="display:none;">
+                                                        &nbsp;&nbsp;&nbsp;
                                                     </cc1:XUILabel>
                                                     <asp:RequiredFieldValidator ID="rvfLocation" runat="server"
                                                         ErrorMessage="Required Field!" ControlToValidate="ddlLocation"
@@ -165,6 +194,7 @@
                                             <span>@</span>
                                             <cc1:XUILabel ID="lblCreDate" runat="server" DBColumnName="CRE_DATE"
                                                 DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss">
+                                                &nbsp;&nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -178,6 +208,7 @@
                                             <span>@</span>
                                             <cc1:XUILabel ID="lblModDate" runat="server" DBColumnName="MOD_DATE"
                                                 DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss">
+                                                &nbsp;&nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -206,85 +237,156 @@
                         </li>
                     </ul>
                 </header>
-                <asp:Panel runat="server" ID="pnlEntry">
-                    <section class="panel">
-                        <header class="panel-heading">
-                            <span>Asset Grouping List</span>
-                        </header>
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <cc1:XUILinkButton ID="btnAdd" RoleCode="R90000070E" runat="server"
-                                        CssClass="btn btn-primary" OnClick="btnAdd_Click" CausesValidation="false"><i
-                                            class="icon-plus"></i> Create</cc1:XUILinkButton>
-                                    <cc1:XUILinkButton ID="btnDelete" RoleCode="R90000070E" runat="server"
-                                        CssClass="btn btn-danger" OnClick="btnDelete_Click" CausesValidation="false"><i
-                                            class="icon-trash"></i> Delete</cc1:XUILinkButton>
-                                    <cc1:XUILinkButton ID="btnMove" RoleCode="R90000070E" runat="server"
-                                        CssClass="btn btn-purple" CausesValidation="false">
-                                        <i class="icon-arrow-right"></i> Move
-                                    </cc1:XUILinkButton>
-                                </div>
-                                <div class="col-sm-4">
-                                    <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearch"
-                                        class="input-group">
-                                        <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control"
-                                            placeholder="Keywords"></asp:TextBox>
-                                        <div class="input-group-btn">
-                                            <asp:LinkButton ID="btnSearch" runat="server" CssClass="btn btn-info"
-                                                OnClick="btnSearch_Click" CausesValidation="false"><i
-                                                    class="icon-search"></i> Search</asp:LinkButton>
+                <div class="panel-body">
+                    <div class="tab-content tasi-tab">
+                        <div class="tab-pane active" id="AssetList">
+                            <asp:Panel runat="server" ID="pnlAssetList">
+                                <section class="panel">
+                                    <header class="panel-heading">
+                                        <span>Asset List</span>
+                                    </header>
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <cc1:XUILinkButton ID="btnAdd" RoleCode="R90000070E" runat="server"
+                                                    CssClass="btn btn-primary" OnClick="btnAdd_Click"
+                                                    CausesValidation="false"><i class="icon-plus"></i> Create
+                                                </cc1:XUILinkButton>
+                                                <cc1:XUILinkButton ID="btnDelete" RoleCode="R90000070E" runat="server"
+                                                    CssClass="btn btn-danger" OnClick="btnDelete_Click"
+                                                    CausesValidation="false"><i class="icon-trash"></i> Delete
+                                                </cc1:XUILinkButton>
+                                                <cc1:XUILinkButton ID="btnMove" runat="server" CssClass="btn btn-purple"
+                                                    OnClientClick="return handleMovePopup();">
+                                                    <i class="icon-arrow-right"></i> Move
+                                                </cc1:XUILinkButton>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearch"
+                                                    class="input-group">
+                                                    <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control"
+                                                        placeholder="Keywords"></asp:TextBox>
+                                                    <div class="input-group-btn">
+                                                        <asp:LinkButton ID="btnSearch" runat="server"
+                                                            CssClass="btn btn-info" OnClick="btnSearch_Click"
+                                                            CausesValidation="false"><i class="icon-search"></i> Search
+                                                        </asp:LinkButton>
+                                                    </div>
+                                                </asp:Panel>
+                                            </div>
                                         </div>
-                                    </asp:Panel>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <asp:UpdatePanel ID="upd" runat="server">
-                                <ContentTemplate>
-                                    <asp:GridView ID="gvwList" runat="server"
-                                        CssClass="display table table-bordered table-striped grid-auto"
-                                        AutoGenerateColumns="false" AllowPaging="true" PageSize="10" DataKeyNames="ID"
-                                        onselectedindexchanged="gvwList_SelectedIndexChanged"
-                                        EmptyDataText="There Is No Data" Width="100%">
-                                        <Columns>
-                                            <asp:TemplateField>
-                                                <HeaderTemplate>
-                                                    <span>No</span>
-                                                </HeaderTemplate>
-                                                <ItemTemplate>
-                                                    <%# Container.DataItemIndex + 1 %>
-                                                </ItemTemplate>
-                                            </asp:TemplateField>
-                                            <asp:TemplateField>
-                                                <HeaderTemplate>
-                                                    <asp:CheckBox ID="chbSelectAll" runat="server"
-                                                        onclick="checkAll(this)" />
-                                                </HeaderTemplate>
-                                                <ItemTemplate>
-                                                    <asp:CheckBox ID="chbSelect" runat="server" onclick="Check_Click" />
-                                                </ItemTemplate>
-                                            </asp:TemplateField>
-                                            <asp:BoundField DataField="BARCODE" HeaderText="Asset Barcode">
-                                            </asp:BoundField>
-                                            <asp:BoundField DataField="ITEM_NAME" HeaderText="Asset Name">
-                                            </asp:BoundField>
-                                            <asp:BoundField DataField="category" HeaderText="Asset category">
-                                            </asp:BoundField>
-                                            <asp:TemplateField HeaderText="Parent">
-                                                <ItemTemplate>
-                                                    <asp:CheckBox ID="chkParent" runat="server"
-                                                        Checked='<%# Convert.ToBoolean(Eval("is_parent")) %>'
-                                                        onclick="return singleCheck(this);" />
-                                                </ItemTemplate>
-                                            </asp:TemplateField>
+                                    </div>
+                                    <div class="panel-body">
+                                        <asp:UpdatePanel ID="upd" runat="server">
+                                            <ContentTemplate>
+                                                <asp:GridView ID="gvwList" runat="server"
+                                                    CssClass="display table table-bordered table-striped grid-auto"
+                                                    AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
+                                                    DataKeyNames="ID"
+                                                    onselectedindexchanged="gvwList_SelectedIndexChanged"
+                                                    EmptyDataText="There Is No Data" Width="100%">
+                                                    <Columns>
+                                                        <asp:TemplateField>
+                                                            <HeaderTemplate>
+                                                                <span>No</span>
+                                                            </HeaderTemplate>
+                                                            <ItemTemplate>
+                                                                <%# Container.DataItemIndex + 1 %>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField>
+                                                            <HeaderTemplate>
+                                                                <asp:CheckBox ID="chbSelectAll" runat="server"
+                                                                    onclick="checkAll(this)" />
+                                                            </HeaderTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:CheckBox ID="chbSelect" runat="server"
+                                                                    onclick="Check_Click" />
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="BARCODE" HeaderText="Asset Code">
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="ITEM_NAME" HeaderText="Asset Name">
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="category"
+                                                            HeaderText="Asset category">
+                                                        </asp:BoundField>
+                                                        <asp:TemplateField HeaderText="Parent">
+                                                            <ItemTemplate>
+                                                                <asp:CheckBox ID="chkParent" runat="server"
+                                                                    Checked='<%# Convert.ToBoolean(Eval("is_parent")) %>'
+                                                                    onclick="return singleCheck(this);" />
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
 
-                                        </Columns>
-                                    </asp:GridView>
-                                </ContentTemplate>
-                            </asp:UpdatePanel>
+                                                    </Columns>
+                                                </asp:GridView>
+                                            </ContentTemplate>
+                                        </asp:UpdatePanel>
+                                    </div>
+                                </section>
+                            </asp:Panel>
                         </div>
-                    </section>
-                </asp:Panel>
+                        <div class="tab-pane" id="MovementHistory">
+                            <asp:Panel runat="server" ID="pnlMovementHistory">
+                                <section class="panel">
+                                    <header class="panel-heading">
+                                        <span>Movement History List</span>
+                                    </header>
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-sm-8">                                                
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <asp:Panel ID="pnlSearchHistory" runat="server" DefaultButton="btnSearch"
+                                                    class="input-group">
+                                                    <asp:TextBox ID="txtSearchHistory" runat="server" CssClass="form-control"
+                                                        placeholder="Keywords"></asp:TextBox>
+                                                    <div class="input-group-btn">
+                                                        <asp:LinkButton ID="btnSearchHistory" runat="server"
+                                                            CssClass="btn btn-info" OnClick="btnSearchHistory_Click"
+                                                            CausesValidation="false"><i class="icon-search"></i> Search
+                                                        </asp:LinkButton>
+                                                    </div>
+                                                </asp:Panel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <asp:UpdatePanel ID="updpnlMovementHistory" runat="server">
+                                            <ContentTemplate>
+                                                <asp:GridView ID="gvwMovementHistory" runat="server"
+                                                    CssClass="display table table-bordered table-striped grid-auto"
+                                                    AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
+                                                    DataKeyNames="historyid"
+                                                    onselectedindexchanged="gvwMovementHistory_SelectedIndexChanged"
+                                                    EmptyDataText="There Is No Data" Width="100%">
+                                                    <Columns>
+                                                        <asp:TemplateField>
+                                                            <HeaderTemplate>
+                                                                <span>No</span>
+                                                            </HeaderTemplate>
+                                                            <ItemTemplate>
+                                                                <%# Container.DataItemIndex + 1 %>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="barcode" HeaderText="Asset Code"></asp:BoundField>
+                                                        <asp:BoundField DataField="item_name" HeaderText="Asset Name"></asp:BoundField>
+                                                        <asp:BoundField DataField="cre_date" HeaderText="Date" DataFormatString="{0:dd/MM/yyyy}"></asp:BoundField>
+                                                        <asp:BoundField DataField="action" HeaderText="Type Transaksi"></asp:BoundField>
+                                                        <asp:BoundField DataField="group_asset_code" HeaderText="Move From"></asp:BoundField>
+                                                        <asp:BoundField DataField="move_to" HeaderText="Move To"></asp:BoundField>
+                                                    </Columns>
+                                                </asp:GridView> 
+                                            </ContentTemplate>                                            
+                                        </asp:UpdatePanel>
+                                    </div>
+                                </section>
+                            </asp:Panel>
+
+                        </div>
+                    </div>
+                </div>
+
             </section>
         </asp:Content>
