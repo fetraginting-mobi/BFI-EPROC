@@ -7,7 +7,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
     <section class="panel">
         <header class="panel-heading">
-            <span>FA Item Group Report </span>
+            <span>FA Grouping Asset Report </span>
         </header>
         <div class="panel-heading">
             <div class="row">

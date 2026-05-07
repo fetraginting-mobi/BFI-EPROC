@@ -1,12 +1,6 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/iproc.master" AutoEventWireup="true" CodeFile="subscriptionCustom.aspx.cs" Inherits="lookup_subscriptionCustom" Title="Subscription Lookup" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cpb" runat="Server">
-<%--    <style>
-        .table-responsive { overflow-x: auto; }
-        .grid-header { background-color: #f9f9f9; font-weight: bold; }
-        .panel-body { padding: 15px; }
-    </style>--%>
-
     <section class="panel">
         <div class="panel-body">
             <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearchSource" class="input-group">
@@ -17,7 +11,6 @@
                     </asp:LinkButton>
                 </div>
             </asp:Panel>
-
             <div class="row" style="margin-top:10px;">
                 <div class="col-sm-12 table-responsive">
                     <asp:UpdatePanel ID="updSource" runat="server">

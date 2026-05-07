@@ -109,7 +109,7 @@
                                                     <cc1:XUILabel ID="lblbranch" runat="server"
                                                         DBColumnName="cost_center" DataType="String"
                                                         BindType="DBToUIOnly" Text="--" style="display:none;">
-                                                        &nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     </cc1:XUILabel>
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
@@ -145,7 +145,7 @@
                                                     <cc1:XUILabel ID="lblLocation" runat="server"
                                                         DBColumnName="FA_LOCATION" DataType="String"
                                                         BindType="DBToUIOnly" Text="--" style="display:none;">
-                                                        &nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     </cc1:XUILabel>
                                                     <asp:RequiredFieldValidator ID="rvfLocation" runat="server"
                                                         ErrorMessage="Required Field!" ControlToValidate="ddlLocation"
@@ -194,7 +194,7 @@
                                             <span>@</span>
                                             <cc1:XUILabel ID="lblCreDate" runat="server" DBColumnName="CRE_DATE"
                                                 DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss">
-                                                &nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -208,7 +208,7 @@
                                             <span>@</span>
                                             <cc1:XUILabel ID="lblModDate" runat="server" DBColumnName="MOD_DATE"
                                                 DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss">
-                                                &nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -331,7 +331,7 @@
                             <asp:Panel runat="server" ID="pnlMovementHistory">
                                 <section class="panel">
                                     <header class="panel-heading">
-                                        <span>Movement History List</span>
+                                        <span>Movement Grouping Asset History</span>
                                     </header>
                                     <div class="panel-heading">
                                         <div class="row">
