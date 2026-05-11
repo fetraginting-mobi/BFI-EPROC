@@ -393,10 +393,12 @@ public partial class module_purchaseorder_termofpayment : BasePage
     {
         try
         {
-            txtAmount.Text = "0.00";
+            //txtAmount.Text = "0.00";
+     
             LoadItemList();
+            TotalAmount();
             upd.Update();
-            updItemList.Update();            
+            updItemList.Update();
         }
         catch (Exception ex)
         {
@@ -488,11 +490,6 @@ public partial class module_purchaseorder_termofpayment : BasePage
     {
         GeneralDAL _dal = new GeneralDAL();
         decimal totalKeseluruhan = 0;
-
-        if (Request.QueryString["action"] == "edit")
-        {
-            return;
-        }
         try
         {
             foreach (GridViewRow row in gvwList.Rows)
@@ -522,6 +519,8 @@ public partial class module_purchaseorder_termofpayment : BasePage
             LoadItemList();
             upd.Update();
             updItemList.Update();
+
+            //Shared.ShowInfoDialog(this, "Data item list berhasil diperbarui.");
         }
         catch (Exception ex)
         {
