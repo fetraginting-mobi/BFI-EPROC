@@ -3398,7 +3398,6 @@ public class Shared
     public static string ExecuteReportExportExcel(Page page, string spReportName, string spResultName, Hashtable parameter, string filepath)
     {
         GeneralDAL dalReport = null;
-        string fullpathtextfile = "";
         try
         {
             //  execute DAL first
