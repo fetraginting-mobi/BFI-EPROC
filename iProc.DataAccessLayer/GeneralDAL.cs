@@ -328,6 +328,25 @@ namespace iProc.DataAccessLayer
 
             return outputValue;
         }
+        public void BulkInsert(DataTable dt, string tableName)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(dbw.ConnectionString))
+            {
+                conn.Open();
+
+                using (SqlBulkCopy bulk = new SqlBulkCopy(conn))
+                {
+                    bulk.DestinationTableName = tableName;
+                    bulk.BatchSize = 5000;
+                    bulk.BulkCopyTimeout = 600;
+
+                    bulk.WriteToServer(dt);
+                }
+            }
+        }
         #endregion
     }    
 }

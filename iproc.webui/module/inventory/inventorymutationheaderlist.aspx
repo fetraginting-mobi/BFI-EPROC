@@ -48,7 +48,6 @@
 
                 <div class="panel-body">
                     <div class="tab-content">
-
                         <div class="tab-pane active" id="invmutation">
                             <div class="panel-heading">
                                 <div class="row">
@@ -159,7 +158,7 @@
                                                     Text="Download Template" CssClass="btn btn-info"
                                                     OnClick="btnDownload_Click" />
                                                 <cc1:XUILinkButton ID="btnPost" RoleCode="R60000110O" runat="server"
-                                                    CssClass="btn btn-success disabled" Enabled="false"
+                                                    CssClass="btn btn-success"
                                                     OnClick="btnPost_Click"><i class="icon-envelope"></i> Post
                                                 </cc1:XUILinkButton>
                                             </div>
@@ -233,8 +232,8 @@
                                             onclick="togglePostButton()" AutoGenerateColumns=" false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
                                             PageSize="10" DataKeyNames="CODE_BARCODE"
-                                            OnPageIndexChanging="gvwList_PageIndexChanging"
-                                            onselectedindexchanged="SelectedIndexChanged"
+                                            OnPageIndexChanging="gvwListUpload_PageIndexChanging"
+                                            onselectedindexchanged="SelectedUploadIndexChanged"
                                             EmptyDataText="There Is No Data">
                                             <Columns>
                                                 <asp:TemplateField>
@@ -247,11 +246,11 @@
                                                 </asp:TemplateField>
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
-                                                        <asp:CheckBox ID="chbSelectAll" runat="server"
+                                                        <asp:CheckBox ID="chbSelectAllUpload" runat="server"
                                                             onclick="checkAll(this)" />
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
-                                                        <asp:CheckBox ID="chbSelect" runat="server"
+                                                        <asp:CheckBox ID="chbSelectUpload" runat="server"
                                                             onclick="Check_Click" />
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
@@ -260,13 +259,16 @@
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="MUTATION_DATE" HeaderText="Date"
                                                     DataFormatString="{0:dd/MM/yyyy}">
-                                                    <ItemStyle Width="25%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">
+                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status">
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />

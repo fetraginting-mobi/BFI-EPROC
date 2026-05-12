@@ -8,9 +8,13 @@ using iProc.DataAccessLayer;
 using Excel;
 using System.IO;
 using System.Collections.Generic;
+using System.Data;
+
+
 public partial class module_inventory_inventorymutationheaderlist : BasePageList
 {
     private static string TABLE_NAME = "INVENTORY_MUTATION_HEADER";
+    private static string TABLE_UPLOAD_NAME = "INVENTORY_MUTATION_UPLOAD_HEADER";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -25,7 +29,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         {
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "IM");
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatusUpload, "IM");
-            Shared.BindBranchEmployeeSort(ddlBranch);            
+            Shared.BindBranchEmployeeSort(ddlBranch);
             Shared.BindBranchEmployeeSort(ddlBranchUpload);
 
             BindData();
@@ -37,15 +41,21 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
+        Hashtable _htupload = null;
 
         try
         {
             _dal = new GeneralDAL();
             _ht = new Hashtable();
+            _htupload = new Hashtable();
 
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+
+            _htupload["p_keywords"] = txtSearchUpload.Text;
+            _htupload["p_status"] = ddlStatusUpload.SelectedValue;
+            _htupload["p_branch_code"] = ddlBranchUpload.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -54,7 +64,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             gvwList.DataBind();
 
             //View Data Upload Mutation
-            gvwListUpload.DataSource = _dal.GetRows(TABLE_NAME, _ht);
+            gvwListUpload.DataSource = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
             gvwListUpload.DataBind();
         }
         catch (Exception ex)
@@ -128,11 +138,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
         IExcelDataReader excelReader = null;
         string fileName = FileUploadControlMutation.FileName;
-        GeneralDAL _dal = new GeneralDAL();
-
-        Hashtable headerMap = new Hashtable();
-        Hashtable headerItemMap = new Hashtable();
-        Hashtable headerDetailBuffer = new Hashtable();
+        Guid uploadId = Guid.NewGuid();
 
         try
         {
@@ -144,15 +150,15 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Format file tidak didukung. Gunakan file Excel (.xls atau .xlsx) sesuai template yang disediakan");
+                throw new Exception("Format file tidak didukung");
 
+
+            DataTable dt = BuildStagingTable();
             int excelRowIndex = 0;
 
             while (excelReader.Read())
             {
                 excelRowIndex++;
-
-                // ===== HEADER VALIDATION =====
                 if (excelRowIndex == 1)
                 {
                     string errorMsg;
@@ -163,147 +169,46 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     }
                     continue;
                 }
+                if (IsRowEmpty(excelReader))
+                    break;
 
-                int rowNumber = excelRowIndex - 1;
+                DataRow row = dt.NewRow();
+                row["upload_id"] = uploadId;
+                row["row_number"] = excelRowIndex - 1;
+                row["from_cost_center"] = GetStringSafe(excelReader, 1);
+                row["from_location"] = GetStringSafe(excelReader, 2);
+                row["to_cost_center"] = GetStringSafe(excelReader, 3);
+                row["to_location"] = GetStringSafe(excelReader, 4);
+                row["owner"] = GetStringSafe(excelReader, 5);
+                row["asset_code"] = GetStringSafe(excelReader, 6);
+                row["description"] = GetStringSafe(excelReader, 7);
+                //row["department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
+                //row["division_code"] = Shared.CurrentEmployeeDivCode;
+                //row["sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
+                //row["units_code"] = Shared.CurrentEmployeeUnitsCode;
 
-                try
-                {
-                    if (IsRowEmpty(excelReader))
-                        break;
-
-                    // ===== VALIDATION =====
-                    if (IsEmpty(excelReader, 1)) throw new Exception("From Location wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 2)) throw new Exception("To Branch wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 3)) throw new Exception("To Location wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 4)) throw new Exception("Description wajib diisi (baris " + rowNumber + ")");
-                    if (IsEmpty(excelReader, 5)) throw new Exception("ITEM_CODE wajib diisi (baris " + rowNumber + ")");
-
-                    int qty;
-                    if (!TryConvertToInt(excelReader.GetValue(6), out qty) || qty <= 0)
-                        throw new Exception("Quantity harus angka > 0 (baris " + rowNumber + ")");
-
-                    string p_from_location = excelReader.GetString(1).Trim();
-                    string p_to_branch = excelReader.GetString(2).Trim();
-                    string p_to_location = excelReader.GetString(3).Trim();
-                    string p_desc = excelReader.GetString(4).Trim();
-                    string p_item_code = excelReader.GetString(5).Trim();
-
-                    string headerKey = p_from_location + "|" + p_to_branch + "|" + p_to_location;
-
-                    // === DUPLICATE ITEM CHECK ===
-                    if (!headerItemMap.ContainsKey(headerKey))
-                        headerItemMap[headerKey] = new Hashtable();
-
-                    Hashtable itemMap = (Hashtable)headerItemMap[headerKey];
-                    if (itemMap.ContainsKey(p_item_code))
-                        throw new Exception("ITEM_CODE duplikat (baris " + rowNumber + ")");
-                    itemMap[p_item_code] = true;
-
-                    // === STOCK CHECK ===
-                    int onhandQty = _dal.GetOnhandStock(p_item_code, p_from_location, "KPO");
-                    if (onhandQty < qty)
-                        throw new Exception("Stock tidak mencukupi (baris " + rowNumber + ")");
-
-                    // === BUFFER DETAIL ===
-                    if (!headerDetailBuffer.ContainsKey(headerKey))
-                        headerDetailBuffer[headerKey] = new List<Hashtable>();
-
-                    Hashtable detail = new Hashtable();
-                    detail["p_item_code"] = p_item_code;
-                    detail["p_quantity"] = qty;
-                    detail["p_from_location"] = p_from_location;
-                    detail["p_to_branch"] = p_to_branch;
-                    detail["p_to_location"] = p_to_location;
-                    detail["p_desc"] = p_desc;
-
-                    ((List<Hashtable>)headerDetailBuffer[headerKey]).Add(detail);
-                }
-                catch (Exception exRow)
-                {
-                    Hashtable htLog = new Hashtable();
-                    htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
-                    htLog["p_file_name"] = fileName;
-                    htLog["p_row_number"] = rowNumber;
-                    htLog["p_error_message"] = exRow.Message;
-                    htLog["p_raw_data"] = "ITEM=" + excelReader.GetValue(5);
-                    htLog["p_cre_by"] = Shared.CurrentUID;
-                    htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                    _dal.InsertProcessErrorLog(htLog);
-                    Shared.ShowErrorDialog(this, exRow);
-                    continue;
-                }
+                dt.Rows.Add(row);
             }
+            BulkInsertToStaging(dt);
+            // ExecuteBulkProcess(uploadId);
+            // ClientScript.RegisterStartupScript(this.GetType(),"alert","alert('Upload berhasil diproses.');",true);
 
-            // ===== INSERT HEADER & DETAIL (ONLY VALID GROUPS) =====
-            foreach (DictionaryEntry entry in headerDetailBuffer)
-            {
-                string headerKey = entry.Key.ToString();
-                List<Hashtable> details = (List<Hashtable>)entry.Value;
-
-                if (details.Count == 0)
-                    continue;
-
-                string[] key = headerKey.Split('|');
-
-                Hashtable htHeader = new Hashtable();
-                htHeader["p_mutation_date"] = DateTime.Now;
-                htHeader["p_expedition_description"] = details[0]["p_desc"];
-                htHeader["p_branch_code"] = "KPO";
-                htHeader["p_department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
-                htHeader["p_division_code"] = Shared.CurrentEmployeeDivCode;
-                htHeader["p_sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
-                htHeader["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
-                //htHeader["p_remarks"] = description;
-                htHeader["p_from_location"] = key[0];
-                htHeader["p_to_branch"] = key[1];
-                htHeader["p_to_location"] = key[2];
-                htHeader["p_requestor"] = Shared.CurrentUID;
-                htHeader["p_cre_date"] = DateTime.Now;
-                htHeader["p_cre_by"] = Shared.CurrentUID;
-                htHeader["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                htHeader["p_mod_date"] = DateTime.Now;
-                htHeader["p_mod_by"] = Shared.CurrentUID;
-                htHeader["p_mod_ip_address"] = Shared.CurrentIPAddress;
-
-                string barcode = _dal.UploadWithReturnString("INVENTORY_MUTATION_HEADER", htHeader);
-
-                foreach (Hashtable d in details)
-                {
-                    Hashtable htDetail = new Hashtable();
-                    htDetail["p_im_code"] = barcode;
-                    htDetail["p_item_code"] = d["p_item_code"];
-                    htDetail["p_quantity"] = d["p_quantity"];
-                    htDetail["p_remarks"] = "";
-                    htDetail["p_cre_date"] = DateTime.Now;
-                    htDetail["p_cre_by"] = Shared.CurrentUID;
-                    htDetail["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                    htDetail["p_mod_date"] = DateTime.Now;
-                    htDetail["p_mod_by"] = Shared.CurrentUID;
-                    htDetail["p_mod_ip_address"] = Shared.CurrentIPAddress;
-                    htDetail["p_from_branch_code"] = "KPO";
-                    htDetail["p_from_location_code"] = d["p_from_location"];
-                    htDetail["p_to_branch_code"] = d["p_to_branch"];
-                    htDetail["p_to_location_code"] = d["p_to_location"];
-                    htDetail["p_status"] = "NEW";
-
-                    _dal.ExecSPReturnInt("xsp_inventory_mutation_detail_upload", htDetail);
-                }
-            }
         }
         catch (Exception ex)
         {
+
             Shared.ShowErrorDialog(this, ex);
         }
         finally
         {
             if (excelReader != null)
                 excelReader.Close();
-            BindData();
         }
     }
     private static readonly string[] INVENTORY_MUTATION_TEMPLATE_HEADERS =
     {
         "No",
+        "From Branch",
         "From Location*",
         "To Branch*",
         "To Location*",
@@ -360,6 +265,11 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         }
         return true;
     }
+    private void BulkInsertToStaging(DataTable dt)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        _dal.BulkInsert(dt, "inv_mutation_upload_staging");
+    }
     private bool IsRowEmpty(IExcelDataReader reader)
     {
         for (int i = 0; i < reader.FieldCount; i++)
@@ -402,7 +312,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _htParameters["p_code"] = Request.Params["code"];
 
 
-            string pdfName = "upload_invmutation_list"+ ".xlsx"; ;
+            string pdfName = "upload_invmutation_list" + ".xlsx"; ;
             string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             //string filetype = "xls";
 
@@ -416,9 +326,9 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         {
             Shared.ShowErrorDialog(this, ex);
         }
- 
+
     }
-    
+
     protected void btnPost_Click(object sender, EventArgs e)
     {
         try
@@ -477,6 +387,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Shared.ShowErrorDialog(this, ex);
         }
     }
+
     private void ControlPostButton()
     {
         bool isStatusNew = ddlStatus.SelectedValue == "NEW";
@@ -498,6 +409,38 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     protected void btnSearchUpload_Click(object sender, EventArgs e)
     {
         BindData();
+    }
+    protected void gvwListUpload_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListUpload.PageIndex = e.NewPageIndex;
+        BindData();
+    }
+    protected void SelectedUploadIndexChanged(object sender, EventArgs e)
+    {
+        base.SelectedIndexChanged(sender, e);
+        Response.Redirect("inventorymutationheader.aspx?action=edit&codebarcode=" + gvwListUpload.SelectedDataKey[0].ToString());
+    }
+    private DataTable BuildStagingTable()
+    {
+        DataTable dt = new DataTable();
+        dt.Columns.Add("upload_id", typeof(Guid));
+        dt.Columns.Add("row_number", typeof(int));
+        dt.Columns.Add("from_branch", typeof(string));
+        dt.Columns.Add("from_location", typeof(string));
+        dt.Columns.Add("to_branch", typeof(string));
+        dt.Columns.Add("to_location", typeof(string));
+        dt.Columns.Add("description", typeof(string));
+        dt.Columns.Add("item_code", typeof(string));
+        dt.Columns.Add("quantity", typeof(int));
+
+        return dt;
+    }
+    private string GetStringSafe(IExcelDataReader reader, int index)
+    {
+        if (reader.IsDBNull(index))
+            return "";
+
+        return reader.GetValue(index).ToString().Trim();
     }
     #endregion
 }
