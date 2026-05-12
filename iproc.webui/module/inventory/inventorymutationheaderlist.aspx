@@ -34,7 +34,7 @@
                         <li class="active">
                             <a href="#invmutation" id="inventory" onclick="javascript:fnSetTab('inventory');"
                                 data-toggle="tab">
-                                Fixed Asset
+                                Inventory Mutation
                             </a>
                         </li>
                         <li>
@@ -144,9 +144,9 @@
                         </div>
 
                         <div class="tab-pane" id="uploadinvmutation">
-                            <div class="panel-body">
-                                <div class="row" style="margin-bottom: 15px;">
-                                    <div class="col-md-5">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>Upload Excel : </label>
                                             <asp:FileUpload ID="FileUploadControlMutation" runat="server"
@@ -165,28 +165,45 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-7 text-right">
-                                        <div class="form-inline">
-                                            <label>Keywords </label>
+                                    <div class="col-sm-4">
+                                        <asp:Panel ID="pnlSearchUpload" runat="server" DefaultButton="btnSearch"
+                                            class="input-group">
                                             <asp:TextBox ID="txtSearchUpload" runat="server" CssClass="form-control"
-                                                placeholder="Keywords" style="width:200px;"></asp:TextBox>
-                                            <asp:LinkButton ID="btnSearchUpload" runat="server" CssClass="btn btn-info"
-                                                OnClick="btnSearch_Click">
-                                                <i class="icon-search"></i>
-                                            </asp:LinkButton>
-                                        </div>
-                                        <div class="form-inline" style="margin-top:10px;">
-                                            <label>Status : </label>
-                                            <cc1:XUIDropDownList ID="ddlStatusUpload" Width="150px" runat="server"
-                                                CssClass="form-control" AutoPostBack="true" />
-
-                                            <label style="margin-left:15px;">Branch: </label>
-                                            <cc1:XUIDropDownList ID="ddlBranchUpload" Width="180px" runat="server"
-                                                CssClass="form-control" AutoPostBack="true" />
-                                        </div>
+                                                placeholder="Keywords"></asp:TextBox>
+                                            <div class="input-group-btn">
+                                                <asp:LinkButton ID="btnSearchUpload" runat="server" CssClass="btn btn-info"
+                                                    OnClick="btnSearch_Click">
+                                                    <i class="icon-search"></i> Search
+                                                </asp:LinkButton>
+                                            </div>
+                                        </asp:Panel>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Status</label>
+                                            <div class="col-sm-5">
+                                                <cc1:XUIDropDownList ID="ddlStatusUpload" Width="200px" runat="server"
+                                                    CssClass="form-control" AutoPostBack="true"
+                                                    OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-2">Branch</label>
+                                            <div class="col-sm-5">
+                                                <cc1:XUIDropDownList ID="ddlBranchUpload" runat="server"
+                                                    CssClass="form-control" AutoPostBack="true"
+                                                    OnSelectedIndexChanged="ddlBranch_SelectedIndexChanged" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                               
+                                
 
                                 <div class="table-responsive">
                                     <asp:GridView ID="gvUploadLog" runat="server" AutoGenerateColumns="false"
@@ -259,11 +276,10 @@
                                         </asp:GridView>
                                     </ContentTemplate>
                                     <Triggers>
-                                        <asp:AsyncPostBackTrigger ControlID="btnSearch" EventName="Click" />
-                                        <asp:AsyncPostBackTrigger ControlID="btnDelete" EventName="Click" />
                                     </Triggers>
                                 </asp:UpdatePanel>
                             </div>
+                        </div>                            
                         </div>
                     </div>
                 </div>

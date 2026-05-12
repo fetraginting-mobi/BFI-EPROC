@@ -24,7 +24,9 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         if (!Page.IsPostBack)
         {
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "IM");
-            Shared.BindBranchEmployeeSort(ddlBranch);
+            Shared.BindGeneralSubCodeByTransflagCode(ddlStatusUpload, "IM");
+            Shared.BindBranchEmployeeSort(ddlBranch);            
+            Shared.BindBranchEmployeeSort(ddlBranchUpload);
 
             BindData();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
