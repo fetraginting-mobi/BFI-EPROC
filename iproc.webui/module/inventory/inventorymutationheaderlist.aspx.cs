@@ -15,6 +15,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 {
     private static string TABLE_NAME = "INVENTORY_MUTATION_HEADER";
     private static string TABLE_UPLOAD_NAME = "INVENTORY_MUTATION_UPLOAD_HEADER";
+    private static string TABLE_UPLOAD_LOG = "INVENTORY_MUTATION_UPLOAD_STAGING_LOG";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -175,22 +176,20 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 DataRow row = dt.NewRow();
                 row["upload_id"] = uploadId;
                 row["row_number"] = excelRowIndex - 1;
-                row["from_cost_center"] = GetStringSafe(excelReader, 1);
+                row["from_branch"] = GetStringSafe(excelReader, 1);
                 row["from_location"] = GetStringSafe(excelReader, 2);
-                row["to_cost_center"] = GetStringSafe(excelReader, 3);
+                row["to_branch"] = GetStringSafe(excelReader, 3);
                 row["to_location"] = GetStringSafe(excelReader, 4);
-                row["owner"] = GetStringSafe(excelReader, 5);
-                row["asset_code"] = GetStringSafe(excelReader, 6);
-                row["description"] = GetStringSafe(excelReader, 7);
-                //row["department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
-                //row["division_code"] = Shared.CurrentEmployeeDivCode;
-                //row["sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
-                //row["units_code"] = Shared.CurrentEmployeeUnitsCode;
+                row["description"] = GetStringSafe(excelReader, 5);
+                row["item_code"] = GetStringSafe(excelReader, 6);
+                row["quantity"] = GetStringSafe(excelReader, 7);
 
                 dt.Rows.Add(row);
             }
             BulkInsertToStaging(dt);
-            // ExecuteBulkProcess(uploadId);
+            ExecuteBulkProcess(uploadId, fileName);
+            BindUploadData(uploadId, fileName); ;
+
             // ClientScript.RegisterStartupScript(this.GetType(),"alert","alert('Upload berhasil diproses.');",true);
 
         }
@@ -296,8 +295,6 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
         return int.TryParse(value.ToString().Trim(), out result);
     }
-
-
     protected void btnDownload_Click(object sender, EventArgs e)
     {
         GeneralDAL _dal = null;
@@ -441,6 +438,71 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             return "";
 
         return reader.GetValue(index).ToString().Trim();
+    }
+    private void ExecuteBulkProcess(Guid uploadId, String fileName)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable ht = new Hashtable();
+
+        ht["p_upload_id"] = uploadId;
+        ht["p_file_name"] = fileName;
+        ht["p_branch_code"] = "KPO";
+        ht["p_cre_by"] = Shared.CurrentUID;
+        ht["p_cre_ip_address"] = Shared.CurrentIPAddress;
+        ht["p_department_code"] = Shared.CurrentEmployeeDeptCodeDefault;
+        ht["p_division_code"] = Shared.CurrentEmployeeDivCode;
+        ht["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
+        ht["p_sub_department_code"] = Shared.CurrentEmployeeSubDepartmentCode;
+
+        _dal.ExecuteNonQuery(
+            "xsp_inv_mutation_upload_bulk_process",
+            ht
+        );
+    }
+    private void BindUploadData(Guid uploadId, String fileName)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        _ht["p_upload_id"] = uploadId;
+        _ht["p_file_name"] = fileName;
+
+        gvwUploadLog.DataSource = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
+        gvwUploadLog.DataBind();
+
+    }
+    protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwUploadLog.PageIndex = e.NewPageIndex;
+    }
+    protected void gvwUploadLog_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR")
+        {
+            string[] param = e.CommandArgument.ToString().Split('|');
+
+            string fileName = param[0];
+            string creDate = param[1];
+            string status = e.CommandName == "VIEW_VALID" ? "VALID" : "ERROR";
+
+            string url = string.Format(
+                    "../inventory/inventorymutationuploadlog.aspx?codebarcode={0}&file={1}&date={2}&status={3}",
+                    Request.Params["codebarcode"],
+                    fileName,
+                    creDate,
+                    status
+                );
+
+            string script = string.Format("fnShowGenericScreen('{0}');", url);
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "popup",
+                script,
+                true
+            );
+        }
     }
     #endregion
 }

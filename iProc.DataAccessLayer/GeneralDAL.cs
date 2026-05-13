@@ -347,6 +347,17 @@ namespace iProc.DataAccessLayer
                 }
             }
         }
+        public void ExecuteNonQuery(string spName, Hashtable parameters)
+        {
+            DBWrapper dbw = DBWrapper.GetSqlClientWrapper();
+            dbw.ConnectionString = Shared.ConnectionString;
+
+            if (!dbw.ExecuteSP(spName, parameters))
+                throw new Exception(
+                    "Fail to execute " + spName,
+                    new Exception(dbw.DBErrorMessage)
+                );
+        }
         #endregion
     }    
 }

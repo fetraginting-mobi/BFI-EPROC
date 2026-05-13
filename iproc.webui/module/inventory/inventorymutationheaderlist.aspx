@@ -178,6 +178,70 @@
                                         </asp:Panel>
                                     </div>
                                 </div>
+                                
+                                <div class="row">
+                                  <div class="col-sm-8">  
+                                      <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped" AllowPaging="true" PageSize="5" DataKeyNames="FILE_NAME" OnPageIndexChanging="gvwUploadLog_PageIndexChanging" OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data" Width="100%" Style="margin-top:10px;">
+                                        <Columns>
+                                          <asp:TemplateField ItemStyle-Width="2%">
+                                            <HeaderTemplate>
+                                              <span>No</span>
+                                            </HeaderTemplate>
+                                            <ItemTemplate><%# Container.DataItemIndex + 1 %> </ItemTemplate>
+                                          </asp:TemplateField>
+                                          <asp:BoundField DataField="upload_date" HeaderText="Date Upload">
+                                            <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                          </asp:BoundField>
+                                          <asp:BoundField DataField="file_name" HeaderText="File Name">
+                                            <ItemStyle Width="30%" />
+                                          </asp:BoundField>
+                                          <asp:BoundField DataField="total_rows" HeaderText="Total Upload Data">
+                                            <ItemStyle Width="15%" HorizontalAlign="Center"/>
+                                          </asp:BoundField>
+                                          <asp:TemplateField HeaderText="Total Valid">
+                                            <ItemTemplate>
+                                                <asp:LinkButton 
+                                                    ID="lnkValid" 
+                                                    runat="server"
+                                                    Visible='<%# Convert.ToInt32(Eval("total_valid")) > 0 %>'
+                                                    Text='<%# Eval("total_valid") %>'
+                                                    CommandName="VIEW_VALID"
+                                                    CommandArgument='<%# Eval("FILE_NAME") + "|" + Eval("upload_date") %>' 
+                                                    Style="color:Green"/>
+                                                
+                                                <asp:Label 
+                                                    ID="lblValid" 
+                                                    runat="server"
+                                                    Visible='<%# Convert.ToInt32(Eval("total_valid")) == 0 %>'
+                                                    Text="0" />
+                                            </ItemTemplate>
+                                            <ItemStyle Width="10%" HorizontalAlign="Center"/>
+                                        </asp:TemplateField>
+
+                                        <asp:TemplateField HeaderText="Total Error">
+                                            <ItemTemplate>
+                                                <asp:LinkButton 
+                                                    ID="lnkError" 
+                                                    runat="server"
+                                                    Visible='<%# Convert.ToInt32(Eval("total_error")) > 0 %>'
+                                                    Text='<%# Eval("total_error") %>'
+                                                    CommandName="VIEW_ERROR"
+                                                    CommandArgument='<%# Eval("FILE_NAME") + "|" + Eval("upload_date") %>' 
+                                                    Style="color:Red"/>
+                                                
+                                                <asp:Label 
+                                                    ID="lblError" 
+                                                    runat="server"
+                                                    Visible='<%# Convert.ToInt32(Eval("total_error")) == 0 %>'
+                                                    Text="0" />
+                                                    
+                                            </ItemTemplate>
+                                            <ItemStyle Width="10%" HorizontalAlign="Center"/>
+                                        </asp:TemplateField>
+                                        </Columns>
+                                      </asp:GridView>
+                                  </div>
+                              </div>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
@@ -204,7 +268,7 @@
                                 </div>                               
                                 
 
-                                <div class="table-responsive">
+                                <%--<div class="table-responsive">
                                     <asp:GridView ID="gvUploadLog" runat="server" AutoGenerateColumns="false"
                                         CssClass="table table-bordered text-center">
                                         <Columns>
@@ -217,7 +281,7 @@
                                             <asp:BoundField HeaderText="Total Error" DataField="TOTAL_ERROR" />
                                         </Columns>
                                     </asp:GridView>
-                                </div>
+                                </div>--%>                       
 
                                 <hr style="border-top: 2px solid #ccc;" />
 
