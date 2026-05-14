@@ -481,15 +481,14 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         {
             string[] param = e.CommandArgument.ToString().Split('|');
 
-            string fileName = param[0];
-            string creDate = param[1];
+            string uploadid = param[0];
+            string filename = param[1];
             string status = e.CommandName == "VIEW_VALID" ? "VALID" : "ERROR";
 
             string url = string.Format(
-                    "../inventory/inventorymutationuploadlog.aspx?codebarcode={0}&file={1}&date={2}&status={3}",
-                    Request.Params["codebarcode"],
-                    fileName,
-                    creDate,
+                    "../inventory/inventorymutationuploadlog.aspx?uploadid={0}&filename={1}&status={2}",
+                    uploadid,
+                    filename,
                     status
                 );
 

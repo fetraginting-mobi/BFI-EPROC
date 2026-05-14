@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Configuration;
 using System.Data;
+using System.Text.RegularExpressions;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
@@ -17,7 +18,7 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
 {
     protected void Page_Init(object sender, EventArgs e)
     {
-        PAGE_LIST = "INVENTORY_MUTATION_UPLOAD_STAGING_LOG";
+        PAGE_LIST = "INV_MUTATION_DETAIL_UPLOAD";
         NEXT_PAGE = "";
     }
 
@@ -47,12 +48,26 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
             _ht = new Hashtable();
 
             _ht["p_keywords"] = txtSearch.Text;
-            _ht["p_code_barcode"] = Request.Params["codebarcode"];
-            _ht["p_file_name"] = Request.Params["file"];
-            _ht["p_cre_date"] = Request.Params["date"];
+
+            //convert string upload id menjadii GUID
+            string p_upload_id = Request.Params["uploadid"];
+            //Response.Write("Nilai uploadIdStr: <b>" + p_upload_id + "</b><br/>");
+            //string guidPattern = @"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+
+
+            //if (!string.IsNullOrEmpty(p_upload_id) && Regex.IsMatch(p_upload_id, guidPattern))
+            //{
+                _ht["p_upload_id"] = new Guid(p_upload_id);
+            //}
+            //else
+            //{
+            //    _ht["p_upload_id"] = DBNull.Value;
+            //}
+
+            _ht["p_file_name "] = Request.Params["filename"];
             _ht["p_status"] = Request.Params["status"];
 
-            gvwList.DataSource = _dal.GetRows("", "xsp_inventory_mutation_upload_staging_log_getrows", _ht);
+            gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_detail_upload_getrows", _ht);
             gvwList.DataBind();
         }
         catch (Exception ex)

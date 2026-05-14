@@ -28,23 +28,23 @@
                 <ContentTemplate>
                     <cc1:XUILabel ID="lblStatus" runat="server" DataType="String" style="display:none;"></cc1:XUILabel>
                     <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                    AllowPaging="true" PageSize="5" DataKeyNames="ID"
+                    AllowPaging="true" PageSize="5" DataKeyNames="row_number"
                         OnPageIndexChanging="gvwList_PageIndexChanging" OnRowDataBound="gvwList_RowDataBound"
                         onselectedindexchanged="SelectedIndexChanged" EmptyDataText="There is no data">
                         <Columns>
-                            <asp:BoundField DataField="ROW" HeaderText="Row">
+                            <asp:BoundField DataField="row_number" HeaderText="Row">
                                 <ItemStyle Width="10%" HorizontalAlign="Center"/>
                             </asp:BoundField>
                             <asp:BoundField DataField="BARCODE" HeaderText="Barcode">
                                 <ItemStyle Width="10%" HorizontalAlign="Left"/>
                             </asp:BoundField>
-                            <asp:BoundField DataField="ASSET_NAME" HeaderText="Asset Name">
+                            <asp:BoundField DataField="item_name" HeaderText="Asset Name">
                                 <ItemStyle Width="20%" HorizontalAlign="Left"/>
                             </asp:BoundField>
                             <asp:TemplateField HeaderText="Status">
                                 <ItemTemplate>
-                                    <asp:Label ID="lblStatusText" runat="server" 
-                                        Text='<%# Eval("STATUS") %>' 
+                                    <asp:Label ID="process_flag" runat="server" 
+                                        Text='<%# Eval("process_flag") %>' 
                                         EnableViewState="false"></asp:Label>
                                 </ItemTemplate>
                                 <ItemStyle Width="10%" HorizontalAlign="Center"/>

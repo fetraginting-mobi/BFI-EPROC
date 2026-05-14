@@ -181,7 +181,7 @@
                                 
                                 <div class="row">
                                   <div class="col-sm-8">  
-                                      <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped" AllowPaging="true" PageSize="5" DataKeyNames="FILE_NAME" OnPageIndexChanging="gvwUploadLog_PageIndexChanging" OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data" Width="100%" Style="margin-top:10px;">
+                                      <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped" AllowPaging="true" PageSize="5" DataKeyNames="upload_id,file_name" OnPageIndexChanging="gvwUploadLog_PageIndexChanging" OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data" Width="100%" Style="margin-top:10px;">
                                         <Columns>
                                           <asp:TemplateField ItemStyle-Width="2%">
                                             <HeaderTemplate>
@@ -191,6 +191,8 @@
                                           </asp:TemplateField>
                                           <asp:BoundField DataField="upload_date" HeaderText="Date Upload">
                                             <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                          </asp:BoundField>
+                                          <asp:BoundField DataField="upload_id" Visible="false">
                                           </asp:BoundField>
                                           <asp:BoundField DataField="file_name" HeaderText="File Name">
                                             <ItemStyle Width="30%" />
@@ -206,7 +208,7 @@
                                                     Visible='<%# Convert.ToInt32(Eval("total_valid")) > 0 %>'
                                                     Text='<%# Eval("total_valid") %>'
                                                     CommandName="VIEW_VALID"
-                                                    CommandArgument='<%# Eval("FILE_NAME") + "|" + Eval("upload_date") %>' 
+                                                    CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>' 
                                                     Style="color:Green"/>
                                                 
                                                 <asp:Label 
@@ -226,7 +228,7 @@
                                                     Visible='<%# Convert.ToInt32(Eval("total_error")) > 0 %>'
                                                     Text='<%# Eval("total_error") %>'
                                                     CommandName="VIEW_ERROR"
-                                                    CommandArgument='<%# Eval("FILE_NAME") + "|" + Eval("upload_date") %>' 
+                                                    CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>' 
                                                     Style="color:Red"/>
                                                 
                                                 <asp:Label 
