@@ -28,7 +28,7 @@
                 <ContentTemplate>
                     <cc1:XUILabel ID="lblStatus" runat="server" DataType="String" style="display:none;"></cc1:XUILabel>
                     <asp:GridView ID="gvwList" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped"
-                    AllowPaging="true" PageSize="5" DataKeyNames="row_number"
+                    AllowPaging="true" PageSize="10" DataKeyNames="row_number"
                         OnPageIndexChanging="gvwList_PageIndexChanging" OnRowDataBound="gvwList_RowDataBound"
                         onselectedindexchanged="SelectedIndexChanged" EmptyDataText="There is no data">
                         <Columns>

@@ -55,7 +55,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
-            _htupload["p_status"] = ddlStatusUpload.SelectedValue;
+            // _htupload["p_status"] = ddlStatusUpload.SelectedValue;
             _htupload["p_branch_code"] = ddlBranchUpload.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
@@ -175,6 +175,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
                 DataRow row = dt.NewRow();
                 row["upload_id"] = uploadId;
+                row["file_name"] = fileName;
                 row["row_number"] = excelRowIndex - 1;
                 row["from_branch"] = GetStringSafe(excelReader, 1);
                 row["from_location"] = GetStringSafe(excelReader, 2);
@@ -189,9 +190,15 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             BulkInsertToStaging(dt);
             ExecuteBulkProcess(uploadId, fileName);
             BindUploadData(uploadId, fileName); ;
+            BindData();
 
-            // ClientScript.RegisterStartupScript(this.GetType(),"alert","alert('Upload berhasil diproses.');",true);
+            string script = @"
+            $(document).ready(function () {
+                $('.nav-tabs a[href=""#uploadinvmutation""]').tab('show');
+                alert('File "" " + fileName + @" "" berhasil diproses.');
+            });";
 
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ActivateUploadTab", script, true);
         }
         catch (Exception ex)
         {
@@ -227,7 +234,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             errorMessage = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
             htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
             htLog["p_file_name"] = fileName;
-            htLog["p_row_number"] = 0; // HEADER
+            htLog["p_row_number"] = 0;
             htLog["p_error_message"] = errorMessage;
             htLog["p_raw_data"] = "HEADER VALIDATION";
             htLog["p_cre_by"] = Shared.CurrentUID;
@@ -309,7 +316,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _htParameters["p_code"] = Request.Params["code"];
 
 
-            string pdfName = "upload_invmutation_list" + ".xlsx"; ;
+            string pdfName = "upload_invmutation" + Shared.CurrentUID + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx"; ;
             string pdfPath = Server.MapPath(@"..\..\template\" + pdfName);
             //string filetype = "xls";
 
@@ -330,61 +337,58 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         try
         {
-            if (ddlStatus.SelectedValue != "NEW")
-            {
-                Shared.ShowErrorDialog(this,
-                    new Exception("Post hanya boleh untuk Status NEW dan IsUpload TRUE"));
-                return;
-            }
-
             ArrayList selectedCodes = new ArrayList();
-
-            for (int i = 0; i < gvwList.Rows.Count; i++)
+            foreach (GridViewRow row in gvwListUpload.Rows)
             {
-                GridViewRow row = gvwList.Rows[i];
-                CheckBox chk = row.FindControl("chbSelect") as CheckBox;
-
+                CheckBox chk = row.FindControl("chbSelectUpload") as CheckBox;
                 if (chk != null && chk.Checked)
                 {
-                    string codeBarcode =
-                        gvwList.DataKeys[row.RowIndex].Value.ToString();
-
+                    string codeBarcode = gvwListUpload.DataKeys[row.RowIndex].Value.ToString();
                     selectedCodes.Add(codeBarcode);
+                }
+            }
+
+            // Jika TIDAK ADA yang dicentang, maka ambil SEMUA data NEW (Logic Otomatis Anda)
+            if (selectedCodes.Count == 0)
+            {
+                GeneralDAL _dal = new GeneralDAL();
+                Hashtable _htupload = new Hashtable();
+                _htupload["p_keywords"] = txtSearchUpload.Text;
+                _htupload["p_status"] = "NEW";
+                _htupload["p_branch_code"] = ddlBranchUpload.SelectedValue;
+                Shared.ApplyDefaultProp(_htupload);
+
+                DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
+                if (dtTarget != null)
+                {
+                    foreach (DataRow dr in dtTarget.Rows)
+                    {
+                        selectedCodes.Add(dr["CODE_BARCODE"].ToString());
+                    }
                 }
             }
 
             if (selectedCodes.Count == 0)
             {
-                Shared.ShowErrorDialog(this,
-                    new Exception("Pilih minimal 1 data untuk diposting"));
+                Shared.ShowErrorDialog(this, new Exception("Tidak ada data yang dipilih atau tersedia untuk di-post."));
                 return;
             }
 
-            // SIMPAN KE SESSION (BULK LIST)
+            // 3. Simpan ke Session dan buka Approval
             Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
             Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
 
-            // REDIRECT KE GENERIC APPLICATION (PASSWORD 1x)
-            string url = string.Format(
-            "../../approval/genericapplication.aspx?code=AP000013&nexturl={0}",
-            Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx")
-            );
+            string url = string.Format("../../approval/genericapplication.aspx?code=AP000013&nexturl={0}",
+                Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx"));
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
-            ScriptManager.RegisterStartupScript(
-                this,
-                this.GetType(),
-                "OPEN_APPROVAL",
-                script,
-                true
-            );
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "OPEN_APPROVAL", script, true);
         }
         catch (Exception ex)
         {
             Shared.ShowErrorDialog(this, ex);
         }
     }
-
     private void ControlPostButton()
     {
         bool isStatusNew = ddlStatus.SelectedValue == "NEW";
@@ -421,6 +425,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         DataTable dt = new DataTable();
         dt.Columns.Add("upload_id", typeof(Guid));
+        dt.Columns.Add("file_name", typeof(string));
         dt.Columns.Add("row_number", typeof(int));
         dt.Columns.Add("from_branch", typeof(string));
         dt.Columns.Add("from_location", typeof(string));

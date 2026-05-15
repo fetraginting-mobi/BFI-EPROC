@@ -269,24 +269,7 @@
                                     </div>
                                 </div>                               
                                 
-
-                                <%--<div class="table-responsive">
-                                    <asp:GridView ID="gvUploadLog" runat="server" AutoGenerateColumns="false"
-                                        CssClass="table table-bordered text-center">
-                                        <Columns>
-                                            <asp:BoundField HeaderText="No" DataField="NO" />
-                                            <asp:BoundField HeaderText="Date Upload" DataField="DATE_UPLOAD" />
-                                            <asp:BoundField HeaderText="Upload By" DataField="UPLOAD_BY" />
-                                            <asp:BoundField HeaderText="File Name" DataField="FILE_NAME" />
-                                            <asp:BoundField HeaderText="Total Row" DataField="TOTAL_ROW" />
-                                            <asp:BoundField HeaderText="Total Valid" DataField="TOTAL_VALID" />
-                                            <asp:BoundField HeaderText="Total Error" DataField="TOTAL_ERROR" />
-                                        </Columns>
-                                    </asp:GridView>
-                                </div>--%>                       
-
                                 <hr style="border-top: 2px solid #ccc;" />
-
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group"></div>
