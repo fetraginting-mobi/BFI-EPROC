@@ -561,7 +561,6 @@
                                     Mutation Detail
                                 </a>
                             </li>
-
                             <li class="">
                                 <a href="#expedition" id="mutatexpedition"
                                     onclick="javascript:fnSetTab('mutatexpedition');" data-toggle="tab"
@@ -569,9 +568,8 @@
                                     Mutation Expedition
                                 </a>
                             </li>
-
-                            <li class="">
-                                <a href="#mutationuploadlog" id="mutationuploadlog"
+                            <li id="liMutationUploadLog" runat="server">
+                                <a href="#mutationuploadlog" id="lnkMutationUploadLog"
                                     onclick="javascript:fnSetTab('mutationuploadlog');" data-toggle="tab"
                                     style="padding-bottom:28px">
                                     Post Upload Mutation History
@@ -588,7 +586,8 @@
                                         <div class="col-sm-8">
                                             <cc1:XUILinkButton ID="btnAddAdDep" RoleCode="R80000010E" runat="server"
                                                 CssClass="btn btn-primary" data-toggle="modal" CausesValidation="false">
-                                                <i class="icon-plus"></i> Add</cc1:XUILinkButton>
+                                                <i class="icon-plus"></i> Add
+                                            </cc1:XUILinkButton>
                                             <cc1:XUILinkButton RoleCode="R80000010E" ID="btnSaveDetail" runat="server"
                                                 CssClass="btn btn-primary" OnClick="btnSaveDetail_Click"><i
                                                     class="icon-save"></i> Save</cc1:XUILinkButton>
@@ -764,25 +763,52 @@
                                     </asp:UpdatePanel>
                                 </div>
                             </div>
-
                             <div class="tab-pane" id="mutationuploadlog">
-                                <div class="panel-heading">
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <cc1:XUILinkButton RoleCode="R60000110E" ID="btnAddTOPXXX" runat="server"
-                                                CssClass="btn btn-primary"><i
-                                                    class="icon-plus"></i> Create</cc1:XUILinkButton>
-                                            <cc1:XUILinkButton RoleCode="R60000110E" ID="btnDeleteTOPXXX" runat="server"
-                                                CssClass="btn btn-danger"><i
-                                                    class="icon-trash"></i> Delete</cc1:XUILinkButton>
-                                        </div>
-
-                                    </div>
+                                <div class="panel-body">
+                                    <asp:UpdatePanel ID="updmutationuploadlog" runat="server" UpdateMode="Conditional">
+                                        <ContentTemplate>
+                                            <asp:GridView ID="gvwListmutationuploadlog" runat="server"
+                                                AutoGenerateColumns="false"
+                                                CssClass="display table table-bordered table-striped" AllowPaging="true"
+                                                PageSize="10" DataKeyNames="code_barcode"
+                                                OnPageIndexChanging="gvwListMutationUploadlog_PageIndexChanging"
+                                                EmptyDataText="There is no data" Width="100%">
+                                                <Columns>
+                                                    <asp:TemplateField>
+                                                        <HeaderTemplate><span>No</span></HeaderTemplate>
+                                                        <ItemTemplate>
+                                                            <%# Container.DataItemIndex + 1 %>
+                                                        </ItemTemplate>
+                                                    </asp:TemplateField>
+                                                    <asp:BoundField DataField="date" HeaderText="Date"
+                                                        DataFormatString="{0:dd/MM/yyyy}">
+                                                        <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+                                                    <asp:BoundField DataField="code_barcode" HeaderText="code_barcode"
+                                                        Visible="false"></asp:BoundField>
+                                                    <asp:BoundField DataField="process_name" HeaderText="Process">
+                                                        <ItemStyle Width="5%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+                                                    <asp:BoundField DataField="item_code" HeaderText="Item Code">
+                                                        <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+                                                    <asp:BoundField DataField="item_name" HeaderText="Item">
+                                                        <ItemStyle Width="17%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+                                                    <asp:BoundField DataField="quantity" HeaderText="Quantity">
+                                                        <ItemStyle Width="5%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+                                                    <asp:BoundField DataField="error_message"
+                                                        HeaderText="Error message">
+                                                    </asp:BoundField>
+                                                </Columns>
+                                            </asp:GridView>
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <%-- </section>--%>
+                </section>
             </asp:Panel>
-
         </asp:Content>

@@ -14,6 +14,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
     private static string TABLE_NAME_DETAIL = "INVENTORY_MUTATION_DETAIL";
     private static string TABLE_NAME_HEADER = "INVENTORY_MUTATION_HEADER";
     private static string TABLE_NAME_EXPEDITION = "INVENTORY_MUTATION_EXPEDITION";
+    private static string TABLE_NAME_POST_HISTORY = "INVENTORY_POST_MUTATION_UPLOAD_HISTORY";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -82,6 +83,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 // Load Data Utama dari Database
                 LoadData();
                 BindTOP();
+                BindMutationUploadLog();
 
                 // Setting Default untuk Mode Edit
                 ddlBranch.Enabled = false;
@@ -127,6 +129,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
                         gvwList.Columns[1].Visible = false;
                     }
                     btnCancel.Visible = true;
+                    liMutationUploadLog.Visible = true;
                 }
                 else
                 {
@@ -139,6 +142,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
                         btnDeleteTOP.Visible = false;
                         gvwList.Columns[1].Visible = false;
                     }
+                    liMutationUploadLog.Visible = false;
                 }
                 BindData();
                 btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
@@ -380,9 +384,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
             TextBox txtQuantity = (TextBox)e.Row.FindControl("txtQuantity");
             TextBox txtRemarks = (TextBox)e.Row.FindControl("txtRemarks");
 
-
-
-
             txtQuantity.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "QUANTITY"));
             txtRemarks.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "REMARKS"));
             if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CANCEL" || lblTransFlagCode.Text == "ONPROGRESS" || lblProcess.Text == "GENERATE")
@@ -422,9 +423,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
         Shared.BindDepartment(ddlDepartment, ddlDivision.SelectedValue);
         Shared.BindSubDepartment(ddlSubDepartment, ddlDepartment.SelectedValue);
         Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
-
-
-
         //updDep.Update();
     }
 
@@ -441,14 +439,10 @@ public partial class module_inventory_inventorymutationheader : BasePage
 
     protected void ddlSubDepartment_SelectedIndexChanged(object sender, EventArgs e)
     {
-
         Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
-
-
-
         //updDep.Update();
     }
 
@@ -534,8 +528,35 @@ public partial class module_inventory_inventorymutationheader : BasePage
     {
         Response.Redirect(string.Format("inventorymutationepedition.aspx?action=edit&id={0}&codebarcode={1}", gvwListTOP.SelectedDataKey[0].ToString(), lblCodeBarcode.Text));
     }
+    protected void gvwListMutationUploadlog_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListmutationuploadlog.PageIndex = e.NewPageIndex;
+        BindMutationUploadLog();
+    }
+    private void BindMutationUploadLog()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
 
-    # endregion
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_im_code"] = lblCodeBarcode.Text;
+
+            gvwListmutationuploadlog.DataSource = _dal.GetRows(TABLE_NAME_POST_HISTORY, _ht);
+            gvwListmutationuploadlog.DataBind();
+            updmutationuploadlog.Update();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+
+    #endregion
 
 
 }

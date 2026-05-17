@@ -29,9 +29,14 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         if (!Page.IsPostBack)
         {
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "IM");
-            Shared.BindGeneralSubCodeByTransflagCode(ddlStatusUpload, "IM");
+            Shared.BindGeneralLocationByBranch(ddlFromLocation, "KPO");
+            ddlFromLocation.Items.Insert(0, new ListItem("ALL", ""));
             Shared.BindBranchEmployeeSort(ddlBranch);
-            Shared.BindBranchEmployeeSort(ddlBranchUpload);
+            Shared.BindGetBranch(ddltoBranch);
+            ddltoBranch.Items.Insert(0, new ListItem("ALL", ""));
+            Shared.BindGeneralLocationByBranch(ddltoLocation, "");
+            ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+
 
             BindData();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
@@ -56,7 +61,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
             // _htupload["p_status"] = ddlStatusUpload.SelectedValue;
-            _htupload["p_branch_code"] = ddlBranchUpload.SelectedValue;
+            _htupload["p_branch_code"] = "KPO";
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -355,7 +360,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 Hashtable _htupload = new Hashtable();
                 _htupload["p_keywords"] = txtSearchUpload.Text;
                 _htupload["p_status"] = "NEW";
-                _htupload["p_branch_code"] = ddlBranchUpload.SelectedValue;
+                _htupload["p_branch_code"] = "KPO";
                 Shared.ApplyDefaultProp(_htupload);
 
                 DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
@@ -392,7 +397,6 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private void ControlPostButton()
     {
         bool isStatusNew = ddlStatus.SelectedValue == "NEW";
-        //bool isUploadTrue = ddlIsUpload.SelectedValue == "1";
         bool hasData = gvwList.Rows.Count > 0;
 
         if (isStatusNew && hasData)
@@ -507,6 +511,25 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 true
             );
         }
+    }
+    protected void ddlFromBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlToBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedBranch = ddltoBranch.SelectedValue;
+        Shared.BindGeneralLocationByBranch(ddltoLocation, selectedBranch);
+        ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+        BindData();
+    }
+    protected void ddlFromLocation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlToLocation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
     }
     #endregion
 }
