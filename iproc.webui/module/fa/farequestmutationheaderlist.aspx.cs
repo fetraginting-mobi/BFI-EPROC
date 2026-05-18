@@ -118,5 +118,56 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     {
         BindData();
     }
+    # region Upload bulk mutation
+    protected void btnUploadRowFormat_Click(object sender, EventArgs e)
+    {
+        // Response.Redirect("farequestmutationbulkupload.aspx");
+    }
+    protected void btnDownload_Click(object sender, EventArgs e)
+    {
+
+    }
+    protected void gvwListUpload_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        // gvwListUpload.PageIndex = e.NewPageIndex;
+        BindData();
+    }
+    protected void SelectedUploadIndexChanged(object sender, EventArgs e)
+    {
+        // base.SelectedIndexChanged(sender, e);
+        // Response.Redirect("inventorymutationheader.aspx?action=edit&codebarcode=" + gvwListUpload.SelectedDataKey[0].ToString());
+    }
+
+    protected void btnPost_Click(object sender, EventArgs e)
+    {
+    }
+    protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        // gvwUploadLog.PageIndex = e.NewPageIndex;
+    }
+    protected void gvwUploadLog_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+    }
+    protected void ddlFromBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlToBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedBranch = ddltoBranch.SelectedValue;
+        Shared.BindGeneralLocationByBranch(ddltoLocation, selectedBranch);
+        ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+        BindData();
+    }
+    protected void ddlFromLocation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlToLocation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+
+    #endregion
 }
 
