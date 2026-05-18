@@ -13,7 +13,9 @@ using CrystalDecisions.Shared;
 using iProc.DataAccessLayer;
 using MPF23.XUI.Control;
 using Microsoft.VisualBasic;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Specialized;
 using Newtonsoft.Json;
@@ -469,20 +471,96 @@ public class Shared
 
     public static void BindGeneralSubCodeByTransflagCode(DropDownList ddl, string DocumentCode)
     {
-        GeneralDAL _dal = null;
-        Hashtable _ht = null;
+        string cacheKey = "CACHE_GEN_SUBCODE_" + DocumentCode;
+        DataTable dt;
 
+        // GeneralDAL _dal = null;
+        // Hashtable _ht = null;
+
+        // try
+        // {
+        //     _dal = new GeneralDAL();
+        //     _ht = new Hashtable();
+
+        //     _ht["p_keywords"] = "";
+        //     _ht["p_code"] = DocumentCode;
+
+        //     ddl.DataSource = _dal.GetRows("", "xsp_master_general_subcode_getrows_for_ddl_transflag_code", _ht);
+        //     ddl.DataTextField = "DESCRIPTION";
+        //     ddl.DataValueField = "CODE";
+        //     ddl.DataBind();
+        // }
+        // catch (Exception ex)
+        // {
+        // }
         try
         {
-            _dal = new GeneralDAL();
-            _ht = new Hashtable();
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dt = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                GeneralDAL _dal = new GeneralDAL();
+                Hashtable _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_code"] = DocumentCode;
 
-            _ht["p_keywords"] = "";
-            _ht["p_code"] = DocumentCode;
+                dt = _dal.GetRows("", "xsp_master_general_subcode_getrows_for_ddl_transflag_code", _ht);
 
-            ddl.DataSource = _dal.GetRows("", "xsp_master_general_subcode_getrows_for_ddl_transflag_code", _ht);
+                if (dt != null)
+                {
+                    HttpContext.Current.Cache.Insert(cacheKey, dt, null,
+                        DateTime.Now.AddMinutes(60),
+                        System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+            }
+
+            ddl.DataSource = dt;
             ddl.DataTextField = "DESCRIPTION";
             ddl.DataValueField = "CODE";
+            ddl.DataBind();
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+    public static void BindGeneralLocationByBranch(DropDownList ddl, string Branch)
+    {
+        if (Branch == "ALL" || string.IsNullOrEmpty(Branch))
+        {
+            Branch = "";
+        }
+
+        string cacheKey = "CACHE_INV_LOC_" + (string.IsNullOrEmpty(Branch) ? "ALL_DATA" : Branch);
+        DataTable dt;
+        try
+        {
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dt = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                GeneralDAL _dal = new GeneralDAL();
+                Hashtable _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_item_code"] = ""; 
+                _ht["p_branch_code"] = Branch; 
+
+                dt = _dal.GetRows("", "xsp_master_location_getrows_for_lookup", _ht);
+
+                if (dt != null)
+                {
+                    HttpContext.Current.Cache.Insert(cacheKey, dt, null,
+                        DateTime.Now.AddMinutes(120),
+                        System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+            }
+
+            ddl.DataSource = dt;
+            ddl.DataTextField = "location_desc";
+            ddl.DataValueField = "code";
             ddl.DataBind();
         }
         catch (Exception ex)
@@ -2358,21 +2436,59 @@ public class Shared
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
+        DataTable dtBranch = null;
 
+        string cacheKey = "CACHE_BRANCH_" + Shared.CurrentUID;
+
+        //try
+        //{
+        //    _dal = new GeneralDAL();
+        //    _ht = new Hashtable();
+
+        //    _ht["p_keywords"] = "";
+        //    _ht["p_code"] = Shared.CurrentUID;
+
+        //    //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
+        //    ddl.DataSource = _dal.GetRows("", "xsp_master_branch_filter_sort_getrows", _ht);
+        //    ddl.DataTextField = "DESCRIPTION";
+        //    ddl.DataValueField = "CODE";
+        //    ddl.DataBind();
+
+
+        //}
+        //catch (Exception ex)
+        //{
+        //}
         try
         {
-            _dal = new GeneralDAL();
-            _ht = new Hashtable();
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dtBranch = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                _dal = new GeneralDAL();
+                _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_code"] = Shared.CurrentUID;
 
-            _ht["p_keywords"] = "";
-            _ht["p_code"] = Shared.CurrentUID;
+                dtBranch = _dal.GetRows("", "xsp_master_branch_filter_sort_getrows", _ht);
+                if (dtBranch != null && dtBranch.Rows.Count > 0)
+                {
+                    HttpContext.Current.Cache.Insert(
+                        cacheKey,
+                        dtBranch,
+                        null,
+                        DateTime.Now.AddMinutes(60),
+                        System.Web.Caching.Cache.NoSlidingExpiration
+                    );
+                }
 
-            //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
-            ddl.DataSource = _dal.GetRows("", "xsp_master_branch_filter_sort_getrows", _ht);
+            }
+            ddl.DataSource = dtBranch;
             ddl.DataTextField = "DESCRIPTION";
             ddl.DataValueField = "CODE";
             ddl.DataBind();
-
 
         }
         catch (Exception ex)
@@ -2424,6 +2540,49 @@ public class Shared
             ddl.DataValueField = "CODE";
             ddl.DataBind();
 
+
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+    public static void BindGetBranch(DropDownList ddl)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        DataTable dtBranch = null;
+
+        string cacheKey = "CACHE_GET_BRANCH_" + Shared.CurrentUID;
+        try
+        {
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dtBranch = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                _dal = new GeneralDAL();
+                _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_code"] = Shared.CurrentUID;
+
+                dtBranch = _dal.GetRows("", "xsp_master_branch_getrows", _ht);
+                if (dtBranch != null && dtBranch.Rows.Count > 0)
+                {
+                    HttpContext.Current.Cache.Insert(
+                        cacheKey,
+                        dtBranch,
+                        null,
+                        DateTime.Now.AddMinutes(180),
+                        System.Web.Caching.Cache.NoSlidingExpiration
+                    );
+                }
+
+            }
+            ddl.DataSource = dtBranch;
+            ddl.DataTextField = "DESCRIPTION";
+            ddl.DataValueField = "CODE";
+            ddl.DataBind();
 
         }
         catch (Exception ex)
@@ -3398,7 +3557,6 @@ public class Shared
     public static string ExecuteReportExportExcel(Page page, string spReportName, string spResultName, Hashtable parameter, string filepath)
     {
         GeneralDAL dalReport = null;
-        string fullpathtextfile = "";
         try
         {
             //  execute DAL first
@@ -4143,5 +4301,154 @@ public class Shared
             return true; // anggap berubah jika gagal ambil
         }
     }
+
+    #region Grouping Asset
+    public static void ExportToExcelDirectDownload(string tableName, string spName, Hashtable reportParameters)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        //DataTable dt = null;
+        DataTable dt = _dal.GetRows(spName, reportParameters);
+
+        using (MemoryStream memStream = new MemoryStream())
+        {
+            using (SpreadsheetDocument document = SpreadsheetDocument.Create(memStream, SpreadsheetDocumentType.Workbook))
+            {
+                // --- SETUP WORKBOOK ---
+                WorkbookPart workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Spreadsheet.Workbook();
+
+                // --- STYLESHEET ---
+                WorkbookStylesPart stylePart = workbookPart.AddNewPart<WorkbookStylesPart>();
+                stylePart.Stylesheet = CreateStylesheet();
+                stylePart.Stylesheet.Save();
+
+                WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+
+                // --- COLUMNS & DATA ---
+                Spreadsheet.Columns columns = CreateColumnsWithAutoWidth(dt);
+                Spreadsheet.SheetData sheetData = new Spreadsheet.SheetData();
+
+                worksheetPart.Worksheet = new Spreadsheet.Worksheet();
+                worksheetPart.Worksheet.Append(columns);
+                worksheetPart.Worksheet.Append(sheetData);
+
+                Spreadsheet.Sheets sheets = document.WorkbookPart.Workbook.AppendChild<Spreadsheet.Sheets>(new Spreadsheet.Sheets());
+                Spreadsheet.Sheet sheet = new Spreadsheet.Sheet()
+                {
+                    Id = document.WorkbookPart.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = tableName.Length > 30 ? tableName.Substring(0, 30) : tableName
+                };
+                sheets.Append(sheet);
+
+                // --- HEADER ---
+                Spreadsheet.Row headerRow = new Spreadsheet.Row();
+                foreach (DataColumn column in dt.Columns)
+                {
+                    // Gunakan Spreadsheet.CellValues
+                    Spreadsheet.Cell cell = CreateCell(column.ColumnName, Spreadsheet.CellValues.InlineString);
+                    cell.StyleIndex = 1;
+                    headerRow.AppendChild(cell);
+                }
+                sheetData.AppendChild(headerRow);
+
+                // --- DATA ---
+                foreach (DataRow dsrow in dt.Rows)
+                {
+                    Spreadsheet.Row newRow = new Spreadsheet.Row();
+                    foreach (DataColumn col in dt.Columns)
+                    {
+                        string cellValue = dsrow[col].ToString();
+
+                        // Deteksi tipe data
+                        Spreadsheet.CellValues dataType = IsNumericType(col.DataType) ?
+                            Spreadsheet.CellValues.Number : Spreadsheet.CellValues.InlineString;
+
+                        if (dataType == Spreadsheet.CellValues.Number && string.IsNullOrEmpty(cellValue))
+                            cellValue = "0";
+
+                        newRow.AppendChild(CreateCell(cellValue, dataType));
+                    }
+                    sheetData.AppendChild(newRow);
+                }
+
+                workbookPart.Workbook.Save();
+            }
+
+            // --- DOWNLOAD PROCESS ---
+            string fileName = tableName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+
+            memStream.WriteTo(HttpContext.Current.Response.OutputStream);
+            HttpContext.Current.Response.Flush();
+            HttpContext.Current.Response.End();
+        }
+    }
+
+    // Perhatikan penggunaan 'Spreadsheet.' pada return type dan isi fungsi
+    private static Spreadsheet.Stylesheet CreateStylesheet()
+    {
+        return new Spreadsheet.Stylesheet(
+            new Spreadsheet.Fonts(
+                new Spreadsheet.Font(),
+                new Spreadsheet.Font(new Spreadsheet.Bold(), new Spreadsheet.Color() { Rgb = "FFFFFF" })
+            ),
+            new Spreadsheet.Fills(
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill() { PatternType = Spreadsheet.PatternValues.None }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill() { PatternType = Spreadsheet.PatternValues.Gray125 }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill(new Spreadsheet.ForegroundColor() { Rgb = "4F81BD" }) { PatternType = Spreadsheet.PatternValues.Solid })
+            ),
+            new Spreadsheet.Borders(new Spreadsheet.Border()),
+            new Spreadsheet.CellFormats(
+                new Spreadsheet.CellFormat(),
+                new Spreadsheet.CellFormat() { FontId = 1, FillId = 2, ApplyFill = true, ApplyFont = true }
+            )
+        );
+    }
+
+    private static Spreadsheet.Columns CreateColumnsWithAutoWidth(DataTable dt)
+    {
+        Spreadsheet.Columns cols = new Spreadsheet.Columns();
+        for (int i = 0; i < dt.Columns.Count; i++)
+        {
+            int maxChar = dt.Columns[i].ColumnName.Length;
+            foreach (DataRow row in dt.Rows)
+            {
+                int len = row[i].ToString().Length;
+                if (len > maxChar) maxChar = len;
+            }
+            double width = (maxChar > 50) ? 55 : maxChar + 3.5;
+            cols.Append(new Spreadsheet.Column() { Min = (uint)i + 1, Max = (uint)i + 1, Width = width, CustomWidth = true });
+        }
+        return cols;
+    }
+
+    private static Spreadsheet.Cell CreateCell(string text, Spreadsheet.CellValues dataType)
+    {
+        Spreadsheet.Cell cell = new Spreadsheet.Cell() { DataType = dataType };
+        if (dataType == Spreadsheet.CellValues.InlineString)
+            cell.InlineString = new Spreadsheet.InlineString(new Spreadsheet.Text(text ?? ""));
+        else
+            cell.CellValue = new Spreadsheet.CellValue(text ?? "0");
+        return cell;
+    }
+
+    private static bool IsNumericType(Type type)
+    {
+        switch (Type.GetTypeCode(type))
+        {
+            case TypeCode.Decimal:
+            case TypeCode.Double:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+            case TypeCode.Single: return true;
+            default: return false;
+        }
+    }
+    #endregion
 
 }
