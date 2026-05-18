@@ -469,20 +469,96 @@ public class Shared
 
     public static void BindGeneralSubCodeByTransflagCode(DropDownList ddl, string DocumentCode)
     {
-        GeneralDAL _dal = null;
-        Hashtable _ht = null;
+        string cacheKey = "CACHE_GEN_SUBCODE_" + DocumentCode;
+        DataTable dt;
 
+        // GeneralDAL _dal = null;
+        // Hashtable _ht = null;
+
+        // try
+        // {
+        //     _dal = new GeneralDAL();
+        //     _ht = new Hashtable();
+
+        //     _ht["p_keywords"] = "";
+        //     _ht["p_code"] = DocumentCode;
+
+        //     ddl.DataSource = _dal.GetRows("", "xsp_master_general_subcode_getrows_for_ddl_transflag_code", _ht);
+        //     ddl.DataTextField = "DESCRIPTION";
+        //     ddl.DataValueField = "CODE";
+        //     ddl.DataBind();
+        // }
+        // catch (Exception ex)
+        // {
+        // }
         try
         {
-            _dal = new GeneralDAL();
-            _ht = new Hashtable();
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dt = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                GeneralDAL _dal = new GeneralDAL();
+                Hashtable _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_code"] = DocumentCode;
 
-            _ht["p_keywords"] = "";
-            _ht["p_code"] = DocumentCode;
+                dt = _dal.GetRows("", "xsp_master_general_subcode_getrows_for_ddl_transflag_code", _ht);
 
-            ddl.DataSource = _dal.GetRows("", "xsp_master_general_subcode_getrows_for_ddl_transflag_code", _ht);
+                if (dt != null)
+                {
+                    HttpContext.Current.Cache.Insert(cacheKey, dt, null,
+                        DateTime.Now.AddMinutes(60),
+                        System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+            }
+
+            ddl.DataSource = dt;
             ddl.DataTextField = "DESCRIPTION";
             ddl.DataValueField = "CODE";
+            ddl.DataBind();
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+    public static void BindGeneralLocationByBranch(DropDownList ddl, string Branch)
+    {
+        if (Branch == "ALL" || string.IsNullOrEmpty(Branch))
+        {
+            Branch = "";
+        }
+
+        string cacheKey = "CACHE_INV_LOC_" + (string.IsNullOrEmpty(Branch) ? "ALL_DATA" : Branch);
+        DataTable dt;
+        try
+        {
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dt = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                GeneralDAL _dal = new GeneralDAL();
+                Hashtable _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_item_code"] = ""; 
+                _ht["p_branch_code"] = Branch; 
+
+                dt = _dal.GetRows("", "xsp_master_location_getrows_for_lookup", _ht);
+
+                if (dt != null)
+                {
+                    HttpContext.Current.Cache.Insert(cacheKey, dt, null,
+                        DateTime.Now.AddMinutes(120),
+                        System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+            }
+
+            ddl.DataSource = dt;
+            ddl.DataTextField = "location_desc";
+            ddl.DataValueField = "code";
             ddl.DataBind();
         }
         catch (Exception ex)
@@ -2358,21 +2434,59 @@ public class Shared
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
+        DataTable dtBranch = null;
 
+        string cacheKey = "CACHE_BRANCH_" + Shared.CurrentUID;
+
+        //try
+        //{
+        //    _dal = new GeneralDAL();
+        //    _ht = new Hashtable();
+
+        //    _ht["p_keywords"] = "";
+        //    _ht["p_code"] = Shared.CurrentUID;
+
+        //    //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
+        //    ddl.DataSource = _dal.GetRows("", "xsp_master_branch_filter_sort_getrows", _ht);
+        //    ddl.DataTextField = "DESCRIPTION";
+        //    ddl.DataValueField = "CODE";
+        //    ddl.DataBind();
+
+
+        //}
+        //catch (Exception ex)
+        //{
+        //}
         try
         {
-            _dal = new GeneralDAL();
-            _ht = new Hashtable();
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dtBranch = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                _dal = new GeneralDAL();
+                _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_code"] = Shared.CurrentUID;
 
-            _ht["p_keywords"] = "";
-            _ht["p_code"] = Shared.CurrentUID;
+                dtBranch = _dal.GetRows("", "xsp_master_branch_filter_sort_getrows", _ht);
+                if (dtBranch != null && dtBranch.Rows.Count > 0)
+                {
+                    HttpContext.Current.Cache.Insert(
+                        cacheKey,
+                        dtBranch,
+                        null,
+                        DateTime.Now.AddMinutes(60),
+                        System.Web.Caching.Cache.NoSlidingExpiration
+                    );
+                }
 
-            //ddl.DataSource = _dal.GetRows("MASTER_BRANCH", _ht);
-            ddl.DataSource = _dal.GetRows("", "xsp_master_branch_filter_sort_getrows", _ht);
+            }
+            ddl.DataSource = dtBranch;
             ddl.DataTextField = "DESCRIPTION";
             ddl.DataValueField = "CODE";
             ddl.DataBind();
-
 
         }
         catch (Exception ex)
@@ -2424,6 +2538,49 @@ public class Shared
             ddl.DataValueField = "CODE";
             ddl.DataBind();
 
+
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+    public static void BindGetBranch(DropDownList ddl)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        DataTable dtBranch = null;
+
+        string cacheKey = "CACHE_GET_BRANCH_" + Shared.CurrentUID;
+        try
+        {
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                dtBranch = (DataTable)HttpContext.Current.Cache[cacheKey];
+            }
+            else
+            {
+                _dal = new GeneralDAL();
+                _ht = new Hashtable();
+                _ht["p_keywords"] = "";
+                _ht["p_code"] = Shared.CurrentUID;
+
+                dtBranch = _dal.GetRows("", "xsp_master_branch_getrows", _ht);
+                if (dtBranch != null && dtBranch.Rows.Count > 0)
+                {
+                    HttpContext.Current.Cache.Insert(
+                        cacheKey,
+                        dtBranch,
+                        null,
+                        DateTime.Now.AddMinutes(180),
+                        System.Web.Caching.Cache.NoSlidingExpiration
+                    );
+                }
+
+            }
+            ddl.DataSource = dtBranch;
+            ddl.DataTextField = "DESCRIPTION";
+            ddl.DataValueField = "CODE";
+            ddl.DataBind();
 
         }
         catch (Exception ex)
@@ -3398,7 +3555,6 @@ public class Shared
     public static string ExecuteReportExportExcel(Page page, string spReportName, string spResultName, Hashtable parameter, string filepath)
     {
         GeneralDAL dalReport = null;
-        string fullpathtextfile = "";
         try
         {
             //  execute DAL first
