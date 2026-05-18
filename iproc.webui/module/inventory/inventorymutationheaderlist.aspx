@@ -158,8 +158,8 @@
                                                     Text="Download Template" CssClass="btn btn-info"
                                                     OnClick="btnDownload_Click" />
                                                 <cc1:XUILinkButton ID="btnPost" RoleCode="R60000110O" runat="server"
-                                                    CssClass="btn btn-success"
-                                                    OnClick="btnPost_Click"><i class="icon-envelope"></i> Post
+                                                    CssClass="btn btn-success" OnClick="btnPost_Click"><i
+                                                        class="icon-envelope"></i> Post
                                                 </cc1:XUILinkButton>
                                             </div>
                                         </div>
@@ -170,105 +170,128 @@
                                             <asp:TextBox ID="txtSearchUpload" runat="server" CssClass="form-control"
                                                 placeholder="Keywords"></asp:TextBox>
                                             <div class="input-group-btn">
-                                                <asp:LinkButton ID="btnSearchUpload" runat="server" CssClass="btn btn-info"
-                                                    OnClick="btnSearch_Click">
+                                                <asp:LinkButton ID="btnSearchUpload" runat="server"
+                                                    CssClass="btn btn-info" OnClick="btnSearch_Click">
                                                     <i class="icon-search"></i> Search
                                                 </asp:LinkButton>
                                             </div>
                                         </asp:Panel>
                                     </div>
                                 </div>
-                                
-                                <div class="row">
-                                  <div class="col-sm-8">  
-                                      <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false" CssClass="display table table-bordered table-striped" AllowPaging="true" PageSize="5" DataKeyNames="upload_id,file_name" OnPageIndexChanging="gvwUploadLog_PageIndexChanging" OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data" Width="100%" Style="margin-top:10px;">
-                                        <Columns>
-                                          <asp:TemplateField ItemStyle-Width="2%">
-                                            <HeaderTemplate>
-                                              <span>No</span>
-                                            </HeaderTemplate>
-                                            <ItemTemplate><%# Container.DataItemIndex + 1 %> </ItemTemplate>
-                                          </asp:TemplateField>
-                                          <asp:BoundField DataField="upload_date" HeaderText="Date Upload">
-                                            <ItemStyle Width="15%" HorizontalAlign="Center" />
-                                          </asp:BoundField>
-                                          <asp:BoundField DataField="upload_id" Visible="false">
-                                          </asp:BoundField>
-                                          <asp:BoundField DataField="file_name" HeaderText="File Name">
-                                            <ItemStyle Width="30%" />
-                                          </asp:BoundField>
-                                          <asp:BoundField DataField="total_rows" HeaderText="Total Upload Data">
-                                            <ItemStyle Width="15%" HorizontalAlign="Center"/>
-                                          </asp:BoundField>
-                                          <asp:TemplateField HeaderText="Total Valid">
-                                            <ItemTemplate>
-                                                <asp:LinkButton 
-                                                    ID="lnkValid" 
-                                                    runat="server"
-                                                    Visible='<%# Convert.ToInt32(Eval("total_valid")) > 0 %>'
-                                                    Text='<%# Eval("total_valid") %>'
-                                                    CommandName="VIEW_VALID"
-                                                    CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>' 
-                                                    Style="color:Green"/>
-                                                
-                                                <asp:Label 
-                                                    ID="lblValid" 
-                                                    runat="server"
-                                                    Visible='<%# Convert.ToInt32(Eval("total_valid")) == 0 %>'
-                                                    Text="0" />
-                                            </ItemTemplate>
-                                            <ItemStyle Width="10%" HorizontalAlign="Center"/>
-                                        </asp:TemplateField>
 
-                                        <asp:TemplateField HeaderText="Total Error">
-                                            <ItemTemplate>
-                                                <asp:LinkButton 
-                                                    ID="lnkError" 
-                                                    runat="server"
-                                                    Visible='<%# Convert.ToInt32(Eval("total_error")) > 0 %>'
-                                                    Text='<%# Eval("total_error") %>'
-                                                    CommandName="VIEW_ERROR"
-                                                    CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>' 
-                                                    Style="color:Red"/>
-                                                
-                                                <asp:Label 
-                                                    ID="lblError" 
-                                                    runat="server"
-                                                    Visible='<%# Convert.ToInt32(Eval("total_error")) == 0 %>'
-                                                    Text="0" />
-                                                    
-                                            </ItemTemplate>
-                                            <ItemStyle Width="10%" HorizontalAlign="Center"/>
-                                        </asp:TemplateField>
-                                        </Columns>
-                                      </asp:GridView>
-                                  </div>
-                              </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false"
+                                            CssClass="display table table-bordered table-striped" AllowPaging="true"
+                                            PageSize="5" DataKeyNames="upload_id,file_name"
+                                            OnPageIndexChanging="gvwUploadLog_PageIndexChanging"
+                                            OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data"
+                                            Width="100%" Style="margin-top:10px;">
+                                            <Columns>
+                                                <asp:TemplateField ItemStyle-Width="2%">
+                                                    <HeaderTemplate>
+                                                        <span>No</span>
+                                                    </HeaderTemplate>
+                                                    <ItemTemplate>
+                                                        <%# Container.DataItemIndex + 1 %>
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:BoundField DataField="upload_date" HeaderText="Date Upload">
+                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="upload_id" Visible="false">
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="file_name" HeaderText="File Name">
+                                                    <ItemStyle Width="30%" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="total_rows" HeaderText="Total Upload Data">
+                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
+                                                <asp:TemplateField HeaderText="Total Valid">
+                                                    <ItemTemplate>
+                                                        <asp:LinkButton ID="lnkValid" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_valid")) > 0 %>'
+                                                            Text='<%# Eval("total_valid") %>' CommandName="VIEW_VALID"
+                                                            CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>'
+                                                            Style="color:Green" />
+
+                                                        <asp:Label ID="lblValid" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_valid")) == 0 %>'
+                                                            Text="0" />
+                                                    </ItemTemplate>
+                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                </asp:TemplateField>
+
+                                                <asp:TemplateField HeaderText="Total Error">
+                                                    <ItemTemplate>
+                                                        <asp:LinkButton ID="lnkError" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_error")) > 0 %>'
+                                                            Text='<%# Eval("total_error") %>' CommandName="VIEW_ERROR"
+                                                            CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>'
+                                                            Style="color:Red" />
+
+                                                        <asp:Label ID="lblError" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_error")) == 0 %>'
+                                                            Text="0" />
+
+                                                    </ItemTemplate>
+                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                </asp:TemplateField>
+                                            </Columns>
+                                        </asp:GridView>
+                                    </div>
+                                </div>
                             </div>
                             <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label class="col-sm-3">Status</label>
-                                            <div class="col-sm-5">
-                                                <cc1:XUIDropDownList ID="ddlStatusUpload" Width="200px" runat="server"
-                                                    CssClass="form-control" AutoPostBack="true"
-                                                    OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged" />
-                                            </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="col-sm-3">From Branch</label>
+                                        <div class="col-sm-5">
+                                            <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
+                                            <cc1:XUIDropDownList ID="ddlFromBranch" Width="200px" runat="server"
+                                                CssClass="form-control" AutoPostBack="true"
+                                                OnSelectedIndexChanged="ddlFromBranch_SelectedIndexChanged">
+                                                <asp:ListItem Text="Head Office" Value="KPO"></asp:ListItem>
+                                            </cc1:XUIDropDownList>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-sm-2">Branch</label>
-                                            <div class="col-sm-5">
-                                                <cc1:XUIDropDownList ID="ddlBranchUpload" runat="server"
-                                                    CssClass="form-control" AutoPostBack="true"
-                                                    OnSelectedIndexChanged="ddlBranch_SelectedIndexChanged" />
-                                            </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="col-sm-3">From Location</label>
+                                        <div class="col-sm-5">
+                                            <cc1:XUIDropDownList ID="ddlFromLocation" Width="200px" runat="server"
+                                                CssClass="form-control" AutoPostBack="true"
+                                                OnSelectedIndexChanged="ddlFromLocation_SelectedIndexChanged">
+                                            </cc1:XUIDropDownList>
                                         </div>
                                     </div>
-                                </div>                               
-                                
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="col-sm-3">To Branch</label>
+                                        <div class="col-sm-5">
+                                            <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
+                                            <cc1:XUIDropDownList ID="ddltoBranch" Width="200px" runat="server"
+                                                CssClass="form-control" AutoPostBack="true"
+                                                OnSelectedIndexChanged="ddlToBranch_SelectedIndexChanged">
+                                            </cc1:XUIDropDownList>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="col-sm-3">To Location</label>
+                                        <div class="col-sm-5">
+                                            <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
+                                            <cc1:XUIDropDownList ID="ddltoLocation" Width="200px" runat="server"
+                                                CssClass="form-control" AutoPostBack="true"
+                                                OnSelectedIndexChanged="ddlToLocation_SelectedIndexChanged">
+                                            </cc1:XUIDropDownList>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <hr style="border-top: 2px solid #ccc;" />
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -277,8 +300,7 @@
                                 </div>
                                 <asp:UpdatePanel ID="updUpload" runat="server">
                                     <ContentTemplate>
-                                        <asp:GridView ID="gvwListUpload" runat="server"
-                                            onclick="togglePostButton()" AutoGenerateColumns=" false"
+                                        <asp:GridView ID="gvwListUpload" runat="server" AutoGenerateColumns=" false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
                                             PageSize="10" DataKeyNames="CODE_BARCODE"
                                             OnPageIndexChanging="gvwListUpload_PageIndexChanging"
@@ -330,9 +352,9 @@
                                     </Triggers>
                                 </asp:UpdatePanel>
                             </div>
-                        </div>                            
                         </div>
                     </div>
+                </div>
                 </div>
             </section>
         </asp:Content>
