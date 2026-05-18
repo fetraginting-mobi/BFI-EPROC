@@ -60,8 +60,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
-            // _htupload["p_status"] = ddlStatusUpload.SelectedValue;
             _htupload["p_branch_code"] = "KPO";
+            _htupload["p_from_location"] = ddlFromLocation.SelectedValue;
+            _htupload["p_to_branch"] = ddltoBranch.SelectedValue;
+            _htupload["p_to_location"] = ddltoLocation.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
