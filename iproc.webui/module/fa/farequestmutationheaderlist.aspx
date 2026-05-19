@@ -9,6 +9,28 @@
             <section class="panel">
                 <header class="panel-heading">
                     <span>FA Mutation List</span>
+                    <script type="text/javascript">
+                        function toggleUploadButton() {
+                            var fileInput = document.getElementById('<%= FileUploadControlMutation.ClientID %>');
+                            var uploadBtn = document.getElementById('<%= btnUploadRowFormat.ClientID %>');
+
+                            if (!fileInput || !uploadBtn)
+                                return;
+
+                            if (fileInput.value === "") {
+                                uploadBtn.disabled = true;
+                                if (uploadBtn.className.indexOf("disabled") === -1)
+                                    uploadBtn.className += " disabled";
+                            } else {
+                                uploadBtn.disabled = false;
+                                uploadBtn.className = uploadBtn.className.replace(" disabled", "");
+                            }
+                        }
+
+                        window.onload = function () {
+                            toggleUploadButton();
+                        };
+                    </script>
                 </header>
                 <header class="panel-heading tab-bg-dark-navy-blue">
                     <asp:TextBox ID="txtTabCode" runat="server" style="display:none"></asp:TextBox>
@@ -20,9 +42,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#uploadinvmutation" id="uploadinventory"
+                            <a href="#uploadfamutation" id="uploadinventory"
                                 onclick="javascript:fnSetTab('uploadinventory');" data-toggle="tab">
-                                FA Inventory Mutation
+                                FA Upload Mutation
                             </a>
                         </li>
                     </ul>
@@ -161,7 +183,7 @@
                                 </asp:UpdatePanel>
                             </div>
                         </div>
-                        <div class="tab-pane" id="uploadinvmutation">
+                        <div class="tab-pane" id="uploadfamutation">
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-sm-8">
@@ -264,13 +286,12 @@
                             <div class="panel-body">
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label class="col-sm-3">From Branch</label>
+                                        <label class="col-sm-3">From Cost Center</label>
                                         <div class="col-sm-5">
                                             <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
                                             <cc1:XUIDropDownList ID="ddlFromBranch" Width="200px" runat="server"
                                                 CssClass="form-control" AutoPostBack="true"
                                                 OnSelectedIndexChanged="ddlFromBranch_SelectedIndexChanged">
-                                                <asp:ListItem Text="Head Office" Value="KPO"></asp:ListItem>
                                             </cc1:XUIDropDownList>
                                         </div>
                                     </div>
@@ -288,7 +309,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label class="col-sm-3">To Branch</label>
+                                        <label class="col-sm-3">To Cost Center</label>
                                         <div class="col-sm-5">
                                             <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
                                             <cc1:XUIDropDownList ID="ddltoBranch" Width="200px" runat="server"
@@ -344,17 +365,19 @@
                                                             onclick="Check_Click" />
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
-                                                <asp:BoundField DataField="CODE" HeaderText="Inventory Mutation No.">
+                                                <asp:BoundField DataField="CODE" HeaderText="FA Mutation Request No.">
                                                     <ItemStyle Width="25%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="CODE_BARCODE" Visible="false">
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="MUTATION_DATE" HeaderText="Date"
                                                     DataFormatString="{0:dd/MM/yyyy}">
                                                     <ItemStyle Width="15%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
+                                                <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Cost Center">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
+                                                <asp:BoundField DataField="TO_BRANCH" HeaderText="To Cost Center">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">
@@ -363,7 +386,7 @@
                                                 <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status">
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:CommandField ShowSelectButton="true" />
+                                                <asp:CommandField ShowSelectButton="true" HeaderText="Action" />
                                             </Columns>
                                         </asp:GridView>
                                     </ContentTemplate>
@@ -375,4 +398,11 @@
                     </div>
                 </div>
             </section>
+            <div style="display:none;">
+                <asp:Label ID="lblDummyBarcode" runat="server" Text="BULK_POST"></asp:Label>
+                <asp:Label ID="lblDummyBranch" runat="server" Text="ALL"></asp:Label>
+                <asp:Label ID="lblDummyAmount" runat="server" Text="0"></asp:Label>
+                <asp:Label ID="lblDummyCode" runat="server" Text="BULK_CODE"></asp:Label>
+                <asp:Label ID="lblDummyRemarks" runat="server" Text="Bulk Post FA Mutation"></asp:Label>
+            </div>
         </asp:Content>
