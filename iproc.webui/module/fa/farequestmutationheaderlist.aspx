@@ -220,11 +220,11 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="row">
+                                <div class="row">
                                     <div class="col-sm-8">
                                         <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
-                                            PageSize="5" DataKeyNames="upload_id,file_name"
+                                            PageSize="3" DataKeyNames="upload_id,file_name"
                                             OnPageIndexChanging="gvwUploadLog_PageIndexChanging"
                                             OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data"
                                             Width="100%" Style="margin-top:10px;">
@@ -281,7 +281,7 @@
                                             </Columns>
                                         </asp:GridView>
                                     </div>
-                                </div> -->
+                                </div>
                             </div>
                             <div class="panel-body">
                                 <div class="col-sm-3">
@@ -399,10 +399,10 @@
                 </div>
             </section>
             <div style="display:none;">
-                <asp:Label ID="lblDummyBarcode" runat="server" Text="BULK_POST"></asp:Label>
-                <asp:Label ID="lblDummyBranch" runat="server" Text="ALL"></asp:Label>
-                <asp:Label ID="lblDummyAmount" runat="server" Text="0"></asp:Label>
-                <asp:Label ID="lblDummyCode" runat="server" Text="BULK_CODE"></asp:Label>
-                <asp:Label ID="lblDummyRemarks" runat="server" Text="Bulk Post FA Mutation"></asp:Label>
+                <asp:Label ID="lblTempBarcode" runat="server" Text="BULK_POST"></asp:Label>
+                <asp:Label ID="lblTempBranch" runat="server" Text="ALL"></asp:Label>
+                <asp:Label ID="lblTempAmount" runat="server" Text="0"></asp:Label>
+                <asp:Label ID="lblTempCode" runat="server" Text="BULK_CODE"></asp:Label>
+                <asp:Label ID="lblTempRemarks" runat="server" Text="Bulk Post FA Mutation"></asp:Label>
             </div>
         </asp:Content>

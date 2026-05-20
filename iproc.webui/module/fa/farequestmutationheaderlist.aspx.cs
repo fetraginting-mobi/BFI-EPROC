@@ -59,8 +59,9 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             }
 
             BindData();
+            BindUploadData();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
-        }
+        }        
         LoadAfterInit();
     }
 
@@ -196,7 +197,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     }
     protected void gvwListUpload_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
-        // gvwListUpload.PageIndex = e.NewPageIndex;
+        gvwListUpload.PageIndex = e.NewPageIndex;
         BindData();
     }
     protected void SelectedUploadIndexChanged(object sender, EventArgs e)
@@ -246,7 +247,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 return;
             }
             string realFirstBarcode = selectedCodes[0].ToString().Trim();
-            lblDummyBarcode.Text = realFirstBarcode;
+            lblTempBarcode.Text = realFirstBarcode;
 
             // 3. Simpan ke Session dan buka Approval
             Session[SessionKey.POST_MUTATION_FA_LIST] = selectedCodes;
@@ -264,14 +265,14 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
              "&parc_branch_code={5}" +
              "&parc_object_description={6}" +
              "&parc_object_code={7}",
-             lblDummyBarcode.ClientID,         // {0} -> di-parse hris.js menjadi "KPO40260500001"
-             Server.UrlEncode(nextUrlRaw),     // {1}
-             "POST",                           // {2}
-             lblDummyBranch.ClientID,          // {3}
-             lblDummyAmount.ClientID,          // {4}
-             lblDummyBranch.ClientID,          // {5}
-             lblDummyRemarks.ClientID,         // {6}
-             lblDummyCode.ClientID             // {7}
+             lblTempBarcode.ClientID,         
+             Server.UrlEncode(nextUrlRaw),     
+             "POST",                           
+             lblTempBranch.ClientID,          
+             lblTempAmount.ClientID,          
+             lblTempBranch.ClientID,          
+             lblTempRemarks.ClientID,         
+             lblTempCode.ClientID             
          );
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
@@ -291,10 +292,36 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     }
     protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
-        // gvwUploadLog.PageIndex = e.NewPageIndex;
+        gvwUploadLog.PageIndex = e.NewPageIndex;
+        BindUploadData();
     }
     protected void gvwUploadLog_RowCommand(object sender, GridViewCommandEventArgs e)
     {
+        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR")
+        {
+            string[] param = e.CommandArgument.ToString().Split('|');
+
+            string uploadid = param[0];
+            string filename = param[1];
+            string status = e.CommandName == "VIEW_VALID" ? "VALID" : "ERROR";
+
+            string url = string.Format(
+                    "../fa/farequestmutationuploadlog.aspx?uploadid={0}&filename={1}&status={2}",
+                    uploadid,
+                    filename,
+                    status
+                );
+
+            string script = string.Format("fnShowGenericScreen('{0}');", url);
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "popup",
+                script,
+                true
+            );
+        }
     }
     protected void ddlFromBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -383,7 +410,8 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
 
             BulkInsertToStaging(dt);
             ExecuteBulkProcess(uploadId, fileName);
-            BindUploadData(uploadId, fileName);
+            BindUploadData();
+            // BindUploadData(uploadId, fileName);
             BindData();
 
             string script = @" $(document).ready(function () { $('.nav-tabs a[href=""#uploadfamutation""]').tab('show'); alert('File "" " + fileName + @" "" berhasil diproses.'); });";
@@ -515,13 +543,13 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         );
     }
 
-    private void BindUploadData(Guid uploadId, String fileName)
+    private void BindUploadData()
     {
         GeneralDAL _dal = new GeneralDAL();
         Hashtable _ht = new Hashtable();
 
-        _ht["p_upload_id"] = uploadId;
-        _ht["p_file_name"] = fileName;
+        _ht["p_upload_id"] = "";
+        // _ht["p_file_name"] = fileName;
 
         gvwUploadLog.DataSource = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
         gvwUploadLog.DataBind();
