@@ -20,20 +20,15 @@ public partial class module_fa_farequestmutationdetail : BasePage
         {
             txtBranchEmp.Text = Shared.CurrentEmployeeBranchCode;
             txtBranchHeader.Text = Request.Params["branch"];
-             lblIRCode.Text = Request.Params["code"];
+            lblIRCode.Text = Request.Params["code"];
             lblBarcode.Text = Request.Params["codebarcode"];
             txtLocation.Text = Request.Params["location"];
             txtOwner.Text = Request.Params["owner"];
-           // txtBranchHeader.Text = lblBranchHeader.Text;
-            //btnLookUpInventoryRequestItem.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=FAITM&acol_0={0}&bcol_1={1}&ccol_2={2}&dcol_3={3}&parc_branch_code={4}&parc_branch_code_header={5}');", txtAssetCode.ClientID, txtItemName.ClientID, txtBranch.ClientID, lblBranchName.ClientID, txtBranchEmp.ClientID, txtBranchHeader.ClientID);
             btnLookUpInventoryRequestItem.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=FAMTT&acol_0={0}&bcol_1={1}&ccol_2={2}&dcol_3={3}&ecol_4={4}&ecol_5={5}&parc_branch_code={6}&parc_location={7}&parc_owner={8}');", txtItemCode.ClientID, lblItemName.ClientID, txtBranchEmp.ClientID, lblBranchHeader.ClientID, lblBranchHeader.ClientID, txtloccode.ClientID, txtBranchHeader.ClientID, txtLocation.ClientID, txtOwner.ClientID);
-          
-           
 
             if (Request.Params["action"].Equals("edit"))
             {
-               LoadData();
-                
+                LoadData();
 
                 if (!lblIRStatus.Text.Equals("NEW"))
                 {
@@ -44,13 +39,20 @@ public partial class module_fa_farequestmutationdetail : BasePage
             }
             else
             {
-                //GetCode();
-
-              
                 lblDivision.Text = Shared.CurrentEmployeeDivCode;
                 lblDepartement.Text = Shared.CurrentEmployeeDeptNameDefault;
+            }
+        }
 
-
+        if (Request.Params["action"] != null && Request.Params["action"].Equals("edit"))
+        {
+            if (lblProcess != null && (lblProcess.Text.Trim().ToUpper() == "UPLOAD" || lblProcess.Text.Trim().ToUpper() == "UPL"))
+            {
+                btnSave.Visible = false;
+                btnLookUpInventoryRequestItem.Enabled = false;
+                btnLookUpInventoryRequestItem.Attributes["href"] = "javascript:void(0);";
+                btnLookUpInventoryRequestItem.Attributes["onclick"] = "return false;";
+                txtDescription.Enabled = false;
             }
         }
         LoadAfterInit();
@@ -140,7 +142,7 @@ public partial class module_fa_farequestmutationdetail : BasePage
         SaveData();
     }
 
-   
+
 
     protected void btnCancel_Click(object sender, EventArgs e)
     {

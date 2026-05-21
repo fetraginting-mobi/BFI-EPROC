@@ -13,7 +13,9 @@ using CrystalDecisions.Shared;
 using iProc.DataAccessLayer;
 using MPF23.XUI.Control;
 using Microsoft.VisualBasic;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Specialized;
 using Newtonsoft.Json;
@@ -4299,5 +4301,154 @@ public class Shared
             return true; // anggap berubah jika gagal ambil
         }
     }
+
+    #region Grouping Asset
+    public static void ExportToExcelDirectDownload(string tableName, string spName, Hashtable reportParameters)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        //DataTable dt = null;
+        DataTable dt = _dal.GetRows(spName, reportParameters);
+
+        using (MemoryStream memStream = new MemoryStream())
+        {
+            using (SpreadsheetDocument document = SpreadsheetDocument.Create(memStream, SpreadsheetDocumentType.Workbook))
+            {
+                // --- SETUP WORKBOOK ---
+                WorkbookPart workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Spreadsheet.Workbook();
+
+                // --- STYLESHEET ---
+                WorkbookStylesPart stylePart = workbookPart.AddNewPart<WorkbookStylesPart>();
+                stylePart.Stylesheet = CreateStylesheet();
+                stylePart.Stylesheet.Save();
+
+                WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+
+                // --- COLUMNS & DATA ---
+                Spreadsheet.Columns columns = CreateColumnsWithAutoWidth(dt);
+                Spreadsheet.SheetData sheetData = new Spreadsheet.SheetData();
+
+                worksheetPart.Worksheet = new Spreadsheet.Worksheet();
+                worksheetPart.Worksheet.Append(columns);
+                worksheetPart.Worksheet.Append(sheetData);
+
+                Spreadsheet.Sheets sheets = document.WorkbookPart.Workbook.AppendChild<Spreadsheet.Sheets>(new Spreadsheet.Sheets());
+                Spreadsheet.Sheet sheet = new Spreadsheet.Sheet()
+                {
+                    Id = document.WorkbookPart.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = tableName.Length > 30 ? tableName.Substring(0, 30) : tableName
+                };
+                sheets.Append(sheet);
+
+                // --- HEADER ---
+                Spreadsheet.Row headerRow = new Spreadsheet.Row();
+                foreach (DataColumn column in dt.Columns)
+                {
+                    // Gunakan Spreadsheet.CellValues
+                    Spreadsheet.Cell cell = CreateCell(column.ColumnName, Spreadsheet.CellValues.InlineString);
+                    cell.StyleIndex = 1;
+                    headerRow.AppendChild(cell);
+                }
+                sheetData.AppendChild(headerRow);
+
+                // --- DATA ---
+                foreach (DataRow dsrow in dt.Rows)
+                {
+                    Spreadsheet.Row newRow = new Spreadsheet.Row();
+                    foreach (DataColumn col in dt.Columns)
+                    {
+                        string cellValue = dsrow[col].ToString();
+
+                        // Deteksi tipe data
+                        Spreadsheet.CellValues dataType = IsNumericType(col.DataType) ?
+                            Spreadsheet.CellValues.Number : Spreadsheet.CellValues.InlineString;
+
+                        if (dataType == Spreadsheet.CellValues.Number && string.IsNullOrEmpty(cellValue))
+                            cellValue = "0";
+
+                        newRow.AppendChild(CreateCell(cellValue, dataType));
+                    }
+                    sheetData.AppendChild(newRow);
+                }
+
+                workbookPart.Workbook.Save();
+            }
+
+            // --- DOWNLOAD PROCESS ---
+            string fileName = tableName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+
+            memStream.WriteTo(HttpContext.Current.Response.OutputStream);
+            HttpContext.Current.Response.Flush();
+            HttpContext.Current.Response.End();
+        }
+    }
+
+    // Perhatikan penggunaan 'Spreadsheet.' pada return type dan isi fungsi
+    private static Spreadsheet.Stylesheet CreateStylesheet()
+    {
+        return new Spreadsheet.Stylesheet(
+            new Spreadsheet.Fonts(
+                new Spreadsheet.Font(),
+                new Spreadsheet.Font(new Spreadsheet.Bold(), new Spreadsheet.Color() { Rgb = "FFFFFF" })
+            ),
+            new Spreadsheet.Fills(
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill() { PatternType = Spreadsheet.PatternValues.None }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill() { PatternType = Spreadsheet.PatternValues.Gray125 }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill(new Spreadsheet.ForegroundColor() { Rgb = "4F81BD" }) { PatternType = Spreadsheet.PatternValues.Solid })
+            ),
+            new Spreadsheet.Borders(new Spreadsheet.Border()),
+            new Spreadsheet.CellFormats(
+                new Spreadsheet.CellFormat(),
+                new Spreadsheet.CellFormat() { FontId = 1, FillId = 2, ApplyFill = true, ApplyFont = true }
+            )
+        );
+    }
+
+    private static Spreadsheet.Columns CreateColumnsWithAutoWidth(DataTable dt)
+    {
+        Spreadsheet.Columns cols = new Spreadsheet.Columns();
+        for (int i = 0; i < dt.Columns.Count; i++)
+        {
+            int maxChar = dt.Columns[i].ColumnName.Length;
+            foreach (DataRow row in dt.Rows)
+            {
+                int len = row[i].ToString().Length;
+                if (len > maxChar) maxChar = len;
+            }
+            double width = (maxChar > 50) ? 55 : maxChar + 3.5;
+            cols.Append(new Spreadsheet.Column() { Min = (uint)i + 1, Max = (uint)i + 1, Width = width, CustomWidth = true });
+        }
+        return cols;
+    }
+
+    private static Spreadsheet.Cell CreateCell(string text, Spreadsheet.CellValues dataType)
+    {
+        Spreadsheet.Cell cell = new Spreadsheet.Cell() { DataType = dataType };
+        if (dataType == Spreadsheet.CellValues.InlineString)
+            cell.InlineString = new Spreadsheet.InlineString(new Spreadsheet.Text(text ?? ""));
+        else
+            cell.CellValue = new Spreadsheet.CellValue(text ?? "0");
+        return cell;
+    }
+
+    private static bool IsNumericType(Type type)
+    {
+        switch (Type.GetTypeCode(type))
+        {
+            case TypeCode.Decimal:
+            case TypeCode.Double:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+            case TypeCode.Single: return true;
+            default: return false;
+        }
+    }
+    #endregion
 
 }
