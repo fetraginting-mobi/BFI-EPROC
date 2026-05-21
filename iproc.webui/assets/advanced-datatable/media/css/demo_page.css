@@ -107,7 +107,7 @@
 }
 
 #dt_example code {
-	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-family: RobotoLocal,OpenSansLocal;
 	padding: 2px 4px !important;
 	white-space: nowrap;
 	font-size: 0.9em;

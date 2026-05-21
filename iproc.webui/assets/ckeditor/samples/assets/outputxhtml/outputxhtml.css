@@ -60,17 +60,20 @@ body
 
 .FontComic
 {
-	font-family: 'Comic Sans MS';
+	/* font-family: 'Comic Sans MS'; */
+	font-family: 'RobotoLocal';
 }
 
 .FontCourier
 {
-	font-family: 'Courier New';
+	/* font-family: 'Courier New'; */
+	font-family: 'OpenSansLocal';
 }
 
 .FontTimes
 {
-	font-family: 'Times New Roman';
+	/* font-family: 'Times New Roman'; */
+	font-family: 'RobotoLocal';
 }
 
 /**

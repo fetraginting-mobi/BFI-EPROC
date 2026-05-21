@@ -271,7 +271,7 @@ div.page-info {
 
 
 code {
-	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-family: 'RobotoLocal', 'OpenSansLocal';
 	padding: 2px 4px !important;
 	white-space: pre;
 	font-size: 0.9em;
