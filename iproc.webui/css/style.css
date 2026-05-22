@@ -24,7 +24,6 @@ Website: http://thevectorlab.net/
 body {
     color: #111010; 
     background: #f1f2f7;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
     padding: 0px !important;
     margin: 0px !important;
@@ -79,7 +78,6 @@ a, a:hover, a:focus {
     font-size: 18px;
     text-transform: uppercase;
     font-weight: 300;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 
@@ -90,7 +88,6 @@ a, a:hover, a:focus {
     font-weight: normal;
     color: #b6b6b6;
     font-weight: 300;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 .form-signin .form-control {
@@ -119,7 +116,6 @@ a, a:hover, a:focus {
     color: #fff;
     text-transform: uppercase;
     font-weight: 300;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
     box-shadow: 0 4px #e56b60;
     margin-bottom: 20px;
@@ -2316,13 +2312,11 @@ ul.inbox-pagination li {
 
 .modal-header h4.modal-title {
     font-weight: 300;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 
 .modal-body label {
     font-weight: 400;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 
@@ -3490,7 +3484,6 @@ table.sliders tr td {
     background: transparent;
     border: none;
     color: #34495e;
-    /* font-family: "Lato", sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
     font-size: 14px;
     margin: 0px;
@@ -3519,7 +3512,6 @@ table.sliders tr td {
 .tagsinput-remove-link:before {
     color: #ffffff;
     content: "\f00d";
-    /* font-family: "FontAwesome"; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 .tagsinput-add-container {
@@ -3549,7 +3541,6 @@ table.sliders tr td {
 }
 .tagsinput-add:before {
     content: "\f067";
-    /* font-family: "FontAwesome"; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 .tags_clear {
@@ -3637,7 +3628,6 @@ table.sliders tr td {
 }
 
 .daterangepicker .calendar th, .daterangepicker .calendar td {
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
     font-weight: 300;
     text-align: center;
@@ -4102,7 +4092,6 @@ span.customSelect.changed {
 }
 .rating span.star,
 .rating span.star {
-    /* font-family: FontAwesome; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
     font-weight: normal;
     font-style: normal;
@@ -4183,7 +4172,6 @@ span.customSelect.changed {
     margin: 0;
     overflow: hidden;
     font-weight: normal;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
 }
 
@@ -4586,7 +4574,6 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
     margin-bottom: 80px;
     display: inline-block;
     text-align: center;
-    /* font-family: 'Open Sans', sans-serif; */
     font-family: 'RobotoLocal', 'OpenSansLocal' !important;
     font-weight: 300;
 }
