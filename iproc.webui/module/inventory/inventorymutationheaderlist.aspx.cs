@@ -158,7 +158,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Format file tidak didukung");
+                throw new Exception("Invalid template format. Please download and use the provided template.");
 
 
             DataTable dt = BuildStagingTable();
@@ -238,7 +238,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         // === VALIDASI JUMLAH KOLOM ===
         if (reader.FieldCount != INVENTORY_MUTATION_TEMPLATE_HEADERS.Length)
         {
-            errorMessage = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
+            errorMessage = "Invalid template format. The number of columns is invalid.";
             htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
             htLog["p_file_name"] = fileName;
             htLog["p_row_number"] = 0;
@@ -263,7 +263,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                errorMessage = "Template file tidak sesuai. Header kolom ke-" + (i + 1) + " harus '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
+                errorMessage = "Template mismatch: Column" + (i + 1) + " header must match '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
                 htLog.Clear();
                 htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
                 htLog["p_file_name"] = fileName;
