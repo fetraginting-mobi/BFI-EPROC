@@ -16,7 +16,7 @@ Highcharts.theme = {
 	chart: {
 		backgroundColor: null,
 		style: {
-			fontFamily: "Dosis, sans-serif"
+			fontFamily: RobotoLocal, OpenSansLocal
 		}
 	},
 	title: {
