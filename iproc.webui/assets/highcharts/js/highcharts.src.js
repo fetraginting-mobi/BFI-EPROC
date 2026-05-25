@@ -3042,7 +3042,7 @@ SVGRenderer.prototype = {
 
 	getStyle: function (style) {
 		return (this.style = extend({
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
+			fontFamily: 'RobotoLocal, OpenSansLocal', // default font
 			fontSize: '12px'
 		}, style));
 	},

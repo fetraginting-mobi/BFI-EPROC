@@ -1,6 +1,6 @@
 @charset "UTF-8";
 body {
-  font: 20px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 20px/1.5 'RobotoLocal', 'OpenSansLocal';
   padding: 60px 50px;
 }
 
