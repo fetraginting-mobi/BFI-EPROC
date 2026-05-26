@@ -4,22 +4,93 @@ Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 version: 0.12.0
 */
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
-table{border-collapse:collapse;border-spacing:0;}
-fieldset,img{border:0;}
-address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
-ol,ul {list-style:none;}
-caption,th {text-align:left;}
-h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
-q:before,q:after{content:'';}
-abbr,acronym {border:0;}
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+	margin: 0;
+	padding: 0;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+fieldset,
+img {
+	border: 0;
+}
+
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+	font-style: normal;
+	font-weight: normal;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+
+caption,
+th {
+	text-align: left;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: 100%;
+	font-weight: normal;
+}
+
+q:before,
+q:after {
+	content: '';
+}
+
+abbr,
+acronym {
+	border: 0;
+}
 
 
-html, body {
+html,
+body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	font: 14px/1.45em RobotoLocal,OpenSansLocal;
+	font: 14px/1.45em RobotoLocal, OpenSansLocal;
 	color: #111;
 }
 
@@ -83,6 +154,7 @@ div.fw_footer {
 .example-code {
 	margin-left: 30px;
 }
+
 .example-code td.code {
 	border-top: 1px solid #4E6CA3 !important;
 }
@@ -93,7 +165,8 @@ div.fw_footer {
 	top: 0;
 }
 
-dt, dd {
+dt,
+dd {
 	padding: 0.4em 10px;
 }
 
@@ -107,15 +180,18 @@ dd {
 	padding-left: 3em;
 }
 
-dt.even, dd.even {
+dt.even,
+dd.even {
 	background-color: white;
 }
 
-dt.odd, dd.odd {
+dt.odd,
+dd.odd {
 	background-color: #F2F2F2;
 }
 
-div.doc_overview dd, div.doc_overview dt {
+div.doc_overview dd,
+div.doc_overview dt {
 	padding-left: 0 !important;
 }
 
@@ -126,9 +202,11 @@ div.doc_overview dd, div.doc_overview dt {
 	padding: 2px 0.5em 2px 1em;
 	text-align: right;
 }
+
 .right_border {
 	border-right: 3px solid #4E6CA3;
 }
+
 .bottom_border {
 	border-bottom: 1px solid #4E6CA3;
 }
@@ -194,7 +272,8 @@ h5 {
 	margin-bottom: 1em;
 }
 
-div.doc_summary, div.doc_details {
+div.doc_summary,
+div.doc_details {
 	margin-top: 2em;
 	clear: both;
 }
@@ -271,7 +350,7 @@ div.page-info {
 
 
 code {
-	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-family: RobotoLocal, OpenSansLocal;
 	padding: 2px 4px !important;
 	white-space: pre;
 	font-size: 0.9em;
@@ -281,8 +360,8 @@ code {
 
 	border: 1px solid #E1E1E8;
 	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-	        border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 }
 
 pre {

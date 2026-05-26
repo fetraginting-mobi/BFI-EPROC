@@ -20,7 +20,7 @@ input, textarea, select, option, optgroup, button, td, th
 
 pre, code, kbd, samp, tt
 {
-	font-family: monospace,monospace;
+	font-family: RobotoLocal, OpenSansLocal;
 	font-size: 1em;
 }
 

@@ -1035,7 +1035,7 @@ a.cke_path_item:active {
 }
 
 .cke_source {
-    font-family: 'Courier New', Monospace;
+    font-family: RobotoLocal, OpenSansLocal;
     font-size: small;
     background-color: #fff;
     white-space: pre
