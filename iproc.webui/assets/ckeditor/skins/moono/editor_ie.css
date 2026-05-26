@@ -336,7 +336,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 .cke_colorblock {
     padding: 3px;
     font-size: 11px;
-    font-family: RobotoLocal, OpenSansLocal
+    font-family: RobotoLocal, OpenSansLocal;
 }
 
 .cke_colorblock,
