@@ -33,7 +33,7 @@ public partial class module_fa_fagroupingasset : BasePage
             BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
 
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_group_asset_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, GroupingAssetCode);
-            // btnMove.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparametercustom.aspx?code=FGAMV&parc_cost_center={0}&par_location={1}');", ddlBranch.SelectedValue, ddlLocation.SelectedValue);
+            //btnMove.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparametercustom.aspx?code=FGAMV&parc_cost_center={0}&par_location={1}');", ddlBranch.SelectedValue, ddlLocation.SelectedValue);
 
             if (Request.Params["action"].Equals("edit"))
             {

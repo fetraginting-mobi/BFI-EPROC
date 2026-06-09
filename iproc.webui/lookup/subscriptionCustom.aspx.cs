@@ -82,6 +82,51 @@ public partial class lookup_subscriptionCustom : BasePage
         ExecuteMovement(gvwListTarget, SP_TARGET_TO_SOURCE);
     }
 
+    protected void btnSearchSource_Click(object sender, EventArgs e)
+    {
+        BindDataSource();
+    }
+
+    protected void btnSearchTarget_Click(object sender, EventArgs e)
+    {
+        BindDataTarget();
+    }
+
+    protected void gvwListSource_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListSource.PageIndex = e.NewPageIndex;
+        BindDataSource();
+    }
+
+    protected void gvwListTarget_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListTarget.PageIndex = e.NewPageIndex;
+        BindDataTarget();
+    }
+
+    protected void gvwList_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.Header)
+        {
+            TableCell headerCell = new TableCell();
+            headerCell.Text = "Pick";
+            headerCell.Width = Unit.Pixel(50);
+            headerCell.HorizontalAlign = HorizontalAlign.Center;
+            e.Row.Cells.AddAt(0, headerCell);
+        }
+        else if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            TableCell checkCell = new TableCell();
+            CheckBox chb = new CheckBox();
+            chb.ID = "chbChecked";
+            checkCell.Controls.Add(chb);
+            checkCell.HorizontalAlign = HorizontalAlign.Center;
+
+            e.Row.Cells.AddAt(0, checkCell);
+        }
+    }
+
+    // Hanya menggunakan 1 fungsi ExecuteMovement yang dinamis dan sudah diperbaiki
     private void ExecuteMovement(GridView gvw, string spName)
     {
         try
@@ -90,30 +135,44 @@ public partial class lookup_subscriptionCustom : BasePage
             bool hasChanged = false;
             int codeIdx = -1;
 
-            for (int i = 0; i < gvw.HeaderRow.Cells.Count; i++)
+            if (gvw.HeaderRow != null)
             {
-                string headerText = gvw.HeaderRow.Cells[i].Text.ToUpper();
-                if (headerText == "CODE") { codeIdx = i; break; }
+                for (int i = 1; i < gvw.HeaderRow.Cells.Count; i++)
+                {
+                    // Perbaikan: mengubah 'tring' menjadi 'string'
+                    string headerText = gvw.HeaderRow.Cells[i].Text.Trim().ToUpper();
+
+                    // Jika ketemu kolom bernama 'CODE' atau kosong (bawaan auto-generate), kunci indeksnya
+                    if (headerText == "CODE" || string.IsNullOrEmpty(headerText))
+                    {
+                        codeIdx = i;
+                        break;
+                    }
+                }
             }
 
+            // Batas aman: Jika tidak ditemukan kata "CODE", default ke kolom pertama setelah checkbox (Indeks 1)
             if (codeIdx == -1) codeIdx = 1;
 
             foreach (GridViewRow row in gvw.Rows)
             {
-                CheckBox chb = (CheckBox)row.FindControl("chbChecked");
-
-                if (chb != null && chb.Checked)
+                if (row.RowType == DataControlRowType.DataRow)
                 {
-                    Hashtable ht = GetCommonParams();
-                    string codeValue = Server.HtmlDecode(row.Cells[codeIdx].Text).Trim();
+                    CheckBox chb = (CheckBox)row.FindControl("chbChecked");
 
-                    if (!string.IsNullOrEmpty(codeValue))
+                    if (chb != null && chb.Checked)
                     {
-                        ht[SP_PARAMETER_CODE] = codeValue;
-                        Shared.ApplyDefaultProp(ht);
+                        Hashtable ht = GetCommonParams();
+                        string codeValue = Server.HtmlDecode(row.Cells[codeIdx].Text).Trim();
 
-                        dal.Insert("", spName, ht);
-                        hasChanged = true;
+                        if (!string.IsNullOrEmpty(codeValue))
+                        {
+                            ht[SP_PARAMETER_CODE] = codeValue;
+                            Shared.ApplyDefaultProp(ht);
+
+                            dal.Insert("", spName, ht);
+                            hasChanged = true;
+                        }
                     }
                 }
             }
@@ -127,25 +186,9 @@ public partial class lookup_subscriptionCustom : BasePage
                 ScriptManager.RegisterStartupScript(this, GetType(), "refresh", "parent.__doPostBack('" + pGvw + "','');", true);
             }
         }
-        catch (Exception ex) { Shared.ShowErrorDialog(this, ex); }
-    }
-
-    protected void btnSearchSource_Click(object sender, EventArgs e)
-    {
-        BindDataSource();
-    }
-    protected void btnSearchTarget_Click(object sender, EventArgs e)
-    {
-        BindDataTarget();
-    }
-    protected void gvwListSource_PageIndexChanging(object sender, GridViewPageEventArgs e)
-    {
-        gvwListSource.PageIndex = e.NewPageIndex;
-        BindDataSource();
-    }
-    protected void gvwListTarget_PageIndexChanging(object sender, GridViewPageEventArgs e)
-    {
-        gvwListTarget.PageIndex = e.NewPageIndex;
-        BindDataTarget();
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
     }
 }

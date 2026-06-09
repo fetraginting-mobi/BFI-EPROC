@@ -249,7 +249,7 @@
                                                     CausesValidation="false"><i class="icon-trash"></i> Delete
                                                 </cc1:XUILinkButton>
                                                 <cc1:XUILinkButton ID="btnMove" runat="server" CssClass="btn btn-purple"
-                                                    OnClientClick="return handleMovePopup();">
+                                                    OnClick="btnMove_Click">
                                                     <i class="icon-arrow-right"></i> Move
                                                 </cc1:XUILinkButton>
                                             </div>
@@ -354,26 +354,73 @@
                                                     onselectedindexchanged="gvwMovementHistory_SelectedIndexChanged"
                                                     EmptyDataText="There Is No Data" Width="100%">
                                                     <Columns>
-                                                        <asp:TemplateField>
-                                                            <HeaderTemplate>
-                                                                <span>No</span>
-                                                            </HeaderTemplate>
+                                                        <asp:TemplateField ItemStyle-HorizontalAlign="Center"
+                                                            HeaderStyle-HorizontalAlign="Center">
+                                                            <HeaderTemplate><span>No</span></HeaderTemplate>
                                                             <ItemTemplate>
                                                                 <%# Container.DataItemIndex + 1 %>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
-                                                        <asp:BoundField DataField="barcode" HeaderText="Asset Code">
-                                                        </asp:BoundField>
-                                                        <asp:BoundField DataField="item_name" HeaderText="Asset Name">
-                                                        </asp:BoundField>
+                                                        <asp:TemplateField>
+                                                            <HeaderTemplate>
+                                                                Asset Code<br />Asset Item
+                                                            </HeaderTemplate>
+                                                            <ItemTemplate>
+                                                                <strong>
+                                                                    <%# Eval("barcode") %>
+                                                                </strong><br />
+                                                                <span style="color: #333;">
+                                                                    <%# Eval("item_name") %>
+                                                                </span>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="asset_category"
+                                                            HeaderText="Asset Category"></asp:BoundField>
                                                         <asp:BoundField DataField="cre_date" HeaderText="Date"
-                                                            DataFormatString="{0:dd/MM/yyyy}"></asp:BoundField>
+                                                            DataFormatString="{0:dd/MM/yyyy}"
+                                                            ItemStyle-HorizontalAlign="Center">
+                                                        </asp:BoundField>
                                                         <asp:BoundField DataField="action" HeaderText="Type Transaksi">
                                                         </asp:BoundField>
-                                                        <asp:BoundField DataField="group_asset_code"
-                                                            HeaderText="Move From"></asp:BoundField>
-                                                        <asp:BoundField DataField="move_to" HeaderText="Move To">
+
+                                                        <asp:BoundField DataField="doc_reff_no"
+                                                            HeaderText="Doc. Reff No" NullDisplayText="-">
                                                         </asp:BoundField>
+
+
+                                                        <asp:TemplateField ItemStyle-HorizontalAlign="Center"
+                                                            HeaderStyle-HorizontalAlign="Center">
+                                                            <HeaderTemplate>
+                                                                <u>PIC Asset</u><br />Mut.
+                                                                From Branch
+                                                            </HeaderTemplate>
+                                                            <ItemTemplate>
+                                                                <%# string.IsNullOrEmpty(Eval("pic_from").ToString())
+                                                                    ? "-" : Eval("pic_from") %>
+                                                                    <hr
+                                                                        style="margin: 3px 0; border-top: 1px solid #000;" />
+                                                                    <strong>
+                                                                        <%# Eval("branch_from") %>
+                                                                    </strong>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField ItemStyle-HorizontalAlign="Center"
+                                                            HeaderStyle-HorizontalAlign="Center">
+                                                            <HeaderTemplate>
+                                                                <u>PIC
+                                                                    Asset</u><br />Mut.
+                                                                To Branch
+                                                            </HeaderTemplate>
+                                                            <ItemTemplate>
+                                                                <%# string.IsNullOrEmpty(Eval("pic_to").ToString())
+                                                                    ? "-" : Eval("pic_to") %>
+                                                                    <hr
+                                                                        style="margin: 3px 0; border-top: 1px solid #000;" />
+                                                                    <strong>
+                                                                        <%# Eval("branch_to") %>
+                                                                    </strong>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
                                                     </Columns>
                                                 </asp:GridView>
                                             </ContentTemplate>
