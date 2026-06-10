@@ -6,7 +6,7 @@
             <div class="panel-body">
                 <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearchSource" class="input-group">
                     <asp:TextBox ID="txtSearchSource" runat="server" CssClass="form-control"
-                        placeholder="Search Source..."></asp:TextBox>
+                        placeholder="keywords"></asp:TextBox>
                     <div class="input-group-btn">
                         <asp:LinkButton ID="btnSearchSource" runat="server" CssClass="btn btn-info"
                             OnClick="btnSearchSource_Click" CausesValidation="false">
@@ -14,19 +14,29 @@
                         </asp:LinkButton>
                     </div>
                 </asp:Panel>
+
                 <div class="row" style="margin-top:10px;">
                     <div class="col-sm-12 table-responsive">
                         <asp:UpdatePanel ID="updSource" runat="server">
                             <ContentTemplate>
                                 <asp:GridView ID="gvwListSource" runat="server" AutoGenerateColumns="true"
-                                    CssClass="table table-bordered table-striped" AllowPaging="true" PageSize="5"
-                                    OnPageIndexChanging="gvwListSource_PageIndexChanging"
-                                    OnRowDataBound="gvwList_RowDataBound" EmptyDataText="No data">
-                                    <HeaderStyle CssClass="grid-header" />
+                                    DataKeyNames="code" CssClass="table table-bordered table-striped" AllowPaging="true"
+                                    PageSize="5" OnPageIndexChanging="gvwListSource_PageIndexChanging"
+                                    EmptyDataText="There is no data">
+                                    <Columns>
+                                        <asp:TemplateField HeaderText="Pick">
+                                            <ItemStyle Width="50px" HorizontalAlign="Center" />
+                                            <ItemTemplate>
+                                                <asp:CheckBox runat="server" ID="chbChecked" />
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                    </Columns>
                                 </asp:GridView>
                             </ContentTemplate>
                             <Triggers>
                                 <asp:AsyncPostBackTrigger ControlID="btnSearchSource" EventName="Click" />
+                                <asp:AsyncPostBackTrigger ControlID="btnAdd" EventName="Click" />
+                                <asp:AsyncPostBackTrigger ControlID="btnRemove" EventName="Click" />
                             </Triggers>
                         </asp:UpdatePanel>
                     </div>
@@ -47,7 +57,7 @@
 
                 <asp:Panel ID="Panel2" runat="server" DefaultButton="btnSearchTarget" class="input-group">
                     <asp:TextBox ID="txtSearchTarget" runat="server" CssClass="form-control"
-                        placeholder="Search Target..."></asp:TextBox>
+                        placeholder="keywords"></asp:TextBox>
                     <div class="input-group-btn">
                         <asp:LinkButton ID="btnSearchTarget" runat="server" CssClass="btn btn-info"
                             OnClick="btnSearchTarget_Click" CausesValidation="false">
@@ -61,14 +71,23 @@
                         <asp:UpdatePanel ID="updTarget" runat="server">
                             <ContentTemplate>
                                 <asp:GridView ID="gvwListTarget" runat="server" AutoGenerateColumns="true"
-                                    CssClass="table table-bordered table-striped" AllowPaging="true" PageSize="5"
-                                    OnPageIndexChanging="gvwListTarget_PageIndexChanging"
-                                    OnRowDataBound="gvwList_RowDataBound" EmptyDataText="No data">
-                                    <HeaderStyle CssClass="grid-header" />
+                                    DataKeyNames="code" CssClass="table table-bordered table-striped" AllowPaging="true"
+                                    PageSize="5" OnPageIndexChanging="gvwListTarget_PageIndexChanging"
+                                    EmptyDataText="There is no data">
+                                    <Columns>
+                                        <asp:TemplateField HeaderText="Pick">
+                                            <ItemStyle Width="50px" HorizontalAlign="Center" />
+                                            <ItemTemplate>
+                                                <asp:CheckBox runat="server" ID="chbChecked" />
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                    </Columns>
                                 </asp:GridView>
                             </ContentTemplate>
                             <Triggers>
                                 <asp:AsyncPostBackTrigger ControlID="btnSearchTarget" EventName="Click" />
+                                <asp:AsyncPostBackTrigger ControlID="btnAdd" EventName="Click" />
+                                <asp:AsyncPostBackTrigger ControlID="btnRemove" EventName="Click" />
                             </Triggers>
                         </asp:UpdatePanel>
                     </div>

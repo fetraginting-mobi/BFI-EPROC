@@ -35,17 +35,23 @@
                     var ddlBranch = document.getElementById('<%= ddlBranch.ClientID %>');
                     var ddlLoc = document.getElementById('<%= ddlLocation.ClientID %>');
 
+                    if (!ddlBranch) {
+                        alert("Cost Center tidak ditemukan di halaman.");
+                        return false;
+                    }
+
                     if (!ddlBranch.value || ddlBranch.value === "") {
                         alert("Pilih Cost Center terlebih dahulu!");
                         return false;
                     }
 
                     var url = "../../lookup/genericwithparametercustom.aspx?code=FGAMV" +
-                        "&parc_cost_center=" + ddlBranch.value +
-                        "&par_location=" + ddlLoc.value;
+                        "&par_cost_center=" + encodeURIComponent(ddlBranch.value) +
+                        "&par_location=" + encodeURIComponent(ddlLoc ? ddlLoc.value : "");
 
-                    if (typeof fnShowDialog === 'function') {
-                        fnShowDialog(url);
+                    if (document.getElementById('ifrpopup') && typeof $ === 'function') {
+                        document.getElementById('ifrpopup').src = url;
+                        $('#ModalPopup').modal('show');
                     } else {
                         window.open(url, '_blank', 'width=900,height=600,scrollbars=yes');
                     }
@@ -212,7 +218,7 @@
                 </div>
             </section>
             <section class="panel">
-                <header class="panel-heading tab-bg-dark-navy-blue">
+                <header id="pnlTabsHeader" runat="server" class="panel-heading tab-bg-dark-navy-blue">
                     <asp:TextBox ID="txtTabCode" runat="server" style="display:none"></asp:TextBox>
                     <ul class="nav nav-tabs nav-justified">
                         <li class="active">
@@ -248,10 +254,10 @@
                                                     CssClass="btn btn-danger" OnClick="btnDelete_Click"
                                                     CausesValidation="false"><i class="icon-trash"></i> Delete
                                                 </cc1:XUILinkButton>
-                                                <cc1:XUILinkButton ID="btnMove" runat="server" CssClass="btn btn-purple"
-                                                    OnClick="btnMove_Click">
+                                                <a id="btnMove" href="#" class="btn btn-purple"
+                                                    onclick="return handleMovePopup();">
                                                     <i class="icon-arrow-right"></i> Move
-                                                </cc1:XUILinkButton>
+                                                </a>
                                             </div>
                                             <div class="col-sm-4">
                                                 <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearch"
@@ -310,10 +316,12 @@
                                                                     onclick="return singleCheck(this);" />
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
-
                                                     </Columns>
                                                 </asp:GridView>
                                             </ContentTemplate>
+                                            <Triggers>
+                                                <asp:AsyncPostBackTrigger ControlID="btnSearch" EventName="Click" />
+                                            </Triggers>
                                         </asp:UpdatePanel>
                                     </div>
                                 </section>

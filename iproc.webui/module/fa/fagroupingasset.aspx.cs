@@ -28,14 +28,10 @@ public partial class module_fa_fagroupingasset : BasePage
         if (!Page.IsPostBack)
         {
             chbIsActive.Checked = true;
-            string GroupingAssetCode = Request.QueryString["faGroupingAssetCode"];
             Shared.BindBranchEmployeeSort(ddlBranch);
             BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
 
-            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_group_asset_code={3}');", btnSearch.UniqueID, ddlBranch.SelectedValue, ddlLocation.SelectedValue, GroupingAssetCode);
-            //btnMove.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparametercustom.aspx?code=FGAMV&parc_cost_center={0}&par_location={1}');", ddlBranch.SelectedValue, ddlLocation.SelectedValue);
-
-            if (Request.Params["action"].Equals("edit"))
+            if (Request.Params["action"] != null && Request.Params["action"].Equals("edit"))
             {
                 LoadData();
                 BindData();
@@ -43,9 +39,21 @@ public partial class module_fa_fagroupingasset : BasePage
             }
             else
             {
-                pnlAssetList.Visible = false;
+                pnlTabsHeader.Visible = false;
+                pnlAssetList.Visible = pnlMovementHistory.Visible = false;
             }
         }
+        string currentGroupCode = string.IsNullOrEmpty(lblGroupAssetCode.Text) || lblGroupAssetCode.Text == "--"
+                                  ? Request.QueryString["faGroupingAssetCode"]
+                                  : lblGroupAssetCode.Text;
+
+        btnAdd.Attributes["href"] = String.Format(
+            "javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAGROUP&gvw={0}&par_branch_code={1}&par_location={2}&par_fa_group_asset_code={3}');",
+            btnSearch.UniqueID,
+            ddlBranch.SelectedValue,
+            ddlLocation.SelectedValue,
+            currentGroupCode
+        );
     }
     private void LoadData()
     {
@@ -118,7 +126,7 @@ public partial class module_fa_fagroupingasset : BasePage
     }
     protected void btnCancel_Click(object sender, EventArgs e)
     {
-        Response.Redirect("faitemgrouplist.aspx");
+        Response.Redirect("fagroupingassetlist.aspx");
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -168,8 +176,7 @@ public partial class module_fa_fagroupingasset : BasePage
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        if (txtSearch.Text != string.Empty)
-            BindData();
+        BindData();
     }
     protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
@@ -244,32 +251,28 @@ public partial class module_fa_fagroupingasset : BasePage
     {
         try
         {
-            // 1. Validasi Server Side (Contoh: pastikan DDL terpilih)
             if (string.IsNullOrEmpty(ddlBranch.SelectedValue))
             {
-                // Gunakan script alert sederhana jika gagal
                 ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Pilih Branch!');", true);
                 return;
             }
 
-            // 2. Susun URL
             string baseUrl = "../../lookup/genericwithparametercustom.aspx";
             string code = "FGAMV";
-            string url = string.Format("{0}?code={1}&parc_cost_center={2}&par_location={3}",
-                         baseUrl, code, ddlBranch.SelectedValue, ddlLocation.SelectedValue);
+            string url = string.Format("{0}?code={1}&par_cost_center={2}&par_location={3}",
+                         baseUrl,
+                         code,
+                         HttpUtility.UrlEncode(ddlBranch.SelectedValue),
+                         HttpUtility.UrlEncode(ddlLocation.SelectedValue));
 
-            // 3. Daftarkan Script
-            // Kami menggunakan setTimeout agar browser menyelesaikan update DOM UpdatePanel sebelum memicu popup
-            string script = string.Format("setTimeout(function() {{ tryOpenPopup('{0}'); }}, 200);", url);
+            string scriptUrl = url.Replace("\\", "\\\\").Replace("'", "\\'");
+            string script = string.Format("setTimeout(function() {{ fnShowDialog('{0}'); }}, 200);", scriptUrl);
 
-            // KRITIKAL: Gunakan ScriptManager.RegisterStartupScript 
-            // Parameter pertama harus UpdatePanel jika tombol ada di dalam UpdatePanel, 
-            // atau 'this.Page' jika ingin lebih general.
             ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "OpenPopupKey", script, true);
         }
         catch (Exception ex)
         {
-            // Error handling
+            Shared.ShowErrorDialog(this, ex);
         }
     }
     protected void btnSearchHistory_Click(object sender, EventArgs e)
