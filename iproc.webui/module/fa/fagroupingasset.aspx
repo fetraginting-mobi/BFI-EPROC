@@ -26,14 +26,59 @@
                     var checkboxes = grid.getElementsByTagName("input");
 
                     for (var i = 0; i < checkboxes.length; i++) {
-                        if (checkboxes[i].type === "checkbox" && checkboxes[i] !== current) {
+                        if (checkboxes[i].type === "checkbox" && checkboxes[i] !== current && checkboxes[i].id.indexOf("chkParent") >= 0) {
                             checkboxes[i].checked = false;
                         }
                     }
                 }
+
+                function checkAssetRowsAll(objRef) {
+                    var grid = document.getElementById('<%= gvwList.ClientID %>');
+                    if (!grid) {
+                        return;
+                    }
+
+                    var inputList = grid.getElementsByTagName("input");
+                    for (var i = 0; i < inputList.length; i++) {
+                        if (inputList[i].type === "checkbox" && inputList[i].id.indexOf("chbSelect") >= 0 && inputList[i].id.indexOf("chbSelectAll") < 0) {
+                            inputList[i].checked = objRef.checked;
+                        }
+                    }
+                }
+
+                function checkAssetRowClick(objRef) {
+                    var grid = document.getElementById('<%= gvwList.ClientID %>');
+                    if (!grid) {
+                        return;
+                    }
+
+                    var inputList = grid.getElementsByTagName("input");
+                    var headerCheckBox = null;
+                    var allChecked = true;
+
+                    for (var i = 0; i < inputList.length; i++) {
+                        if (inputList[i].type !== "checkbox") {
+                            continue;
+                        }
+
+                        if (inputList[i].id.indexOf("chbSelectAll") >= 0) {
+                            headerCheckBox = inputList[i];
+                        } else if (inputList[i].id.indexOf("chbSelect") >= 0 && inputList[i].id.indexOf("chbSelectAll") < 0 && !inputList[i].checked) {
+                            allChecked = false;
+                        }
+                    }
+
+                    if (headerCheckBox) {
+                        headerCheckBox.checked = allChecked;
+                    }
+                }
+
                 function handleMovePopup() {
                     var ddlBranch = document.getElementById('<%= ddlBranch.ClientID %>');
                     var ddlLoc = document.getElementById('<%= ddlLocation.ClientID %>');
+                    var groupCode = '<%= lblGroupAssetCode.Text %>';
+                    var grid = document.getElementById('<%= gvwList.ClientID %>');
+                    var barcodes = [];
 
                     if (!ddlBranch) {
                         alert("Cost Center tidak ditemukan di halaman.");
@@ -45,9 +90,42 @@
                         return false;
                     }
 
+                    if (!groupCode || groupCode === "--") {
+                        alert("Asset Group Code tidak ditemukan.");
+                        return false;
+                    }
+
+                    if (grid) {
+                        var checkboxes = grid.getElementsByTagName("input");
+                        for (var i = 0; i < checkboxes.length; i++) {
+                            if (checkboxes[i].type === "checkbox" && checkboxes[i].checked && checkboxes[i].id.indexOf("chbSelect") >= 0 && checkboxes[i].id.indexOf("chbSelectAll") < 0) {
+                                var row = checkboxes[i].parentNode;
+                                while (row && row.tagName !== "TR") {
+                                    row = row.parentNode;
+                                }
+
+                                if (row && row.cells.length > 2) {
+                                    var barcode = row.cells[2].innerText || row.cells[2].textContent;
+                                    barcode = barcode.replace(/^\s+|\s+$/g, "");
+
+                                    if (barcode) {
+                                        barcodes.push(barcode);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (barcodes.length === 0) {
+                        alert("Pilih minimal 1 asset terlebih dahulu!");
+                        return false;
+                    }
+
                     var url = "../../lookup/genericwithparametercustom.aspx?code=FGAMV" +
                         "&par_cost_center=" + encodeURIComponent(ddlBranch.value) +
-                        "&par_location=" + encodeURIComponent(ddlLoc ? ddlLoc.value : "");
+                        "&par_location=" + encodeURIComponent(ddlLoc ? ddlLoc.value : "") +
+                        "&move_source_ga_code=" + encodeURIComponent(groupCode) +
+                        "&move_barcodes_string=" + encodeURIComponent(barcodes.join(","));
 
                     if (document.getElementById('ifrpopup') && typeof $ === 'function') {
                         document.getElementById('ifrpopup').src = url;
@@ -295,11 +373,11 @@
                                                         <asp:TemplateField>
                                                             <HeaderTemplate>
                                                                 <asp:CheckBox ID="chbSelectAll" runat="server"
-                                                                    onclick="checkAll(this)" />
+                                                                    onclick="checkAssetRowsAll(this)" />
                                                             </HeaderTemplate>
                                                             <ItemTemplate>
                                                                 <asp:CheckBox ID="chbSelect" runat="server"
-                                                                    onclick="Check_Click" />
+                                                                    onclick="checkAssetRowClick(this);" />
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
                                                         <asp:BoundField DataField="BARCODE" HeaderText="Asset Code">
@@ -312,7 +390,7 @@
                                                         <asp:TemplateField HeaderText="Parent">
                                                             <ItemTemplate>
                                                                 <asp:CheckBox ID="chkParent" runat="server"
-                                                                    Checked='<%# Convert.ToBoolean(Eval("is_parent")) %>'
+                                                                    Checked='<%# IsCheckedValue(Eval("is_parent")) %>'
                                                                     onclick="return singleCheck(this);" />
                                                             </ItemTemplate>
                                                         </asp:TemplateField>

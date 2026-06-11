@@ -68,6 +68,7 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_fa_group_asset_code"] = Request.Params["faGroupingAssetCode"];
             DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
             DBToUI.Map(this.Controls, _dr);
+            chbIsActive.Checked = IsCheckedValue(GetDataRowValue(_dr, "IS_ACTIVE"));
         }
         catch (Exception ex)
         {
@@ -95,7 +96,6 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_cost_center"] = ddlBranch.SelectedValue;
             _ht["p_fa_location"] = ddlLocation.SelectedValue;
 
-            chbIsActive.Checked = true;
             _ht["p_status"] = chbIsActive.Checked ? 1 : 0;
             // _ht["p_item_barcode"] = barcodeValue;
 
@@ -124,6 +124,34 @@ public partial class module_fa_fagroupingasset : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
+    protected bool IsCheckedValue(object value)
+    {
+        if (value == null || value == DBNull.Value)
+            return false;
+
+        string stringValue = Convert.ToString(value).Trim();
+
+        return stringValue.Equals("1")
+            || stringValue.Equals("true", StringComparison.OrdinalIgnoreCase)
+            || stringValue.Equals("y", StringComparison.OrdinalIgnoreCase)
+            || stringValue.Equals("yes", StringComparison.OrdinalIgnoreCase)
+            || stringValue.Equals("active", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private object GetDataRowValue(DataRow dr, string columnName)
+    {
+        if (dr == null || dr.Table == null)
+            return null;
+
+        foreach (DataColumn column in dr.Table.Columns)
+        {
+            if (String.Equals(column.ColumnName, columnName, StringComparison.OrdinalIgnoreCase))
+                return dr[column];
+        }
+
+        return null;
+    }
+
     protected void btnCancel_Click(object sender, EventArgs e)
     {
         Response.Redirect("fagroupingassetlist.aspx");
@@ -247,34 +275,34 @@ public partial class module_fa_fagroupingasset : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
-    protected void btnMove_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            if (string.IsNullOrEmpty(ddlBranch.SelectedValue))
-            {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Pilih Branch!');", true);
-                return;
-            }
+    // protected void btnMove_Click(object sender, EventArgs e)
+    // {
+    //     try
+    //     {
+    //         if (string.IsNullOrEmpty(ddlBranch.SelectedValue))
+    //         {
+    //             ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Pilih Branch!');", true);
+    //             return;
+    //         }
 
-            string baseUrl = "../../lookup/genericwithparametercustom.aspx";
-            string code = "FGAMV";
-            string url = string.Format("{0}?code={1}&par_cost_center={2}&par_location={3}",
-                         baseUrl,
-                         code,
-                         HttpUtility.UrlEncode(ddlBranch.SelectedValue),
-                         HttpUtility.UrlEncode(ddlLocation.SelectedValue));
+    //         string baseUrl = "../../lookup/genericwithparametercustom.aspx";
+    //         string code = "FGAMV";
+    //         string url = string.Format("{0}?code={1}&par_cost_center={2}&par_location={3}",
+    //                      baseUrl,
+    //                      code,
+    //                      HttpUtility.UrlEncode(ddlBranch.SelectedValue),
+    //                      HttpUtility.UrlEncode(ddlLocation.SelectedValue));
 
-            string scriptUrl = url.Replace("\\", "\\\\").Replace("'", "\\'");
-            string script = string.Format("setTimeout(function() {{ fnShowDialog('{0}'); }}, 200);", scriptUrl);
+    //         string scriptUrl = url.Replace("\\", "\\\\").Replace("'", "\\'");
+    //         string script = string.Format("setTimeout(function() {{ fnShowDialog('{0}'); }}, 200);", scriptUrl);
 
-            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "OpenPopupKey", script, true);
-        }
-        catch (Exception ex)
-        {
-            Shared.ShowErrorDialog(this, ex);
-        }
-    }
+    //         ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "OpenPopupKey", script, true);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Shared.ShowErrorDialog(this, ex);
+    //     }
+    // }
     protected void btnSearchHistory_Click(object sender, EventArgs e)
     {
         //string redirectUrl = string.Format("faitemgrouphistory.aspx?faitemgroupcode={0}", lblItemGroupCode.Text);
