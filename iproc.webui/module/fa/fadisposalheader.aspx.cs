@@ -27,7 +27,7 @@ public partial class module_fa_fadisposalheader : BasePage
             Shared.BindUnitsItemOwnSetting(ddlOwner);
 
 
-            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FADISP&parc_fa_disposal_code={0}&gvw={1}&parc_branch_code={2}&parc_location={3}&parc_owner={4}');", txtCodeBarcode.ClientID, btnSearch.UniqueID, ddlBranch.ClientID, ddlFromLocationCode.ClientID, ddlOwner.ClientID);
+            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FADISP&parc_fa_disposal_code={0}&gvw={1}&parc_branch_code={2}&parc_location={3}&parc_owner={4}');", txtCodeBarcode.ClientID, btnSearch.UniqueID, ddlBranch.ClientID, ddlFromLocationCode.ClientID, ddlOwner.ClientID);
            
             Shared.BindGeneralSubCode(ddlReason, "RSN");
 

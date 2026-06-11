@@ -31,7 +31,7 @@ public partial class module_fa_fasaleheader : BasePage
             Shared.BindFaLocationAll(ddlFromLocationCode, ddlBranch.SelectedValue);
             
             Shared.BindBranchEmployee(ddlBranch);
-            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FASALE&parc_fa_sale_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
+            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FASALE&parc_fa_sale_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
             Shared.BindSubBranch(ddlSubBranch, ddlBranch.SelectedValue);
             Shared.BindUnitsItemOwnSale(ddlOwner);
 
