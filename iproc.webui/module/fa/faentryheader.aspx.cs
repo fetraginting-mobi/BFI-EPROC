@@ -266,6 +266,47 @@ public partial class module_fa_faentryheader : BasePage
         }
     }
 
+    private string GetHeaderStatus(DataRow dr)
+    {
+        string status = string.Empty;
+
+        if (dr == null)
+            return string.Empty;
+
+        if (dr.Table.Columns.Contains("FE_STATUS"))
+        {
+            status = dr["FE_STATUS"].ToString();
+            if (!string.IsNullOrEmpty(status.Trim()))
+                return status;
+        }
+
+        if (dr.Table.Columns.Contains("TRANS_FLAG_CODE"))
+        {
+            status = dr["TRANS_FLAG_CODE"].ToString();
+            if (!string.IsNullOrEmpty(status.Trim()))
+                return status;
+        }
+
+        if (dr.Table.Columns.Contains("TRANS_FLAG_DESC"))
+            return dr["TRANS_FLAG_DESC"].ToString();
+
+        return string.Empty;
+    }
+
+    private bool IsCurrentHeaderNew()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        _dal = new GeneralDAL();
+        _ht = new Hashtable();
+
+        _ht["p_code_barcode"] = lblCodeBarcode.Text;
+        DataRow _dr = _dal.GetRow(TABLE_NAME_HEADER, _ht);
+
+        return GetHeaderStatus(_dr).Trim().Equals("NEW", StringComparison.OrdinalIgnoreCase);
+    }
+
     protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwList.PageIndex = e.NewPageIndex;
@@ -274,6 +315,20 @@ public partial class module_fa_faentryheader : BasePage
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
+        try
+        {
+            if (!IsCurrentHeaderNew())
+            {
+                Shared.ShowValidationError(this, "FA Entry status must be NEW to add detail.");
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+            return;
+        }
+
         Response.Redirect("faentrydetail.aspx?action=add&codebarcode=" + lblCodeBarcode.Text);
     }
 

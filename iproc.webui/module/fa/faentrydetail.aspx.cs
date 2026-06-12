@@ -15,6 +15,7 @@ public partial class module_fa_faentrydetail : BasePage
 
     private static string TABLE_NAME_DETAIL = "FA_ENTRY_DETAIL";
     private static string TABLE_NAME_FA = "FA_ASSET";
+    private static string TABLE_NAME_HEADER = "FA_ENTRY_HEADER";
 
 
     protected void Page_Load(object sender, EventArgs e)
@@ -42,60 +43,113 @@ public partial class module_fa_faentrydetail : BasePage
                 txtPurchaseDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 txtPurchaseDate.Enabled = false;
 
-                if (!lblFEStatus.Text.Equals("NEW"))
+                if (!IsHeaderStatusNew(lblFEStatus.Text))
                 {
-                    btnSave.Visible = false;
-                    txtPurchaseDate.Enabled = false;
-                    txtCostPrice.Enabled = false;
-                    ddlDepreCategoryBook.Enabled = false;
-                    ddlDepreCategoryFiscal.Enabled = false;
-                    txtTotalDepreKormesil.Enabled = false;
-                    txtTotalDepreFiscal.Enabled = false;
-                    txtNetBookValueKormesil.Enabled = false;
-                    txtNetBookValueFiscal.Enabled = false;
-                    txtObjectInfo.Enabled = false;
-                    txtRemarks.Enabled = false;
-                   // ddlfaLocationCode.Enabled = false;
-                    ddlCategory.Enabled = false;
-                    btnLookUpInventoryEntryItem.Enabled = false;
-                    txtItemName.Enabled = false;
-                    
+                    SetReadOnlyMode();
                 }
             }
             else
             {
-                GetCode();
+                LoadHeaderData();
                 ddlCategory.Enabled = false;
                 ddlDepreCategoryFiscal.Enabled = false;
                 ddlDepreCategoryBook.Enabled = false;
                 txtPurchaseDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 txtPurchaseDate.Enabled = false;
 
-               
+                if (!IsHeaderStatusNew(lblFEStatus.Text))
+                    SetReadOnlyMode();
             }
         }
         LoadAfterInit();
     }
 
-    private void GetCode()
+    private DataRow GetHeaderRow(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+        return dal.GetRow(TABLE_NAME_HEADER, ht);
+    }
+
+    private string GetHeaderStatus(DataRow dr)
+    {
+        string status = string.Empty;
+
+        if (dr == null)
+            return string.Empty;
+
+        if (dr.Table.Columns.Contains("FE_STATUS"))
+        {
+            status = dr["FE_STATUS"].ToString();
+            if (!string.IsNullOrEmpty(status.Trim()))
+                return status;
+        }
+
+        if (dr.Table.Columns.Contains("TRANS_FLAG_CODE"))
+        {
+            status = dr["TRANS_FLAG_CODE"].ToString();
+            if (!string.IsNullOrEmpty(status.Trim()))
+                return status;
+        }
+
+        if (dr.Table.Columns.Contains("TRANS_FLAG_DESC"))
+            return dr["TRANS_FLAG_DESC"].ToString();
+
+        return string.Empty;
+    }
+
+    private bool IsHeaderStatusNew(string status)
+    {
+        if (string.IsNullOrEmpty(status))
+            return false;
+
+        return status.Trim().Equals("NEW", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void LoadHeaderData()
     {
         GeneralDAL _dal = null;
-        Hashtable _ht = null;
 
         try
         {
             _dal = new GeneralDAL();
-            _ht = new Hashtable();
 
-            _ht["p_code_barcode"] = Request.Params["codebarcode"];
-            DataRow _dr = _dal.GetRow("FA_ENTRY_HEADER", _ht);
+            DataRow _dr = GetHeaderRow(_dal);
 
             lblFECode.Text = _dr["code"].ToString();
+            lblFEStatus.Text = GetHeaderStatus(_dr);
         }
         catch (Exception ex)
         {
             Shared.ShowErrorDialog(this, ex);
         }
+    }
+
+    private bool IsCurrentHeaderNew(GeneralDAL dal)
+    {
+        DataRow dr = GetHeaderRow(dal);
+        lblFEStatus.Text = GetHeaderStatus(dr);
+
+        return IsHeaderStatusNew(lblFEStatus.Text);
+    }
+
+    private void SetReadOnlyMode()
+    {
+        btnSave.Visible = false;
+        txtPurchaseDate.Enabled = false;
+        txtCostPrice.Enabled = false;
+        ddlDepreCategoryBook.Enabled = false;
+        ddlDepreCategoryFiscal.Enabled = false;
+        txtTotalDepreKormesil.Enabled = false;
+        txtTotalDepreFiscal.Enabled = false;
+        txtNetBookValueKormesil.Enabled = false;
+        txtNetBookValueFiscal.Enabled = false;
+        txtObjectInfo.Enabled = false;
+        txtRemarks.Enabled = false;
+        ddlCategory.Enabled = false;
+        btnLookUpInventoryEntryItem.Enabled = false;
+        txtItemName.Enabled = false;
     }
 
     private void LoadData()
@@ -130,6 +184,12 @@ public partial class module_fa_faentrydetail : BasePage
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
+            if (!IsCurrentHeaderNew(_dal))
+            {
+                Shared.ShowValidationError(this, "FA Entry status must be NEW to add or update detail.");
+                return;
+            }
+
             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
             Shared.ApplyDefaultProp(_ht);
 
@@ -152,7 +212,18 @@ public partial class module_fa_faentrydetail : BasePage
 
     protected void btnSave_Click(object sender, EventArgs e)
     {
+        Page.Validate();
+        if (!Page.IsValid)
+            return;
+
         SaveData();
+    }
+
+    protected void cvItemName_ServerValidate(object source, ServerValidateEventArgs args)
+    {
+        args.IsValid = !string.IsNullOrEmpty(txtItemCode.Text.Trim())
+            && !string.IsNullOrEmpty(txtItemName.Text.Trim())
+            && !txtItemName.Text.Trim().Equals("--");
     }
 
     protected void btnCancel_Click(object sender, EventArgs e)

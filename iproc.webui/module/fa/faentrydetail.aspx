@@ -65,6 +65,7 @@
                                     <cc1:XUITextBox ID="txtItemName" runat="server"  DBColumnName="ITEM_NAME" SPParameterName="p_item_name" Enabled="false" CssClass="form-control" DataType="String" BindType="Both" TextMode="MultiLine" Text="--"></cc1:XUITextBox>
                                     <cc1:XUITextBox ID="txtItemCode" runat="server"  DBColumnName="ITEM_CODE" DataType="String" BindType="Both" SPParameterName="p_item_code" CssClass="form-control" style="Display:none;"></cc1:XUITextBox>
                                     <asp:RequiredFieldValidator ID="rfvItemName" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtItemName" Display="Dynamic"></asp:RequiredFieldValidator> 
+                                    <asp:CustomValidator ID="cvItemName" runat="server" ErrorMessage="Required Field!" Display="Dynamic" OnServerValidate="cvItemName_ServerValidate"></asp:CustomValidator>
                                 </div>
                             </div>                            
                         </div>
