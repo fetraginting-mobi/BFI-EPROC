@@ -44,7 +44,7 @@
   vertical-align: baseline !important;
   width: auto !important;
   box-sizing: content-box !important;
-  font-family: "Consolas","Monaco","Bitstream Vera Sans Mono","Courier New",Courier,monospace !important;
+  font-family: 'RobotoLocal', 'OpenSansLocal';
   font-weight: normal !important;
   font-style: normal !important;
   font-size: 1em !important;
@@ -302,7 +302,7 @@
   border: none !important;
 }
 .syntaxhighlighter .toolbar a {
-  font: 100%/1.45em "Lucida Grande", Verdana, Arial, Helvetica, sans-serif !important;
+  font: 100%/1.45em RobotoLocal, OpenSansLocal !important;
   color: white !important;
   background: #4E6CA3 !important;
   float: right !important;

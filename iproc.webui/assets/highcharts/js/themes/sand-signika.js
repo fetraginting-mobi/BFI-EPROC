@@ -23,7 +23,7 @@ Highcharts.theme = {
 	chart: {
 		backgroundColor: null,
 		style: {
-			fontFamily: "Signika, serif"
+			fontFamily: RobotoLocal, OpenSansLocal
 		}
 	},
 	title: {

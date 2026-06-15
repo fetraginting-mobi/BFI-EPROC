@@ -10,7 +10,7 @@ body {
   border-top: 8px solid #282b36;
 }
 canvas {
-  font-family: "proxima-nova", sans-serif sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
 }
 .redBorder,
 .greenBorder,
@@ -29,20 +29,20 @@ canvas {
   background-color: #fdb45c;
 }
 h1 {
-  font-family: "proxima-nova", sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
   font-weight: 600;
   font-size: 55px;
   margin-top: 40px;
 }
 h2 {
-  font-family: "proxima-nova", sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
   font-weight: 400;
   margin-top: 20px;
   font-size: 26px;
   line-height: 40px;
 }
 h3 {
-  font-family: "proxima-nova", sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
   font-weight: 600;
   text-align: center;
   margin: 20px 0;
@@ -53,7 +53,7 @@ h3 a {
   border-bottom: 1px solid #2d91ea;
 }
 p {
-  font-family: "proxima-nova", sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
   line-height: 24px;
   font-size: 18px;
   color: #767c8d;
@@ -61,7 +61,7 @@ p {
 .btn {
   display: inline-block;
   padding: 20px;
-  font-family: "proxima-nova", sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
   font-weight: 600;
   color: #fff;
   text-decoration: none;
@@ -125,7 +125,7 @@ footer {
 }
 footer p {
   color: #767c8d;
-  font-family: "proxima-nova", sans-serif;
+  font-family: RobotoLocal,OpenSansLocal;
   font-size: 16px;
   padding: 20px 0;
 }
