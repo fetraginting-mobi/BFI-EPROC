@@ -36,8 +36,8 @@ public partial class module_report_rptfaitemgroup : BasePage
 
             // Panggil fungsi download langsung
            Shared.ExportToExcelDirectDownload(
-                "ITEM_GROUP_REPORT",
-                "item_group_report", 
+                "FA_GROUPING_ASSET_REPORT",
+                "FA_GROUPING_ASSET_REPORT", 
                 htReportParams
             );
         }
