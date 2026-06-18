@@ -19,7 +19,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
     private static string TABLE_NAME_EXPENSE = "AP_INVOICE_REGISTRATION_EXPENSE";
     private static string TABLE_NAME_DETAIL_FEE = "AP_INVOICE_REGISTRATION_FEE";
     private static string TABLE_NAME_ADVANCE_DEPOSIT = "AP_INVOICE_REGISTRATION_ADVANCE";
-    private static string TABLE_NAME_DOCUMENT= "INVOICE_DOCUMENT";
+    private static string TABLE_NAME_DOCUMENT = "INVOICE_DOCUMENT";
     private static string GET_MULTIPLE_BRANCH = "GET_IS_AGAS"; // (+) Ari 04-07-2022 ket : enhancement 2022
 
     protected void Page_Load(object sender, EventArgs e)
@@ -48,7 +48,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
             btnDeleteDetail.OnClientClick = "return confirm('Delete selected data?');";
 
-           // btnLookUpPurchaseOrderCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=PUROR&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&ecol_4={4}&fcol_5={5}&gcol_6={6}&hcol_7={7}&icol_8={8}&jcol_9={9}&kcol_10={10}&lcol_13={11}&mcol_14={12}&ncol_15={13}&ocol_16={14}&parc_branch_code={15}');", txtPurchaseOrderCode.ClientID, txtPurchaseOrder.ClientID, txtPOCode.ClientID, txtSupplierID.ClientID, lblSupplierName.ClientID, txtInvoiceAmount.ClientID, txtDiscount.ClientID, txtPPNTax.ClientID, txtPPHTax.ClientID, ddlCurrencyCode.ClientID, txtTotalFee.ClientID, ddlDivision.ClientID, ddlDepartment.ClientID, ddlSubDepartment.ClientID, ddlUnits.ClientID, txtBranch.ClientID);
+            // btnLookUpPurchaseOrderCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=PUROR&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&ecol_4={4}&fcol_5={5}&gcol_6={6}&hcol_7={7}&icol_8={8}&jcol_9={9}&kcol_10={10}&lcol_13={11}&mcol_14={12}&ncol_15={13}&ocol_16={14}&parc_branch_code={15}');", txtPurchaseOrderCode.ClientID, txtPurchaseOrder.ClientID, txtPOCode.ClientID, txtSupplierID.ClientID, lblSupplierName.ClientID, txtInvoiceAmount.ClientID, txtDiscount.ClientID, txtPPNTax.ClientID, txtPPHTax.ClientID, ddlCurrencyCode.ClientID, txtTotalFee.ClientID, ddlDivision.ClientID, ddlDepartment.ClientID, ddlSubDepartment.ClientID, ddlUnits.ClientID, txtBranch.ClientID);
 
             //btnLookUpPurchaseOrderCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=PUROR&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&ecol_4={4}&fcol_5={5}&gcol_6={6}&hcol_7={7}&icol_8={8}&jcol_9={9}&kcol_10={10}&parc_branch_code={11}');", txtPurchaseOrderCode.ClientID, txtPurchaseOrder.ClientID, txtPOCode.ClientID, txtSupplierID.ClientID, lblSupplierName.ClientID, txtInvoiceAmount.ClientID, txtDiscount.ClientID, txtPPNTax.ClientID, txtPPHTax.ClientID, ddlCurrencyCode.ClientID, txtTotalFee.ClientID, txtBranch.ClientID);
             //btnLookUpPurchaseOrderCodeTOP.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=PUTOP&acol_0={0}&bcol_0={1}&ccol_1={2}&dcol_3={3}&ecol_4={4}&fcol_5={5}&gcol_6={6}&hcol_7={7}&icol_8={8}&jcol_9={9}&kcol_10={10}&parc_branch_code={11}');", txtPurchaseOrderCode.ClientID, txtPurchaseOrder.ClientID, txtPOCode.ClientID, txtSupplierID.ClientID, lblSupplierName.ClientID, txtInvoiceAmount.ClientID, txtDiscount.ClientID, txtPPNTax.ClientID, txtPPHTax.ClientID, ddlCurrencyCode.ClientID, txtTotalFee.ClientID, txtBranch.ClientID);
@@ -84,15 +84,14 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             btnAddDep.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=INDPS&parc_invoice_code={0}&gvw={1}&parc_supplier_code={2}');", txtCodeBarcode.ClientID, btnSearchAdDep.UniqueID, txtSupplierID.ClientID);
             //if (ddlInvoiceTypeCode.SelectedValue.Equals("FAKB") || ddlInvoiceTypeCode.SelectedValue.Equals("FAKUM"))
             //{
-                btnLookUpPreviousInvoiceNo.Enabled = false;
+            btnLookUpPreviousInvoiceNo.Enabled = false;
             //}
             //else
-            //    btnLookUpPreviousInvoiceNo.Enabled = true;
-            ScriptManager.RegisterStartupScript(this, GetType(), "fx", "tab();", true);
+            //    btnLookUpPreviousInvoiceNo.Enabled = true;            
 
             btnAddAdDep.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=INADV&parc_invoice_code={0}&gvw={1}&parc_supplier_code={2}');", txtCodeBarcode.ClientID, btnSearchAdDep.UniqueID, txtSupplierID.ClientID);
 
-            
+
 
             if (Request.Params["action"].Equals("edit"))
             {
@@ -115,7 +114,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                 BindAdDep();
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
-              
+
                 txtInvoiceDate.Enabled = false;
                 ddlDivision.Enabled = false;
                 ddlDepartment.Enabled = false;
@@ -140,7 +139,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     rfvInvoiceNo.Enabled = false;
                     txtInvoiceNo.Enabled = false;
 
-                   
+
                 }
 
                 if (ddlInvoice.SelectedValue == "Y")
@@ -170,7 +169,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
                 }
 
-               if (ddlFlagAdvDps.SelectedValue == "FDS")
+                if (ddlFlagAdvDps.SelectedValue == "FDS")
                 {
                     btnAddDep.Visible = false;
                     btnAddAdDep.Visible = false;
@@ -184,8 +183,8 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
                 }
 
-               else if (ddlFlagAdvDps.SelectedValue == "FDA")
-                    {
+                else if (ddlFlagAdvDps.SelectedValue == "FDA")
+                {
                     btnAddDep.Visible = true;
                     btnAddAdDep.Visible = false;
                     btnDeleteAdDep.Visible = true;
@@ -194,7 +193,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     txtFaAdjustCode.Visible = false;
                     DEPO.Visible = false;
                     txtDepositNo.Visible = false;
-                    }   
+                }
 
                 else
                 {
@@ -204,13 +203,13 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     btnDeleteAdDep.Visible = false;
                 }
 
-                    
-            
+
+
                 if (rblBillType.SelectedValue == "OT")
                 {
                     mandatory.Visible = false;
                     spasi.Visible = true;
-                   // rfvPurchaseOrderCode.Enabled = false;
+                    // rfvPurchaseOrderCode.Enabled = false;
 
                 }
                 if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CANCEL")
@@ -297,13 +296,13 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     txtFaAdjustCode.Enabled = false;
                     btnLookUpPurchaseFaAdjust.Enabled = false;
                     btnDeleteTermin.Visible = false;
-                   
+
 
 
                     if (!lblApprovalRequestTargetID.Text.Equals(""))
                         btnApprovalTiered.Visible = true;
 
-                } 
+                }
                 if (rblBillType.SelectedValue == "APA")
                 {
                     Shared.BindGeneralSubCode(ddlInvoiceTypeCode, "APA");
@@ -329,8 +328,8 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
                     liFee.Visible = true;
                     liAdvanceDeposit.Visible = true;
-                   
-                   
+
+
                     ddlFlagAdvDps.Visible = true;
 
                     rfvFlagAdvDps.Enabled = true;
@@ -384,10 +383,10 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                         txtDepositNo.Visible = false;
                     }
 
-               
-                    
+
+
                 }
-                else if (rblBillType.SelectedValue == "OT" )
+                else if (rblBillType.SelectedValue == "OT")
                 {
                     Shared.BindGeneralSubCode(ddlInvoiceTypeCode, "OT");
                     btnLookUpSupplierID.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/generic.aspx?code=MSUPL&acol_0={0}&bcol_1={1}');", txtSupplierID.ClientID, lblSupplierName.ClientID);
@@ -395,7 +394,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     btnLookUpPurchaseOrderCodeTOP.Visible = false;
                     btnLookUpUserRequest.Visible = false;
                     btnLookUpPurchaseFaAdjust.Visible = true;
-                  
+
                     btnAdd.Visible = false;
                     btnDelete.Visible = false;
                     btnLookUpUserRequest.Visible = false;
@@ -409,7 +408,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     lblRemainingBalance.Visible = false;
                     txtRemainingBalance.Visible = false;
                     liTermin.Visible = false;
-                   
+
                     if (ddlFlagAdvDps.SelectedValue == "FDS")
                     {
                         liFee.Visible = false;
@@ -449,7 +448,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                         txtDepositNo.Visible = false;
                     }
 
-                  
+
                 }
                 else if (rblBillType.SelectedValue == "PO")
                 {
@@ -468,14 +467,14 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     btnLookUpPreviousInvoiceNo.Enabled = false;
                     btnLookUpUserRequest.Enabled = false;
                     btnLookUpPurchaseOrderCodeTOP.Visible = false;
-                  
+
                     liTermin.Visible = false;
                     liDetail.Visible = false;
                     lblRemainingBalance.Visible = false;
                     txtRemainingBalance.Visible = false;
                     DEPO.Visible = false;
                     txtDepositNo.Visible = false;
-                  
+
                     if (ddlFlagAdvDps.SelectedValue == "FDS")
                     {
                         liFee.Visible = false;
@@ -513,7 +512,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                 else
                 {
                     Shared.BindGeneralSubCode(ddlInvoiceTypeCode, "PO");
-                   
+
                 }
 
             }
@@ -583,21 +582,20 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     ddlFlagAdvDps.Enabled = false;
                     ddlFlagAdvDps.Text = "FPO";
                 }
-               
+
 
                 btnReject.Visible = btnPost.Visible = false;
                 btnAdd.Visible = btnDelete.Visible = false;
 
                 ddlBranch.SelectedValue = Shared.CurrentEmployeeBranchDesc;
-              
+
                 btnLookUpPurchaseOrderCode.Enabled = true;
                 ddlCurrencyCode.Enabled = false;
-               
+
 
             }
         }
-       
-
+        ScriptManager.RegisterStartupScript(this, GetType(), "fx", "tab();", true);
         if (rblBillType.SelectedValue == "PO")
         {
             mandatory.Visible = true;
@@ -607,7 +605,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             ddlFlagAdvDps.Enabled = false;
             ddlFlagAdvDps.Text = "FPO";
             //rfvPurchaseOrderCode.Enabled = true;
-           
+
         }
         if (rblBillType.SelectedValue == "OT")
         {
@@ -647,7 +645,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                 DEPO.Visible = true;
                 txtDepositNo.Visible = true;
                 btnLookUpDepositRequest.Visible = true;
-            
+
             }
 
             if (ddlFlagAdvDps.SelectedValue == "FDA")
@@ -659,17 +657,17 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                 btnLookUpSupplierID.Enabled = false;
                 btnLookUpPurchaseFaAdjust.Visible = false;
                 txtFaAdjustCode.Visible = false;
-                 btnLookUpSupplierID.Enabled = false;
-                 DEPO.Visible = false;
-                 txtDepositNo.Visible = false;
-            
+                btnLookUpSupplierID.Enabled = false;
+                DEPO.Visible = false;
+                txtDepositNo.Visible = false;
+
             }
 
-         
+
 
         }
 
-       
+
 
         //else if (rblBillType.SelectedValue == "OT")
         //{
@@ -763,8 +761,8 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             DBToUI.Map(this.Controls, _dr);
             Shared.BindBranchEmployee(ddlBranch);
             BindDataDocRequest();
-           
-            
+
+
         }
         catch (Exception ex)
         {
@@ -809,7 +807,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
         {
             _dal = new GeneralDAL();
             _ht = new Hashtable();
-         
+
             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
             _ht["p_rate"] = txtRate.Text; // (+) Ari 08-08-2022 ket : enhancement 2022
@@ -831,7 +829,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
-  
+
     protected void btnSave_Click(object sender, EventArgs e)
     {
         SaveData();
@@ -840,7 +838,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
     {
         Response.Redirect("apinvoiceregistrationheaderlist.aspx");
     }
-  
+
     protected void rblBillType_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (rblBillType.SelectedValue == "APA")
@@ -889,7 +887,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             lblSupplierName.Text = "";
             txtPreviousInvoiceNo.Text = "";
             mandatory.Visible = false;
-           // rfvPurchaseOrderCode.Enabled = false;
+            // rfvPurchaseOrderCode.Enabled = false;
             spasi.Visible = true;
             btnLookUpSupplierID.Visible = true;
             btnLookUpSupplierID.Enabled = true;
@@ -899,7 +897,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             //txtInvoiceAmount.Enabled = true;
             ddlCurrencyCode.Enabled = true;
             btnLookUpPurchaseOrderCodeTOP.Visible = false;
-             
+
             rfvFlagAdvDps.Enabled = true;
             txtPurchaseOrderCode.Text = "";
             txtPOCode.Text = "";
@@ -1138,20 +1136,20 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
         }
     }
 
-    
+
     protected void gvwListFee_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwListFee.PageIndex = e.NewPageIndex;
         BindFee();
     }
-     
-     
+
+
     protected void btnSearchFee_Click(object sender, EventArgs e)
     {
         if (lblCodeBarcode.Text != string.Empty)
             BindFee();
     }
-    
+
     #endregion
 
     #region Expense
@@ -1228,16 +1226,16 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                     _ht["p_currency_code"] = Currency.SelectedValue;
                     _ht["p_amount_fee"] = AmountFee;
 
-                    
+
 
                     Shared.ApplyDefaultProp(_ht);
 
                     _dal.ExecRawSP("xsp_ap_invoice_registration_expense_update", _ht);
-                   
+
                 }
             }
             Session[SessionKey.CURRENT_TAB_INDEX_SESSION_KEY] = txtTabCode.Text;
-           
+
             Shared.ShowSuccessGritter(this, string.Format("apinvoiceregistrationheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
             BindExpense();
         }
@@ -1332,7 +1330,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             gvwListTermin.DataBind();
 
             LoadData();
-            
+
         }
         catch (Exception ex)
         {
@@ -1386,7 +1384,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
             Shared.ShowSuccessGritter(this, string.Format("apinvoiceregistrationheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
             BindTermin();
-            
+
         }
         catch (Exception ex)
         {
@@ -1412,7 +1410,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             ddlTax.SelectedValue = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "TAX"));
 
             ddlTaxType.SelectedValue = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "TAX_TYPE"));
-          
+
             txtDiscount.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "DISCOUNT"));
 
             txtDiscountAdditional.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "DISCOUNT_ADDITIONAL"));
@@ -1431,15 +1429,15 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                 txtDiscountAdditional.Enabled = true;
             }
 
-            if (lblTransFlagCode.Text == "POST"|| lblTransFlagCode.Text == "CANCEL" || lblTransFlagCode.Text == "ON-PROGRESS")
+            if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CANCEL" || lblTransFlagCode.Text == "ON-PROGRESS")
             {
 
                 txtDiscount.Enabled = false;
                 ddlTax.Enabled = false;
-                
+
             }
 
-            if (ddlTax.SelectedValue == "TS00005" )
+            if (ddlTax.SelectedValue == "TS00005")
             {
 
                 ddlTaxType.Enabled = false;
@@ -1447,7 +1445,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
         }
     }
-   
+
 
     private void DeleteDataTermin(string ID)
     {
@@ -1561,7 +1559,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
     //            CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
     //            if (chb.Checked)
     //            {
-                    
+
     //                string Amount = ((TextBox)row.Cells[4].Controls[1]).Text;
 
     //                _ht["p_id"] = gvwListAdDep.DataKeys[row.RowIndex][0].ToString();
@@ -1663,11 +1661,11 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
     }
     #endregion
 
-   
+
     #region purchase quotation doc detail
     private void BindDataDocRequest()
     {
-    
+
         GeneralDAL _dal = null;
         Hashtable _ht = null;
         DataView dvQUOTATIONDOC = null;
@@ -1677,7 +1675,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
-           _ht["p_keywords"] = txtSearchDocReq.Text;
+            _ht["p_keywords"] = txtSearchDocReq.Text;
             _ht["p_invoice_code"] = Request.Params["codebarcode"];
             //_ht["p_id_detail"] = Request.Params["id"];
 
@@ -1797,21 +1795,21 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
                                    || sFileType == ".7z"
 
                                   )
-                        {
-                            if (!System.IO.Directory.Exists(filePath))
-                                System.IO.Directory.CreateDirectory(filePath);
+                    {
+                        if (!System.IO.Directory.Exists(filePath))
+                            System.IO.Directory.CreateDirectory(filePath);
 
-                            if (!System.IO.File.Exists(sFullPath))
-                                fupFile.SaveAs(sFullPath);
+                        if (!System.IO.File.Exists(sFullPath))
+                            fupFile.SaveAs(sFullPath);
 
-                            sFullPath = Shared.GetUploadPath("ADD_DOCUMENT/" + lblCodeBarcode.Text) + sFileName;
-                            UpdateDataDetail(gvwListDocReq.DataKeys[gvr.RowIndex]["INVOICE_CODE"].ToString(), gvwListDocReq.DataKeys[gvr.RowIndex]["GENERAL_DOC_CODE"].ToString(), fupFile.FileName, sFullPath, gvwListDocReq.DataKeys[gvr.RowIndex]["ID"].ToString());
-                        }
-                        else
-                        {
-                            Shared.ShowValidationError(this, "Please upload file with format type (.pdf .zip .doc .xlx .png .jpg .jpeg). Max file size allowed is 3 mb.");
-                            return;
-                        }
+                        sFullPath = Shared.GetUploadPath("ADD_DOCUMENT/" + lblCodeBarcode.Text) + sFileName;
+                        UpdateDataDetail(gvwListDocReq.DataKeys[gvr.RowIndex]["INVOICE_CODE"].ToString(), gvwListDocReq.DataKeys[gvr.RowIndex]["GENERAL_DOC_CODE"].ToString(), fupFile.FileName, sFullPath, gvwListDocReq.DataKeys[gvr.RowIndex]["ID"].ToString());
+                    }
+                    else
+                    {
+                        Shared.ShowValidationError(this, "Please upload file with format type (.pdf .zip .doc .xlx .png .jpg .jpeg). Max file size allowed is 3 mb.");
+                        return;
+                    }
                 }
 
                 MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
@@ -1914,7 +1912,7 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
             if (FileName.Length != 0)
             {
-               
+
                 LinkButton btnPreview = (LinkButton)e.Row.Cells[3].Controls[1];
                 LinkButton btnDelete = (LinkButton)e.Row.Cells[4].Controls[1];
 

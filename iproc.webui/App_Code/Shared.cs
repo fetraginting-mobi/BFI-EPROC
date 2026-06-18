@@ -4177,9 +4177,8 @@ public class Shared
         }
     }
 
-    public static string GetUploadPath(string Folder)//2016-03-09 KENAN change string sCompanyCode) with string Folder
+    public static string GetUploadPath(string Folder)
     {
-        //(+) 2016/01/21 -  10:27 - Gleen - get upload path from company 
         GeneralDAL _dal = null;
         Hashtable _ht = null;
 
@@ -4188,10 +4187,7 @@ public class Shared
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
-            //_ht["p_company_code"] = sCompanyCode;
-
             DataRow _dr = _dal.GetRow("", "xsp_sys_global_param_getrow_from_get_path", _ht);
-
             return _dr["FILE_UPLOAD_PATH"].ToString() + Folder + "/";
         }
         catch
