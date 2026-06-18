@@ -539,7 +539,7 @@
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                    <asp:UpdatePanel ID="itemhistory" runat="server">
+                                    <asp:UpdatePanel ID="gvwListitemhistory" runat="server">
                                         <ContentTemplate>
                                             <asp:GridView ID="gvwListHist" runat="server" AutoGenerateColumns="false"
                                                 CssClass="display table table-bordered table-stripe" AllowPaging="true"
