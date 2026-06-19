@@ -19,51 +19,29 @@
                     var termin = document.getElementById('termin');
                     var liTermin = document.getElementById('ctl00_cpb_liTermin');
 
-                    var chbot = document.getElementById('ctl00_cpb_rblBillType_0');
-                    var chbter = document.getElementById('ctl00_cpb_rblBillType_2');
+                    var rbl = document.querySelector("input[name*='rblBillType']:checked");
+                    var billType = rbl ? rbl.value : '';
 
 
                     var ctl102 = document.getElementById('ctl00_cpb_gvwListTermin_ctl02_txtDiscountAdditional');
 
-                    if (chbot && chbot.checked) {
-                        liInvoice.style.display = '';
-                        invoice.style.display = '';
-
-                        liFee.style.display = 'none';
-                        fee.style.display = 'none';
-
-                        liTermin.style.display = 'none';
-                        termin.style.display = 'none';
-
-                        detail.style.display = '';
-                        liDetail.style.display = '';
+                    if (billType === 'PO') {
+                        if (liInvoice && invoice) { liInvoice.style.display = ''; invoice.style.display = ''; }
+                        if (liFee && fee) { liFee.style.display = 'none'; fee.style.display = 'none'; }
+                        if (liTermin && termin) { liTermin.style.display = 'none'; termin.style.display = 'none'; }
+                        if (detail && liDetail) { detail.style.display = ''; liDetail.style.display = ''; }
                     }
-                    else if (chbter && chbter.checked) {
-                        liInvoice.style.display = 'none';
-                        invoice.style.display = 'none';
-
-                        liFee.style.display = '';
-                        fee.style.display = '';
-
-                        liTermin.style.display = '';
-                        termin.style.display = '';
-
-                        detail.style.display = 'none';
-                        liDetail.style.display = 'none';
+                    else if (billType === 'APA') { // PO Termin
+                        if (liInvoice && invoice) { liInvoice.style.display = 'none'; invoice.style.display = 'none'; }
+                        if (liFee && fee) { liFee.style.display = ''; fee.style.display = ''; }
+                        if (liTermin && termin) { liTermin.style.display = ''; termin.style.display = ''; }
+                        if (detail && liDetail) { detail.style.display = 'none'; liDetail.style.display = 'none'; }
                     }
-                    else {
-                        // Logika untuk "Other" (OT)
-                        liInvoice.style.display = 'none';
-                        invoice.style.display = 'none';
-
-                        liFee.style.display = '';
-                        fee.style.display = '';
-
-                        liTermin.style.display = 'none';
-                        termin.style.display = 'none';
-
-                        detail.style.display = 'none';
-                        liDetail.style.display = 'none';
+                    else if (billType === 'OT') { // Other
+                        if (liInvoice && invoice) { liInvoice.style.display = 'none'; invoice.style.display = 'none'; }
+                        if (liFee && fee) { liFee.style.display = ''; fee.style.display = ''; }
+                        if (liTermin && termin) { liTermin.style.display = 'none'; termin.style.display = 'none'; }
+                        if (detail && liDetail) { detail.style.display = 'none'; liDetail.style.display = 'none'; }
                     }
                     function formatNumber(num) {
                         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')

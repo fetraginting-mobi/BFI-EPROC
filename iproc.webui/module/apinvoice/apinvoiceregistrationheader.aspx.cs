@@ -95,6 +95,35 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
             if (Request.Params["action"].Equals("edit"))
             {
+                try
+                {
+                    GeneralDAL _preDal = new GeneralDAL();
+                    Hashtable _preHt = new Hashtable();
+                    _preHt["p_code_barcode"] = Request.Params["codebarcode"];
+                    _preHt["p_user_id"] = Shared.CurrentUID;
+                    DataRow _drPre = _preDal.GetRow(TABLE_NAME_HEADER, _preHt);
+
+                    if (_drPre != null)
+                    {
+                        string dbBillType = _drPre["BILL_TYPE"] != DBNull.Value ? _drPre["BILL_TYPE"].ToString() : "";
+                        if (dbBillType == "APA")
+                        {
+                            Shared.BindGeneralSubCode(ddlInvoiceTypeCode, "APA");
+                        }
+                        else if (dbBillType == "OT")
+                        {
+                            Shared.BindGeneralSubCode(ddlInvoiceTypeCode, "OT");
+                        }
+                        else if (dbBillType == "PO" || dbBillType == "")
+                        {
+                            Shared.BindGeneralSubCode(ddlInvoiceTypeCode, "PO");
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
                 LoadData();
 
                 //btnCancel.Text = "Back";
