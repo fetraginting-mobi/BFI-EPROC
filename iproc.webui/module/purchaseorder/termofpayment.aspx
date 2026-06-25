@@ -270,6 +270,14 @@
                                                     HeaderText="Purchase Amount">
                                                     <ItemStyle Width="10%" HorizontalAlign="Right" />
                                                 </asp:BoundField>
+                                                <asp:BoundField DataField="PPN_TRM"
+                                                    HeaderText="PPN">
+                                                    <ItemStyle Width="10%" HorizontalAlign="Right" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="PPH_TRM"
+                                                    HeaderText="PPH">
+                                                    <ItemStyle Width="10%" HorizontalAlign="Right" />
+                                                </asp:BoundField>
                                                 <asp:BoundField DataField="OUTSTANDING_PO_AMOUNT"
                                                     HeaderText="Outstanding Amount">
                                                     <ItemStyle Width="10%" HorizontalAlign="Right" />
