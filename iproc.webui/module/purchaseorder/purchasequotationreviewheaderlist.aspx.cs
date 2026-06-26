@@ -26,6 +26,7 @@ public partial class module_purchaseorder_quotationreview : BasePageList
         {
 
             Shared.BindBranchEmployeeSort(ddlBranch);
+            Shared.BindOwnerAll(ddlOwner);
 
             //(+) Ari 11-07-2022 ket : enhancement 2022
             ddlBranch.Items.Insert(0, "ALL"); 
@@ -65,6 +66,7 @@ public partial class module_purchaseorder_quotationreview : BasePageList
             _ht["p_from_date"] = Shared.ToStartDateTime(txtFromDate.Text);
             _ht["p_to_date"] = Shared.ToStartDateTime(txtToDate.Text);
             _ht["p_emp_code"] = Shared.CurrentUID;
+            _ht["p_owner"] = ddlOwner.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -151,6 +153,10 @@ public partial class module_purchaseorder_quotationreview : BasePageList
     protected void txtToDateChanged(object sender, EventArgs e)
     {
 
+        BindData();
+    }
+    protected void ddlOwner_SelectedIndexChanged(object sender, EventArgs e)
+    {
         BindData();
     }
 }

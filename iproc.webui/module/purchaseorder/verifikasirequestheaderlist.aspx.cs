@@ -25,6 +25,7 @@ public partial class module_purchaseorder_verifikasirequestheaderlist : BasePage
         if (!Page.IsPostBack)
         {
             Shared.BindBranchEmployeeAll(ddlBranch);
+            Shared.BindOwnerAll(ddlOwner);
             txtempcode.Text = Shared.CurrentUID;
 
             //(+) Ari 11-07-2022 ket : enhancement 2022
@@ -61,6 +62,7 @@ public partial class module_purchaseorder_verifikasirequestheaderlist : BasePage
             //(+) Ari 11-07-2022 ket : enhancement 2022
             _ht["p_from_date"] = Shared.ToStartDateTime(txtFromDate.Text);
             _ht["p_to_date"] = Shared.ToStartDateTime(txtToDate.Text);
+            _ht["p_owner"] = ddlOwner.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -92,6 +94,10 @@ public partial class module_purchaseorder_verifikasirequestheaderlist : BasePage
         Response.Redirect("verifikasirequestheader.aspx?action=edit&codebarcode=" + gvwList.SelectedDataKey[0].ToString());
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlOwner_SelectedIndexChanged(object sender, EventArgs e)
     {
         BindData();
     }

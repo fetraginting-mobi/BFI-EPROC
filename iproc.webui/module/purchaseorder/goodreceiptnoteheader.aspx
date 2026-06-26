@@ -16,6 +16,7 @@
                     <cc1:XUILinkButton RoleCode="R50000080O" ID="btnApprovalTiered" Visible="false" runat="server" CssClass="btn btn-success"><i class="icon-ok"></i>  Approval</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnPost" RoleCode="R50000080O" runat="server" CssClass="btn btn-success"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnReject" RoleCode="R50000080O" runat="server" CssClass="btn btn-danger"  CausesValidation="false"><i class="icon-remove"></i>  Cancel</cc1:XUILinkButton>
+                    <cc1:XUILinkButton ID="btnCancelGRN" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancelGRN_Click"  CausesValidation="false"><i class="icon-remove"></i>  Cancel GRN</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnPrint" RoleCode="R50000080P" runat="server" CssClass="btn btn-primary" OnClick="btnPrint_Click" CausesValidation="false"><i class="icon-print"></i>  Print</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnPrintBAST" RoleCode="R50000080P" runat="server" CssClass="btn btn-primary" OnClick="btnPrintBAST_Click" CausesValidation="false"><i class="icon-print"></i>  Print BAST</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnCancel" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i class="icon-remove"></i>  Cancel</cc1:XUILinkButton>

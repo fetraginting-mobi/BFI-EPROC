@@ -27,6 +27,7 @@ public partial class module_purchaseorder_reviewlist : BasePageList
         if (!Page.IsPostBack)
         {
             Shared.BindBranchEmployeeAll(ddlBranch);
+            Shared.BindOwnerAll(ddlOwner);
 
             //(+) Ari 11-07-2022 ket : enhancement 2022
             if (string.IsNullOrEmpty(txtToDate.Text))
@@ -61,6 +62,7 @@ public partial class module_purchaseorder_reviewlist : BasePageList
             //_ht["p_id_detail"] = gvwList.SelectedDataKey.ToString()[0];
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_owner"] = ddlOwner.SelectedValue;
             _ht["p_units_code"] = Shared.CurrentEmployeeUnitsCode;
 
             //(+) Ari 11-07-2022 ket : enhancement 2022
@@ -98,6 +100,10 @@ public partial class module_purchaseorder_reviewlist : BasePageList
     }
 
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlOwner_SelectedIndexChanged(object sender, EventArgs e)
     {
         BindData();
     }
