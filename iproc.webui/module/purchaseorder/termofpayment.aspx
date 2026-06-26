@@ -100,7 +100,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <asp:Panel ID="pnlItemLookup" runat="server" CssClass="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label class="col-sm-4">Item List</label>
@@ -113,7 +113,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </asp:Panel>
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
@@ -203,6 +203,8 @@
                 </div>
             </section>
 
+            <asp:UpdatePanel ID="updItemListContainer" runat="server" UpdateMode="Conditional">
+                <ContentTemplate>
             <asp:Panel runat="server" ID="pnlItemList">
                 <section class="panel">
                     <header class="panel-heading">
@@ -309,4 +311,11 @@
                 </section>
 
             </asp:Panel>
+                </ContentTemplate>
+                <Triggers>
+                    <asp:AsyncPostBackTrigger ControlID="ddlTerminType" EventName="SelectedIndexChanged" />
+                    <asp:AsyncPostBackTrigger ControlID="btnRefreshAmount" EventName="Click" />
+                    <asp:AsyncPostBackTrigger ControlID="btnSaveItemList" EventName="Click" />
+                </Triggers>
+            </asp:UpdatePanel>
         </asp:Content>

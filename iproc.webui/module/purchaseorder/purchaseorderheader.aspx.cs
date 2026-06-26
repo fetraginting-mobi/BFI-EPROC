@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
@@ -1116,6 +1117,28 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
         }
     }
 
+    private class TopDeleteItem
+    {
+        public string ID { get; set; }
+        public string TrxCode { get; set; }
+    }
+
+    private int GetNumberFromText(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return 0;
+        System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(input, @"\d+");
+
+        if (match.Success)
+        {
+            int result;
+            if (int.TryParse(match.Value, out result))
+            {
+                return result;
+            }
+        }
+        return 0;
+    }
+
     protected void gvwListTOP_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwListTOP.PageIndex = e.NewPageIndex;
@@ -1130,13 +1153,32 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
     protected void btnDeleteTOP_Click(object sender, EventArgs e)
     {
+        List<TopDeleteItem> selectedItems = new List<TopDeleteItem>();
+
         foreach (GridViewRow row in gvwListTOP.Rows)
         {
             CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
             if (chb.Checked)
             {
-                DeleteDataTOP(gvwListTOP.DataKeys[row.RowIndex][0].ToString());
+                selectedItems.Add(new TopDeleteItem
+                {
+                    ID = gvwListTOP.DataKeys[row.RowIndex][0].ToString(),
+                    TrxCode = gvwListTOP.DataKeys[row.RowIndex][1].ToString()
+                });
             }
+        }
+
+        if (selectedItems.Count == gvwListTOP.Rows.Count)
+        {
+            selectedItems = selectedItems
+                .OrderByDescending(item => GetNumberFromText(item.TrxCode))
+                .ThenByDescending(item => item.TrxCode)
+                .ToList();
+        }
+
+        foreach (TopDeleteItem item in selectedItems)
+        {
+            DeleteDataTOP(item.ID);
         }
 
         BindTOP();

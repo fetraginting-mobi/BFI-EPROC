@@ -60,7 +60,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 {
                     ddlTerminType.SelectedValue = existingType;
                     ddlTerminType.Enabled = false;
-                    ToggleAmountPercentageFields(existingType);
+                    ApplyTerminTypeUI();
                 }
             }
             if (action == "edit")
@@ -81,8 +81,11 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 txtTotalAmount.Enabled = false;
                 txtRemarks.Enabled = false;
 
-                ToggleAmountPercentageFields(existingType);
-                LoadItemList();
+                ApplyTerminTypeUI();
+                if (IsAmountTermin())
+                {
+                    LoadItemList();
+                }
             }
 
             if (action != "edit")
@@ -113,16 +116,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 txtReferenceNo.Enabled = false;
             }
 
-            if (ddlTerminType.SelectedValue == "PCT")
-            {
-                txtAmount.Enabled = false;
-                txtPercentage.Enabled = (action != "edit");
-            }
-            else if (ddlTerminType.SelectedValue == "AMT")
-            {
-                txtAmount.Enabled = (action != "edit");
-                txtPercentage.Enabled = false;
-            }
+            ApplyTerminTypeUI();
         }
         LoadAfterInit();
 
@@ -354,19 +348,13 @@ public partial class module_purchaseorder_termofpayment : BasePage
 
     protected void ddlTerminType_SelectedIndex(object sender, EventArgs e)
     {
-
-        if (ddlTerminType.SelectedValue == "PCT")
+        ApplyTerminTypeUI();
+        if (IsAmountTermin())
         {
-            txtAmount.Enabled = false;
-            txtPercentage.Enabled = true;
-            btnLookUpItem.Enabled = false;
+            LoadItemList();
         }
-        if (ddlTerminType.SelectedValue == "AMT")
-        {
-            txtAmount.Enabled = true;
-            txtPercentage.Enabled = false;
-            btnLookUpItem.Enabled = true;
-        }
+        upd.Update();
+        updItemListContainer.Update();
     }
 
     private int GetNumberFromText(string input)
@@ -403,18 +391,23 @@ public partial class module_purchaseorder_termofpayment : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
-    private void ToggleAmountPercentageFields(string type)
+    private bool IsAmountTermin()
     {
-        if (type == "PCT")
-        {
-            txtAmount.Enabled = false;
-            txtPercentage.Enabled = true;
-        }
-        else if (type == "AMT")
-        {
-            txtAmount.Enabled = true;
-            txtPercentage.Enabled = false;
-        }
+        return ddlTerminType.SelectedValue == "AMT";
+    }
+
+    private void ApplyTerminTypeUI()
+    {
+        string action = Request.Params["action"] != null ? Request.Params["action"].ToLower() : "";
+        bool isEdit = action == "edit";
+        bool isAmount = IsAmountTermin();
+        bool isPercentage = ddlTerminType.SelectedValue == "PCT";
+
+        txtAmount.Enabled = isAmount && !isEdit;
+        txtPercentage.Enabled = isPercentage && !isEdit;
+        pnlItemLookup.Visible = isAmount;
+        btnLookUpItem.Enabled = isAmount && !isEdit;
+        pnlItemList.Visible = isAmount;
     }
     private string GetExistingTerminType(string codeBarcode)
     {
@@ -476,7 +469,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
             DataTable dt = _dal.GetRows("term_of_payment_item", _ht);
             gvwList.DataSource = dt;
             gvwList.DataBind();
-            pnlItemList.Visible = true;
+            pnlItemList.Visible = IsAmountTermin();
         }
         catch (Exception ex)
         {
