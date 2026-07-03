@@ -21,15 +21,22 @@
                 }
             </style>
             <script type="text/javascript">
-                function singleCheck(current) {
+                function singleCheck(current, detailID) {
                     var grid = document.getElementById('<%= gvwList.ClientID %>');
                     var checkboxes = grid.getElementsByTagName("input");
+                    var selectedParentID = document.getElementById('<%= hdnSelectedParentID.ClientID %>');
 
                     for (var i = 0; i < checkboxes.length; i++) {
                         if (checkboxes[i].type === "checkbox" && checkboxes[i] !== current && checkboxes[i].id.indexOf("chkParent") >= 0) {
                             checkboxes[i].checked = false;
                         }
                     }
+
+                    if (selectedParentID) {
+                        selectedParentID.value = current.checked ? detailID : "";
+                    }
+
+                    return true;
                 }
 
                 function checkAssetRowsAll(objRef) {
@@ -146,7 +153,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <cc1:XUILinkButton ID="btnSave" RoleCode="R90000070E" runat="server"
-                                CssClass="btn btn-primary" OnClick="btnSave_Click" CausesValidation="false"><i
+                                CssClass="btn btn-primary" OnClick="btnSave_Click"><i
                                     class="icon-save"></i> Save</cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnCancel" RoleCode="R90000070O" runat="server"
                                 CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i
@@ -172,7 +179,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">Cost Center</label>
+                                        <label class="col-sm-4">Branch *</label>
                                         <div class="col-sm-6">
                                             <asp:UpdatePanel ID="updDep" runat="server">
                                                 <ContentTemplate>
@@ -200,8 +207,8 @@
                                         <div class="col-sm-6">
                                             <cc1:XUITextBox ID="txtAssetGroupName" runat="server"
                                                 CssClass="form-control" placeholder="Asset Group Name"
-                                                DBColumnName="FA_GROUP_ASSET_NAME" SPParameterName="p_group_asset_name"
-                                                DataType="String" BindType="Both"></cc1:XUITextBox>
+                                                DBColumnName="FA_GROUP_ASSET_NAME" SPParameterName="p_fa_group_asset_name"
+                                                DataType="String" BindType="Both" MaxLength="255"></cc1:XUITextBox>
                                             <asp:RequiredFieldValidator ID="rfvAssetGroupName" runat="server"
                                                 ErrorMessage="Required Field!" ControlToValidate="txtAssetGroupName"
                                                 Display="Dynamic"></asp:RequiredFieldValidator>
@@ -239,7 +246,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">Date *</label>
+                                        <label class="col-sm-4">Date</label>
                                         <div class="col-sm-6">
                                             <cc1:XUITextBox ID="txtAssetGroupDate" runat="server"
                                                 CssClass="form-control default-date-picker"
@@ -256,6 +263,23 @@
                                             <cc1:XUICheckBox ID="chbIsActive" runat="server" DBColumnName="IS_ACTIVE"
                                                 SPParameterName="p_status" DataType="String" BindType="Both">
                                             </cc1:XUICheckBox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">Remark</label>
+                                        <div class="col-sm-6">
+                                            <cc1:XUITextBox ID="txtRemarks" runat="server" CssClass="form-control"
+                                                placeholder="Remark" DBColumnName="REMARKS" SPParameterName="p_remarks"
+                                                MaxLength="400" DataType="String" BindType="Both"
+                                                TextMode="MultiLine"></cc1:XUITextBox>
+                                            <asp:RegularExpressionValidator runat="server" ID="revRemark"
+                                                ControlToValidate="txtRemarks" ValidationExpression="^[\s\S]{0,400}$"
+                                                ErrorMessage="Exceed maximum length 400" Display="Dynamic">
+                                            </asp:RegularExpressionValidator>
                                         </div>
                                     </div>
                                 </div>
@@ -328,6 +352,10 @@
                                                     CssClass="btn btn-primary" OnClick="btnAdd_Click"
                                                     CausesValidation="false"><i class="icon-plus"></i> Create
                                                 </cc1:XUILinkButton>
+                                                <cc1:XUILinkButton ID="btnSaveDetail" RoleCode="R90000070E" runat="server"
+                                                    CssClass="btn btn-primary" OnClick="btnSaveDetail_Click" 
+                                                    CausesValidation="false"><i class="icon-save"></i> Save
+                                                </cc1:XUILinkButton>
                                                 <cc1:XUILinkButton ID="btnDelete" RoleCode="R90000070E" runat="server"
                                                     CssClass="btn btn-danger" OnClick="btnDelete_Click"
                                                     CausesValidation="false"><i class="icon-trash"></i> Delete
@@ -355,10 +383,11 @@
                                     <div class="panel-body">
                                         <asp:UpdatePanel ID="upd" runat="server">
                                             <ContentTemplate>
+                                                <asp:HiddenField ID="hdnSelectedParentID" runat="server" />
                                                 <asp:GridView ID="gvwList" runat="server"
                                                     CssClass="display table table-bordered table-striped grid-auto"
                                                     AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
-                                                    DataKeyNames="ID"
+                                                    DataKeyNames="ID,is_parent"
                                                     onselectedindexchanged="gvwList_SelectedIndexChanged"
                                                     EmptyDataText="There Is No Data" Width="100%">
                                                     <Columns>
@@ -384,14 +413,21 @@
                                                         </asp:BoundField>
                                                         <asp:BoundField DataField="ITEM_NAME" HeaderText="Asset Name">
                                                         </asp:BoundField>
-                                                        <asp:BoundField DataField="category"
-                                                            HeaderText="Asset category">
+                                                        <asp:BoundField DataField="category" HeaderText="Asset category">
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="owner" HeaderText="Owner">
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="mod_by" HeaderText="Modified By">
                                                         </asp:BoundField>
                                                         <asp:TemplateField HeaderText="Parent">
                                                             <ItemTemplate>
+                                                                <asp:HiddenField ID="hdnDetailID" runat="server"
+                                                                    Value='<%# Eval("ID") %>' />
+                                                                <asp:HiddenField ID="hdnIsParent" runat="server"
+                                                                    Value='<%# Eval("is_parent") %>' />
                                                                 <asp:CheckBox ID="chkParent" runat="server"
                                                                     Checked='<%# IsCheckedValue(Eval("is_parent")) %>'
-                                                                    onclick="return singleCheck(this);" />
+                                                                    onclick='<%# "return singleCheck(this, \"" + Eval("ID") + "\");" %>' />
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
                                                     </Columns>
@@ -399,6 +435,7 @@
                                             </ContentTemplate>
                                             <Triggers>
                                                 <asp:AsyncPostBackTrigger ControlID="btnSearch" EventName="Click" />
+                                                <asp:AsyncPostBackTrigger ControlID="btnSaveDetail" EventName="Click" />
                                             </Triggers>
                                         </asp:UpdatePanel>
                                     </div>

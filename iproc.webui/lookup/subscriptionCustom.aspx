@@ -24,7 +24,7 @@
                                     PageSize="5" OnPageIndexChanging="gvwListSource_PageIndexChanging"
                                     EmptyDataText="There is no data">
                                     <Columns>
-                                        <asp:TemplateField HeaderText="Pick">
+                                        <asp:TemplateField HeaderText="">
                                             <ItemStyle Width="50px" HorizontalAlign="Center" />
                                             <ItemTemplate>
                                                 <asp:CheckBox runat="server" ID="chbChecked" />
@@ -75,7 +75,7 @@
                                     PageSize="5" OnPageIndexChanging="gvwListTarget_PageIndexChanging"
                                     EmptyDataText="There is no data">
                                     <Columns>
-                                        <asp:TemplateField HeaderText="Pick">
+                                        <asp:TemplateField HeaderText="">
                                             <ItemStyle Width="50px" HorizontalAlign="Center" />
                                             <ItemTemplate>
                                                 <asp:CheckBox runat="server" ID="chbChecked" />

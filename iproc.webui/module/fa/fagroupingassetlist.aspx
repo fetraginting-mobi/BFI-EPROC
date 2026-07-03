@@ -64,7 +64,7 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="col-sm-3">Cost Center</label>
+                                <label class="col-sm-3">Branch</label>
                                 <div class="col-sm-5">
                                     <cc1:XUIDropDownList ID="ddlCostCenter" runat="server" Width="200px"
                                         CssClass="form-control" DBColumnName="BRANCH_CODE"
@@ -130,7 +130,7 @@
                                     <asp:BoundField DataField="CRE_DATE" HeaderText="Date">
                                         <ItemStyle HorizontalAlign="Left" />
                                     </asp:BoundField>
-                                    <asp:BoundField DataField="COST_CENTER" HeaderText="Cost Center">
+                                    <asp:BoundField DataField="COST_CENTER" HeaderText="Branch">
                                         <ItemStyle HorizontalAlign="Left" />
                                     </asp:BoundField>
                                     <asp:BoundField DataField="LOCATION" HeaderText="Location">
