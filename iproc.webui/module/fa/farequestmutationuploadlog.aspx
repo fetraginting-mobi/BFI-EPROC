@@ -8,7 +8,7 @@
         <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
             <section class="panel">
                 <header class="panel-heading">
-                    <span> Review Data Error </span>
+                    <asp:Label ID="lblTitle" runat="server" Text="Review Data Error"></asp:Label>
                 </header>
                 <div class="panel-heading">
                     <div class="row">

@@ -150,6 +150,7 @@ public partial class module_fa_farequestmutationheader : BasePage
             DataRow _dr = _dal.GetRow(TABLE_NAME_HEADER, _ht);
 
             DBToUI.Map(this.Controls, _dr);
+            BindUploadId();
             ddlTocc.SelectedValue = _dr["TO_COST_CENTER"].ToString();
             //ddlFromLocationCode.SelectedValue = _dr["FROM_LOCATION_CODE"].ToString();
             Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
@@ -169,6 +170,32 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindBranchEmployeeSort(ddlBranch);
             Shared.BindSubDepartment(ddlSubDepartment, ddlDepartment.SelectedValue);
             Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void BindUploadId()
+    {
+        lblUploadId.Text = "-";
+
+        if (lblProcess.Text.Trim().ToUpper() != "UPLOAD" && lblProcess.Text.Trim().ToUpper() != "UPL")
+            return;
+
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+            _ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+            DataRow _dr = _dal.GetRow("", "xsp_fa_request_mutation_upload_id_getrow", _ht);
+            if (_dr != null && _dr["upload_id"] != DBNull.Value && _dr["upload_id"].ToString() != "")
+                lblUploadId.Text = _dr["upload_id"].ToString();
         }
         catch (Exception ex)
         {
