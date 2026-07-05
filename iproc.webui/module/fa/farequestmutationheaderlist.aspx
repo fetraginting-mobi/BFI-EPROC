@@ -154,10 +154,10 @@
                                                     DataFormatString="{0:dd/MM/yyyy}">
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="BRANCH_NAME" HeaderText="From Cost Center">
+                                                <asp:BoundField DataField="BRANCH_NAME" HeaderText="From Branch">
                                                     <ItemStyle Width="10%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="BRANCH_NAME_TO" HeaderText="To Cost Center">
+                                                <asp:BoundField DataField="BRANCH_NAME_TO" HeaderText="To Branch">
                                                     <ItemStyle Width="10%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="DIVISION_NAME" HeaderText="Division">
@@ -304,7 +304,7 @@
                             <div class="panel-body">
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label class="col-sm-3">From Cost Center</label>
+                                        <label class="col-sm-3">From Branch</label>
                                         <div class="col-sm-5">
                                             <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
                                             <cc1:XUIDropDownList ID="ddlFromBranch" Width="200px" runat="server"
@@ -327,7 +327,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label class="col-sm-3">To Cost Center</label>
+                                        <label class="col-sm-3">To Branch</label>
                                         <div class="col-sm-5">
                                             <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
                                             <cc1:XUIDropDownList ID="ddltoBranch" Width="200px" runat="server"

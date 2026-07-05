@@ -65,7 +65,7 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
             {
                 _dal = new GeneralDAL();
                 _ht["p_upload_id"] = new Guid(p_upload_id);
-                _ht["p_file_name "] = Request.Params["filename"];
+                _ht["p_file_name"] = Request.Params["filename"];
                 _ht["p_status"] = status;
 
                 gvwList.DataSource = _dal.GetRows("", "xsp_fa_mutation_detail_upload_getrows", _ht);
@@ -117,6 +117,7 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
             }
         }
     }
+
 
     private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName, string keywords)
     {
