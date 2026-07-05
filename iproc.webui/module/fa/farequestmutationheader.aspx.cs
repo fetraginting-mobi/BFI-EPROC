@@ -193,8 +193,12 @@ public partial class module_fa_farequestmutationheader : BasePage
             _ht = new Hashtable();
             _ht["p_code_barcode"] = Request.Params["codebarcode"];
 
-            DataRow _dr = _dal.GetRow("", "xsp_fa_request_mutation_upload_id_getrow", _ht);
-            if (_dr != null && _dr["upload_id"] != DBNull.Value && _dr["upload_id"].ToString() != "")
+            DataTable dtUpload = _dal.GetRows("", "xsp_fa_request_mutation_upload_id_getrow", _ht);
+            if (dtUpload.Rows.Count == 0)
+                return;
+
+            DataRow _dr = dtUpload.Rows[0];
+            if (_dr["upload_id"] != DBNull.Value && _dr["upload_id"].ToString() != "")
                 lblUploadId.Text = _dr["upload_id"].ToString();
         }
         catch (Exception ex)
