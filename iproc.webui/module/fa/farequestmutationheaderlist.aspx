@@ -154,10 +154,10 @@
                                                     DataFormatString="{0:dd/MM/yyyy}">
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="BRANCH_NAME" HeaderText="From Cost Center">
+                                                <asp:BoundField DataField="BRANCH_NAME" HeaderText="From Branch">
                                                     <ItemStyle Width="10%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="BRANCH_NAME_TO" HeaderText="To Cost Center">
+                                                <asp:BoundField DataField="BRANCH_NAME_TO" HeaderText="To Branch">
                                                     <ItemStyle Width="10%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="DIVISION_NAME" HeaderText="Division">
@@ -221,7 +221,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-12">
                                         <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
                                             PageSize="3" DataKeyNames="upload_id,file_name"
@@ -240,7 +240,10 @@
                                                 <asp:BoundField DataField="upload_date" HeaderText="Date Upload">
                                                     <ItemStyle Width="15%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="upload_id" Visible="false">
+                                                <asp:BoundField DataField="upload_id" HeaderText="Upload ID">
+                                                    <ItemStyle Width="40%" HorizontalAlign="Left" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="upload_by" HeaderText="Upload By">
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="file_name" HeaderText="File Name">
                                                     <ItemStyle Width="30%" />
@@ -260,7 +263,7 @@
                                                             Visible='<%# Convert.ToInt32(Eval("total_valid")) == 0 %>'
                                                             Text="0" />
                                                     </ItemTemplate>
-                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    <ItemStyle HorizontalAlign="Center" />
                                                 </asp:TemplateField>
 
                                                 <asp:TemplateField HeaderText="Total Error">
@@ -278,6 +281,21 @@
                                                     </ItemTemplate>
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Total Trx Upload">
+                                                    <ItemTemplate>
+                                                        <asp:LinkButton ID="lnkTrxUpload" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_trx_upload")) > 0 %>'
+                                                            Text='<%# Eval("total_trx_upload") %>' CommandName="VIEW_TRX"
+                                                            CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>'
+                                                            Style="color:Blue" />
+
+                                                        <asp:Label ID="lblTrxUpload" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_trx_upload")) == 0 %>'
+                                                            Text="0" />
+
+                                                    </ItemTemplate>
+                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                </asp:TemplateField>
                                             </Columns>
                                         </asp:GridView>
                                     </div>
@@ -286,7 +304,7 @@
                             <div class="panel-body">
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label class="col-sm-3">From Cost Center</label>
+                                        <label class="col-sm-3">From Branch</label>
                                         <div class="col-sm-5">
                                             <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
                                             <cc1:XUIDropDownList ID="ddlFromBranch" Width="200px" runat="server"
@@ -309,7 +327,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label class="col-sm-3">To Cost Center</label>
+                                        <label class="col-sm-3">To Branch</label>
                                         <div class="col-sm-5">
                                             <!-- Tambahkan AutoPostBack, OnSelectedIndexChanged, dan ListItem Hardcode -->
                                             <cc1:XUIDropDownList ID="ddltoBranch" Width="200px" runat="server"

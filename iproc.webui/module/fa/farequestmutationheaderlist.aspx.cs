@@ -15,6 +15,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     private static string TABLE_NAME = "FA_REQUEST_MUTATION_HEADER";
     private static string TABLE_UPLOAD_NAME = "FA_MUTATION_UPLOAD_HEADER";
     private static string TABLE_UPLOAD_LOG = "FA_MUTATION_UPLOAD_STAGING_LOG";
+    private const string FA_MUTATION_UPLOAD_TEMPLATE_CODE = "FA_MUTATION_UPLOAD";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -96,6 +97,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
 
             gvwListUpload.DataSource = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
             gvwListUpload.DataBind();
+            ApplyPostButtonState();
         }
         catch (Exception ex)
         {
@@ -177,7 +179,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             _htParameters = new Hashtable();
 
             _htParameters.Clear();
-            _htParameters["p_code"] = Request.Params["code"];
+            _htParameters["p_code"] = FA_MUTATION_UPLOAD_TEMPLATE_CODE;
 
 
             string pdfName = "upload_famutation" + Shared.CurrentUID + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx"; ;
@@ -220,32 +222,12 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                     selectedCodes.Add(codeBarcode);
                 }
             }
-
-            // Jika TIDAK ADA yang dicentang, maka ambil SEMUA data NEW (Logic Otomatis Anda)
             if (selectedCodes.Count == 0)
             {
-                GeneralDAL _dal = new GeneralDAL();
-                Hashtable _htupload = new Hashtable();
-                _htupload["p_keywords"] = txtSearchUpload.Text;
-                _htupload["p_status"] = "NEW";
-                _htupload["p_branch_code"] = ddlFromBranch.SelectedValue;
-                Shared.ApplyDefaultProp(_htupload);
-
-                DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
-                if (dtTarget != null)
-                {
-                    foreach (DataRow dr in dtTarget.Rows)
-                    {
-                        selectedCodes.Add(dr["CODE_BARCODE"].ToString());
-                    }
-                }
-            }
-
-            if (selectedCodes.Count == 0)
-            {
-                Shared.ShowErrorDialog(this, new Exception("Tidak ada data yang dipilih atau tersedia untuk di-post."));
+                Shared.ShowErrorDialog(this, new Exception("No Data Selected"));
                 return;
             }
+
             string realFirstBarcode = selectedCodes[0].ToString().Trim();
             lblTempBarcode.Text = realFirstBarcode;
 
@@ -290,6 +272,11 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             Shared.ShowErrorDialog(this, ex);
         }
     }
+
+    private void ApplyPostButtonState()
+    {
+        btnPost.Enabled = gvwListUpload.Rows.Count > 0;
+    }
     protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwUploadLog.PageIndex = e.NewPageIndex;
@@ -297,13 +284,13 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     }
     protected void gvwUploadLog_RowCommand(object sender, GridViewCommandEventArgs e)
     {
-        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR")
+        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR" || e.CommandName == "VIEW_TRX")
         {
             string[] param = e.CommandArgument.ToString().Split('|');
 
             string uploadid = param[0];
             string filename = param[1];
-            string status = e.CommandName == "VIEW_VALID" ? "VALID" : "ERROR";
+            string status = e.CommandName == "VIEW_VALID" ? "VALID" : e.CommandName == "VIEW_ERROR" ? "ERROR" : "TRX";
 
             string url = string.Format(
                     "../fa/farequestmutationuploadlog.aspx?uploadid={0}&filename={1}&status={2}",
@@ -428,63 +415,75 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 excelReader.Close();
         }
     }
-    private static readonly string[] FA_MUTATION_TEMPLATE_HEADERS =
-    {
-        "No",
-        "From Cost Center*",
-        "From Location*",
-        "To Cost Center*",
-        "To Location*",
-        "Owner*",
-        "Asset Code*",
-        "Deskripsi"
-    };
-
     private bool ValidateFAMutationTemplate(IExcelDataReader reader, string fileName, out string errorMessage)
     {
         errorMessage = string.Empty;
         GeneralDAL _dal = new GeneralDAL();
         Hashtable htLog = new Hashtable();
+        DataTable dtTemplate = GetUploadTemplateHeaders(_dal, FA_MUTATION_UPLOAD_TEMPLATE_CODE);
 
-        if (reader.FieldCount != FA_MUTATION_TEMPLATE_HEADERS.Length)
+        if (dtTemplate.Rows.Count == 0)
         {
-            errorMessage = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
-            htLog["p_process_name"] = "FA_MUTATION_UPLOAD";
-            htLog["p_file_name"] = fileName;
-            htLog["p_row_number"] = 0; // HEADER
-            htLog["p_error_message"] = errorMessage;
-            htLog["p_raw_data"] = "HEADER VALIDATION";
-            htLog["p_cre_by"] = Shared.CurrentUID;
-            htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-
-            _dal.InsertProcessErrorLog(htLog);
+            errorMessage = "Template upload FA Mutation belum disetting.";
+            LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER TEMPLATE NOT FOUND");
             return false;
         }
-        for (int i = 0; i < FA_MUTATION_TEMPLATE_HEADERS.Length; i++)
+
+        if (reader.FieldCount != dtTemplate.Rows.Count)
+        {
+            errorMessage = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
+            LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER VALIDATION");
+            return false;
+        }
+
+        for (int i = 0; i < dtTemplate.Rows.Count; i++)
         {
             string actualHeader = reader.GetValue(i) == null
                 ? ""
                 : reader.GetValue(i).ToString().Trim();
+            string expectedHeader = GetTemplateHeader(dtTemplate.Rows[i]);
 
             if (!actualHeader.Equals(
-                    FA_MUTATION_TEMPLATE_HEADERS[i],
+                    expectedHeader,
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                errorMessage = "Template file tidak sesuai. Header kolom ke-" + (i + 1) + " harus '" + FA_MUTATION_TEMPLATE_HEADERS[i] + "'.";
-                htLog.Clear();
-                htLog["p_process_name"] = "FA_MUTATION_UPLOAD";
-                htLog["p_file_name"] = fileName;
-                htLog["p_row_number"] = 0;
-                htLog["p_error_message"] = errorMessage;
-                htLog["p_raw_data"] = "HEADER=" + actualHeader;
-                htLog["p_cre_by"] = Shared.CurrentUID;
-                htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                _dal.InsertProcessErrorLog(htLog);
+                errorMessage = "Template file tidak sesuai. Header kolom ke-" + (i + 1) + " harus '" + expectedHeader + "'.";
+                LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER=" + actualHeader);
                 return false;
             }
         }
         return true;
+    }
+
+    private DataTable GetUploadTemplateHeaders(GeneralDAL dal, string code)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_code"] = code;
+
+        return dal.GetRows("", "xsp_master_upload_template_getrows", ht);
+    }
+
+    private string GetTemplateHeader(DataRow row)
+    {
+        string description = row["description"] == null ? "" : row["description"].ToString().Trim();
+        bool mandatory = row["mandatory"] != DBNull.Value && Convert.ToBoolean(row["mandatory"]);
+
+        return mandatory ? description + "*" : description;
+    }
+
+    private void LogFAMutationTemplateError(GeneralDAL dal, Hashtable htLog, string fileName, string errorMessage, string rawData)
+    {
+        htLog.Clear();
+        htLog["p_process_name"] = FA_MUTATION_UPLOAD_TEMPLATE_CODE;
+        htLog["p_file_name"] = fileName;
+        htLog["p_row_number"] = 0;
+        htLog["p_error_message"] = errorMessage;
+        htLog["p_raw_data"] = rawData;
+        htLog["p_cre_by"] = Shared.CurrentUID;
+        htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+
+        dal.InsertProcessErrorLog(htLog);
     }
     private DataTable BuildStagingTable()
     {
@@ -551,9 +550,46 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         _ht["p_upload_id"] = "";
         // _ht["p_file_name"] = fileName;
 
-        gvwUploadLog.DataSource = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
+        DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
+        AddTotalTrxUpload(dtUploadLog);
+
+        gvwUploadLog.DataSource = dtUploadLog;
         gvwUploadLog.DataBind();
 
+    }
+
+    private void AddTotalTrxUpload(DataTable dtUploadLog)
+    {
+        if (!dtUploadLog.Columns.Contains("total_trx_upload"))
+            dtUploadLog.Columns.Add("total_trx_upload", typeof(int));
+
+        foreach (DataRow row in dtUploadLog.Rows)
+        {
+            Guid uploadId;
+            try
+            {
+                uploadId = new Guid(row["upload_id"].ToString());
+            }
+            catch
+            {
+                row["total_trx_upload"] = 0;
+                continue;
+            }
+
+            row["total_trx_upload"] = GetGeneratedTrxUpload(uploadId, row["file_name"].ToString()).Rows.Count;
+        }
+    }
+
+    private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        _ht["p_upload_id"] = uploadId;
+        _ht["p_file_name"] = fileName;
+        _ht["p_keywords"] = "";
+
+        return _dal.GetRows("", "xsp_fa_mutation_upload_generated_trx_getrows", _ht);
     }
     #endregion
 }

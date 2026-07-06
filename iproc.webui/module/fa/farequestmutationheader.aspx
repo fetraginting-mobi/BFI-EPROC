@@ -107,6 +107,17 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
+                                        <label class="col-sm-4">Upload ID</label>
+                                        <div class="col-sm-8">
+                                            <cc1:XUILabel ID="lblUploadId" runat="server" DataType="String"
+                                                Text="-"></cc1:XUILabel>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
                                         <label class="col-sm-4">From Cost Center</label>
                                         <div class="col-sm-6">
                                             <asp:UpdatePanel ID="UpB" runat="server">

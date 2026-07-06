@@ -32,6 +32,13 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
             {
                 gvwList.Columns[4].Visible = false; // index kolom ERROR_MESSAGE
             }
+            else if (lblStatus.Text == "TRX")
+            {
+                lblTitle.Text = "FA Mutation Req No.";
+                gvwList.Columns[1].HeaderText = "FA Mutation Req No.";
+                gvwList.Columns[2].Visible = false;
+                gvwList.Columns[4].Visible = false;
+            }
 
         }
         LoadAfterInit();
@@ -44,16 +51,25 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
 
         try
         {
-            _dal = new GeneralDAL();
             _ht = new Hashtable();
 
             _ht["p_keywords"] = txtSearch.Text;
             string p_upload_id = Request.Params["uploadid"];
-            _ht["p_upload_id"] = new Guid(p_upload_id);
-            _ht["p_file_name "] = Request.Params["filename"];
-            _ht["p_status"] = Request.Params["status"];
+            string status = Request.Params["status"];
 
-            gvwList.DataSource = _dal.GetRows("", "xsp_fa_mutation_detail_upload_getrows", _ht);
+            if (status == "TRX")
+            {
+                gvwList.DataSource = GetGeneratedTrxUpload(new Guid(p_upload_id), Request.Params["filename"], txtSearch.Text);
+            }
+            else
+            {
+                _dal = new GeneralDAL();
+                _ht["p_upload_id"] = new Guid(p_upload_id);
+                _ht["p_file_name"] = Request.Params["filename"];
+                _ht["p_status"] = status;
+
+                gvwList.DataSource = _dal.GetRows("", "xsp_fa_mutation_detail_upload_getrows", _ht);
+            }
             gvwList.DataBind();
         }
         catch (Exception ex)
@@ -100,5 +116,18 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
                 lbl.EnableViewState = false;
             }
         }
+    }
+
+
+    private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName, string keywords)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        _ht["p_upload_id"] = uploadId;
+        _ht["p_file_name"] = fileName;
+        _ht["p_keywords"] = keywords == null ? "" : keywords.Trim();
+
+        return _dal.GetRows("", "xsp_fa_mutation_upload_generated_trx_getrows", _ht);
     }
 }
