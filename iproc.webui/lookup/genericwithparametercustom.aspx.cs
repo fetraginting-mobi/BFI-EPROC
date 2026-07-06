@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
 using iProc.DataAccessLayer;
+using System.Collections.Generic;
 
 
 public partial class lookup_genericwithparametercustom : BasePage
@@ -172,6 +173,8 @@ public partial class lookup_genericwithparametercustom : BasePage
 
             dal = new GeneralDAL();
 
+            ValidateMoveParentAsset(dal, sourceGaCode, barcodes);
+
             Hashtable ht = new Hashtable();
             ht["p_source_ga_code"] = sourceGaCode;
             ht["p_target_ga_code"] = targetGaCode;
@@ -187,6 +190,80 @@ public partial class lookup_genericwithparametercustom : BasePage
         {
             RegisterMoveResultScript("FAILED", ex.Message);
         }
+    }
+
+    private void ValidateMoveParentAsset(GeneralDAL dal, string sourceGaCode, string barcodes)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_keywords"] = String.Empty;
+        ht["p_fa_group_asset_code"] = sourceGaCode;
+
+        DataTable dt = dal.GetRows("fa_grouping_asset_detail", ht);
+
+        if (dt == null || dt.Rows.Count == 0)
+            return;
+
+        List<string> selectedBarcodes = new List<string>(
+            barcodes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+        bool parentSelected = false;
+
+        foreach (DataRow row in dt.Rows)
+        {
+            string barcode = Convert.ToString(GetDataRowValue(row, "BARCODE")).Trim();
+            if (String.IsNullOrEmpty(barcode) || !ContainsText(selectedBarcodes, barcode))
+                continue;
+
+            if (IsCheckedValue(GetDataRowValue(row, "is_parent")))
+            {
+                parentSelected = true;
+                break;
+            }
+        }
+
+        if (parentSelected && selectedBarcodes.Count < dt.Rows.Count)
+        {
+            throw new Exception("Asset cannot be moved to a grouping because it is flagged as parent.");
+        }
+    }
+
+    private bool ContainsText(List<string> values, string value)
+    {
+        foreach (string item in values)
+        {
+            if (String.Equals(item.Trim(), value, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool IsCheckedValue(object value)
+    {
+        if (value == null || value == DBNull.Value)
+            return false;
+
+        string stringValue = Convert.ToString(value).Trim();
+
+        return stringValue.Equals("1")
+            || stringValue.Equals("true", StringComparison.OrdinalIgnoreCase)
+            || stringValue.Equals("y", StringComparison.OrdinalIgnoreCase)
+            || stringValue.Equals("yes", StringComparison.OrdinalIgnoreCase)
+            || stringValue.Equals("active", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private object GetDataRowValue(DataRow dr, string columnName)
+    {
+        if (dr == null || dr.Table == null)
+            return null;
+
+        foreach (DataColumn column in dr.Table.Columns)
+        {
+            if (String.Equals(column.ColumnName, columnName, StringComparison.OrdinalIgnoreCase))
+                return dr[column];
+        }
+
+        return null;
     }
 
     private string GetSelectedTargetGaCode()

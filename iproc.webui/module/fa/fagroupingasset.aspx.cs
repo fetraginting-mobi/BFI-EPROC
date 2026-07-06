@@ -77,15 +77,96 @@ public partial class module_fa_fagroupingasset : BasePage
     }
     protected void btnSave_Click(object sender, EventArgs e)
     {
-        SaveData();
+        SaveData(true);
     }
-    private void SaveData()
+    protected void btnSaveDetail_Click(object sender, EventArgs e)
+    {
+        SaveDataDetail();
+    }
+
+    private void SaveDataDetail()
+    {
+        GeneralDAL _dal = null;
+
+        try
+        {
+            GridViewRow selectedParentRow = null;
+            string selectedParentID = hdnSelectedParentID.Value;
+
+            foreach (GridViewRow row in gvwList.Rows)
+            {
+                HiddenField hdnDetailID = row.FindControl("hdnDetailID") as HiddenField;
+                if (hdnDetailID != null && hdnDetailID.Value == selectedParentID)
+                {
+                    selectedParentRow = row;
+                    break;
+                }
+            }
+
+            if (selectedParentRow == null)
+            {
+                foreach (GridViewRow row in gvwList.Rows)
+                {
+                    CheckBox chkParent = row.FindControl("chkParent") as CheckBox;
+                    if (chkParent != null && Request.Form[chkParent.UniqueID] != null)
+                    {
+                        selectedParentRow = row;
+                        break;
+                    }
+                }
+            }
+
+            string selectedDetailIDValue = String.Empty;
+            bool selectedRowIsParent = false;
+
+            if (selectedParentRow != null)
+            {
+                HiddenField selectedDetailID = selectedParentRow.FindControl("hdnDetailID") as HiddenField;
+                HiddenField selectedIsParent = selectedParentRow.FindControl("hdnIsParent") as HiddenField;
+
+                if (selectedDetailID != null)
+                    selectedDetailIDValue = selectedDetailID.Value;
+
+                selectedRowIsParent = selectedIsParent != null && IsCheckedValue(selectedIsParent.Value);
+            }
+            else
+            {
+                selectedDetailIDValue = GetFirstAssetDetailID();
+            }
+
+            if (String.IsNullOrEmpty(selectedDetailIDValue) || selectedRowIsParent)
+                return;
+
+            _dal = new GeneralDAL();
+            Hashtable _ht = new Hashtable();
+
+            _ht["p_id"] = selectedDetailIDValue;
+            _ht["p_fa_ga_code"] = lblGroupAssetCode.Text;
+            _ht["p_is_parent"] = 1;
+
+            Shared.ApplyDefaultProp(_ht);
+            _dal.ExecRawSP("xsp_fa_grouping_asset_detail_update", _ht);
+
+            Shared.ShowSuccessGritter(this, string.Format("fagroupingasset.aspx?action=edit&faGroupingAssetCode={0}", lblGroupAssetCode.Text));
+            BindData();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void SaveData(bool redirectAfterSave)
     {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
         string sNextGroupingAssetCode = "";
         try
         {
+            Page.Validate();
+            if (!Page.IsValid)
+                return;
+
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
@@ -95,14 +176,12 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_fa_group_asset_name"] = txtAssetGroupName.Text;
             _ht["p_cost_center"] = ddlBranch.SelectedValue;
             _ht["p_fa_location"] = ddlLocation.SelectedValue;
-
+            _ht["p_remarks"] = txtRemarks.Text;
             _ht["p_status"] = chbIsActive.Checked ? 1 : 0;
-            // _ht["p_item_barcode"] = barcodeValue;
-
 
             Shared.ApplyDefaultProp(_ht);
 
-            if (Request.Params["action"].Equals("add"))
+            if (Request.Params["action"] != null && Request.Params["action"].Equals("add"))
             {
                 _dal.Insert(TABLE_NAME, _ht, ref sNextGroupingAssetCode);
                 lblGroupAssetCode.Text = sNextGroupingAssetCode.ToString();
@@ -114,10 +193,13 @@ public partial class module_fa_fagroupingasset : BasePage
                 ddlBranch.Enabled = ddlLocation.Enabled = false;
                 _dal.Update(TABLE_NAME, _ht);
                 sNextGroupingAssetCode = lblGroupAssetCode.Text;
-
             }
-            string redirectUrl = string.Format("fagroupingasset.aspx?action=edit&faGroupingAssetCode={0}", sNextGroupingAssetCode);
-            Response.Redirect(redirectUrl, false);
+
+            if (redirectAfterSave)
+            {
+                string redirectUrl = string.Format("fagroupingasset.aspx?action=edit&faGroupingAssetCode={0}", sNextGroupingAssetCode);
+                Shared.ShowSuccessGritter(this, redirectUrl);
+            }
         }
         catch (Exception ex)
         {
@@ -136,6 +218,23 @@ public partial class module_fa_fagroupingasset : BasePage
             || stringValue.Equals("y", StringComparison.OrdinalIgnoreCase)
             || stringValue.Equals("yes", StringComparison.OrdinalIgnoreCase)
             || stringValue.Equals("active", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private string GetFirstAssetDetailID()
+    {
+        GeneralDAL dal = new GeneralDAL();
+        Hashtable ht = new Hashtable();
+
+        ht["p_keywords"] = String.Empty;
+        ht["p_fa_group_asset_code"] = lblGroupAssetCode.Text;
+
+        DataTable dt = dal.GetRows(TABLE_NAME_DETAIL, ht);
+
+        if (dt == null || dt.Rows.Count == 0)
+            return String.Empty;
+
+        object id = GetDataRowValue(dt.Rows[0], "ID");
+        return id == null || id == DBNull.Value ? String.Empty : Convert.ToString(id);
     }
 
     private object GetDataRowValue(DataRow dr, string columnName)
@@ -248,7 +347,11 @@ public partial class module_fa_fagroupingasset : BasePage
             gvwList.DataSource = _dal.GetRows(TABLE_NAME_DETAIL, _ht);
             gvwList.DataBind();
 
-            gvwMovementHistory.DataSource = _dal.GetRows(TABLE_NAME_HISTORY, _ht);
+            Hashtable htHistory = new Hashtable();
+            htHistory["p_keywords"] = txtSearchHistory.Text;
+            htHistory["p_fa_group_asset_code"] = lblGroupAssetCode.Text;
+
+            gvwMovementHistory.DataSource = _dal.GetRows(TABLE_NAME_HISTORY, htHistory);
             gvwMovementHistory.DataBind();
         }
         catch (Exception ex)
@@ -268,7 +371,7 @@ public partial class module_fa_fagroupingasset : BasePage
 
             _ht["p_id"] = code;
 
-            //_dal.Delete(TABLE_NAME_DETAIL, _ht);
+            _dal.Delete(TABLE_NAME_DETAIL, _ht);
         }
         catch (Exception ex)
         {
@@ -305,7 +408,7 @@ public partial class module_fa_fagroupingasset : BasePage
     // }
     protected void btnSearchHistory_Click(object sender, EventArgs e)
     {
-        //string redirectUrl = string.Format("faitemgrouphistory.aspx?faitemgroupcode={0}", lblItemGroupCode.Text);
-        //Response.Redirect(redirectUrl);
+        gvwMovementHistory.PageIndex = 0;
+        BindData();
     }
 }
