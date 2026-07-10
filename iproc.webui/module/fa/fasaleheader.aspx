@@ -14,7 +14,7 @@
                 <div class="col-sm-12">
                     <cc1:XUILinkButton ID="btnSave" RoleCode="R90000100E" runat="server" CssClass="btn btn-primary" OnClick="btnSave_Click"><i class="icon-save"></i>  Save</cc1:XUILinkButton>
                     <cc1:XUILinkButton RoleCode="R90000100O" ID="btnApprovalTiered" runat="server" CssClass="btn btn-success" Visible="false"><i class="icon-ok"></i>  Approval</cc1:XUILinkButton>
-                    <cc1:XUILinkButton ID="btnPost" RoleCode="R90000100O" runat="server" CssClass="btn btn-success"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
+                    <cc1:XUILinkButton ID="btnPost" RoleCode="R90000100O" runat="server" CssClass="btn btn-success" OnClick="btnPost_Click"><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnReject" RoleCode="R90000100O" runat="server" CssClass="btn btn-danger"  OnClick="btnReject_Click" CausesValidation="false"><i class="icon-remove"></i>  Cancel</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnCancel" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i class="icon-remove"></i>  Cancel</cc1:XUILinkButton>
                 </div>
@@ -247,16 +247,19 @@
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:BoundField DataField="ASSET_BARCODE" HeaderText="Asset Code">
-                                <ItemStyle Width="20%" HorizontalAlign="Center"  />
+                                <ItemStyle Width="10%" HorizontalAlign="Center"  />
                             </asp:BoundField>
                             <asp:BoundField DataField="ASSET_NAME" HeaderText="Asset Name">
-                                <ItemStyle Width="25%" />
-                            </asp:BoundField> 
+                                <ItemStyle Width="15%" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="owner" HeaderText="Owner">
+                                <ItemStyle Width="15%" />
+                            </asp:BoundField>  
                             <asp:BoundField DataField="ORIG_PRICE" HeaderText="Original Value" DataFormatString="{0:N2}">
                                 <ItemStyle Width="15%" HorizontalAlign="Right" />
                             </asp:BoundField>
                             <asp:BoundField DataField="DESCRIPTION" HeaderText="Description" >
-                                <ItemStyle Width="25%"  />
+                                <ItemStyle Width="15%"  />
                             </asp:BoundField>
                             <%--<asp:BoundField DataField="SALE_VALUE" HeaderText="Sale Value" DataFormatString= {0:N2}>
                                 <ItemStyle Width="25%" HorizontalAlign="Right" />
