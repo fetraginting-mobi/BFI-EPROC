@@ -370,6 +370,7 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht = new Hashtable();
 
             _ht["p_id"] = code;
+            Shared.ApplyDefaultProp(_ht);
 
             _dal.Delete(TABLE_NAME_DETAIL, _ht);
         }

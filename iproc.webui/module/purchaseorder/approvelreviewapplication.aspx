@@ -66,17 +66,17 @@
                             </ItemTemplate>
                             </asp:TemplateField>
                             <asp:BoundField DataField="LAST_STATUS" HeaderText="Last Status">
-                                <ItemStyle Width="20%" HorizontalAlign="Center"/>
+                                <ItemStyle Width="10%" HorizontalAlign="Center"/>
                             </asp:BoundField>
                             <asp:BoundField DataField="EMP_NAME" HeaderText="Emp Name" DataFormatString="{0:N2}">
-                                <ItemStyle Width="20%" HorizontalAlign="Center"/>
+                                <ItemStyle Width="40%" HorizontalAlign="Center"/>
                             </asp:BoundField>
                             <asp:BoundField DataField="READ_DATE" HeaderText="Date" DataFormatString="{0:dd/MM/yyyy}">
                                 <ItemStyle Width="20%" HorizontalAlign="Center"/>
                             </asp:BoundField>
                            
                               <asp:BoundField DataField="LEVEL_APPROVAL" HeaderText="Level Approval">
-                                <ItemStyle Width="20%" HorizontalAlign="Center"/>
+                                <ItemStyle Width="10%" HorizontalAlign="Center"/>
                             </asp:BoundField>
                              <asp:BoundField DataField="REMARKS" HeaderText="Remarks">
                                 <ItemStyle Width="20%" HorizontalAlign="Center" />

@@ -495,24 +495,15 @@
                                                             <ItemTemplate>
                                                                 <%# (gvwMovementHistory.PageIndex * gvwMovementHistory.PageSize) + Container.DataItemIndex + 1 %>
                                                             </ItemTemplate>
-                                                        </asp:TemplateField>
-                                                        <asp:TemplateField>
-                                                            <HeaderTemplate>
-                                                                Asset Code<br />Asset Item
-                                                            </HeaderTemplate>
-                                                            <ItemTemplate>
-                                                                <strong>
-                                                                    <%# Eval("barcode") %>
-                                                                </strong><br />
-                                                                <span style="color: #333;">
-                                                                    <%# Eval("item_name") %>
-                                                                </span>
-                                                            </ItemTemplate>
-                                                        </asp:TemplateField>
+                                                        </asp:TemplateField>                                                        
+                                                        <asp:BoundField DataField="barcode"
+                                                            HeaderText="Asset Code"></asp:BoundField>
+                                                        <asp:BoundField DataField="item_name"
+                                                            HeaderText="Asset Item"></asp:BoundField>
                                                         <asp:BoundField DataField="asset_category"
                                                             HeaderText="Asset Category"></asp:BoundField>
                                                         <asp:BoundField DataField="cre_date" HeaderText="Date"
-                                                            DataFormatString="{0:dd/MM/yyyy}"
+                                                            DataFormatString="{0:dd/MM/yyyy HH:mm:ss}"
                                                             ItemStyle-HorizontalAlign="Center">
                                                         </asp:BoundField>
                                                         <asp:BoundField DataField="action" HeaderText="Type Transaksi">
@@ -521,38 +512,26 @@
                                                         <asp:BoundField DataField="doc_reff_no"
                                                             HeaderText="Doc. Reff No" NullDisplayText="-">
                                                         </asp:BoundField>
+                                                        <asp:BoundField DataField="from_group"
+                                                            HeaderText="From Group" NullDisplayText="-">
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="to_group"
+                                                            HeaderText="to Group" NullDisplayText="-">
+                                                        </asp:BoundField>
 
 
                                                         <asp:TemplateField ItemStyle-HorizontalAlign="Center"
                                                             HeaderStyle-HorizontalAlign="Center">
                                                             <HeaderTemplate>
-                                                                <u>PIC Asset</u><br />Mut.
-                                                                From Branch
+                                                                <u>Modified By</u><br />Modified Date
                                                             </HeaderTemplate>
                                                             <ItemTemplate>
-                                                                <%# string.IsNullOrEmpty(Eval("pic_from").ToString())
-                                                                    ? "-" : Eval("pic_from") %>
+                                                                <%# string.IsNullOrEmpty(Eval("mod_by").ToString())
+                                                                    ? "-" : Eval("mod_by") %>
                                                                     <hr
                                                                         style="margin: 3px 0; border-top: 1px solid #000;" />
                                                                     <strong>
-                                                                        <%# Eval("branch_from") %>
-                                                                    </strong>
-                                                            </ItemTemplate>
-                                                        </asp:TemplateField>
-                                                        <asp:TemplateField ItemStyle-HorizontalAlign="Center"
-                                                            HeaderStyle-HorizontalAlign="Center">
-                                                            <HeaderTemplate>
-                                                                <u>PIC
-                                                                    Asset</u><br />Mut.
-                                                                To Branch
-                                                            </HeaderTemplate>
-                                                            <ItemTemplate>
-                                                                <%# string.IsNullOrEmpty(Eval("pic_to").ToString())
-                                                                    ? "-" : Eval("pic_to") %>
-                                                                    <hr
-                                                                        style="margin: 3px 0; border-top: 1px solid #000;" />
-                                                                    <strong>
-                                                                        <%# Eval("branch_to") %>
+                                                                        <%# Eval("mod_date")%>
                                                                     </strong>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
