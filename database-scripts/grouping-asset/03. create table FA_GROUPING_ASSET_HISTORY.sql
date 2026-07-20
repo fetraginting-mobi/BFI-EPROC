@@ -4,6 +4,7 @@ CREATE TABLE [dbo].[FA_GROUPING_ASSET_HISTORY](
 	[BARCODE] [nvarchar](20) NOT NULL,
 	[ACTION] [nvarchar](20) NOT NULL,
 	[MOVE_TO] [nvarchar](200) NULL,
+	[DOC_REFF_NO] [NVARCHAR](200) NULL,
 	[CRE_DATE] [datetime] NOT NULL,
 	[CRE_BY] [nvarchar](15) NOT NULL,
 	[CRE_IP_ADDRESS] [nvarchar](15) NOT NULL,
