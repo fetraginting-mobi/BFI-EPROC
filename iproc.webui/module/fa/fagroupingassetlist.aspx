@@ -49,27 +49,24 @@
                     <div class="row">
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="col-sm-3">Status</label>
-                                <div class="col-sm-2">
-                                    <cc1:XUIDropDownList ID="ddlStatus" Width="150px" runat="server"
-                                        CssClass="form-control" SPParameterName="p_status" BindType="Both"
-                                        DataType="String" AutoPostBack="true"
-                                        OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged">
-                                        <asp:ListItem Text="ALL" Value="ALL"></asp:ListItem>
-                                        <asp:ListItem Text="Active" Value="1"></asp:ListItem>
-                                        <asp:ListItem Text="Not Active" Value="0"></asp:ListItem>
-                                    </cc1:XUIDropDownList>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group">
                                 <label class="col-sm-3">Branch</label>
                                 <div class="col-sm-5">
                                     <cc1:XUIDropDownList ID="ddlCostCenter" runat="server" Width="200px"
                                         CssClass="form-control" DBColumnName="BRANCH_CODE"
                                         SPParameterName="p_branch_code" DataType="String" BindType="Both"
                                         AutoPostBack="true" OnSelectedIndexChanged="ddlBranch_SelectedIndexChanged">
+                                    </cc1:XUIDropDownList>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-3">Location</label>
+                                <div class="col-sm-5">
+                                    <cc1:XUIDropDownList ID="ddlLocation" runat="server" Width="200px"
+                                        CssClass="form-control" DBColumnName="loc_name"
+                                        SPParameterName="p_branch_code" DataType="String" BindType="Both"
+                                        AutoPostBack="true" OnSelectedIndexChanged="ddlLocation_SelectedIndexChanged">
                                     </cc1:XUIDropDownList>
                                 </div>
                             </div>

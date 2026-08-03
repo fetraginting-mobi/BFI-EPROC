@@ -22,6 +22,7 @@ public partial class module_fa_fagroupingassetlist : BasePageList
         if (!Page.IsPostBack)
         {
             Shared.BindBranchEmployeeSort(ddlCostCenter);
+            Shared.BindFaLocationAll(ddlLocation, ddlCostCenter.SelectedValue);
             BindDataFaItemGroup();
             btnDeleteFaGroup.OnClientClick = "return confirm('Delete selected data?');";
         }
@@ -87,6 +88,48 @@ public partial class module_fa_fagroupingassetlist : BasePageList
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
+        Shared.BindFaLocationAll(ddlLocation, ddlCostCenter.SelectedValue);
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = "";
+            _ht["p_status"] = "";
+            _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
+            _ht["p_location"] = "ALL";
+            gvwListFaGroupingAsset.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
+            gvwListFaGroupingAsset.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+
+    }
+    protected void ddlLocation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_keywords"] = "";
+            _ht["p_status"] = "";
+            _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
+            _ht["p_location"] = ddlLocation.SelectedValue;
+            gvwListFaGroupingAsset.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
+            gvwListFaGroupingAsset.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+ 
     }
 
     #region FaItemGroup
@@ -101,9 +144,9 @@ public partial class module_fa_fagroupingassetlist : BasePageList
             _ht = new Hashtable();
 
             _ht["p_keywords"] = txtFaGroupSearch.Text;
-            _ht["p_status"] = ddlStatus.SelectedValue;
+            _ht["p_status"] = "";
             _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
-            //_ht["p_fa_group_asset_code"] = ASSET_GROUP_CODE.Text;
+            _ht["p_location"] = ddlLocation.SelectedValue;
             gvwListFaGroupingAsset.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
             gvwListFaGroupingAsset.DataBind();
         }
