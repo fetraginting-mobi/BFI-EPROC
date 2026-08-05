@@ -421,14 +421,15 @@ public partial class module_fa_fadisposalheader : BasePage
     private string GetPostApprovalUrl()
     {
         return String.Format(
-            "../../approval/genericapplication.aspx?code=AP000021&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');",
+            "../../approval/genericapplication.aspx?code=AP000021&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}",
             lblCodeBarcode.ClientID,
             Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY],
             "POST",
             lblbranch.ClientID,
             lblAmount.ClientID,
-             lblbranch.ClientID,
-             txtRemarks.ClientID, lblCode.ClientID);
+            lblbranch.ClientID,
+            txtRemarks.ClientID,
+            lblCode.ClientID);
     }
     private string EscapeJavaScript(string value)
     {

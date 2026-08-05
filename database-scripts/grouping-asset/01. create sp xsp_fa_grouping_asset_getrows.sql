@@ -1,8 +1,9 @@
-CREATE PROCEDURE [dbo].[xsp_fa_grouping_asset_getrows]
+CREATE PROCEDURE [dbo].[XSP_FA_GROUPING_ASSET_GETROWS]
 (
 	@p_keywords		NVARCHAR(50),
 	@p_status NVARCHAR(10),
-	@p_cost_center NVARCHAR(20)
+	@p_cost_center NVARCHAR(20),
+	@p_location NVARCHAR(20)
 )AS
 BEGIN
 
@@ -11,7 +12,7 @@ BEGIN
 		FGA.FA_GROUP_ASSET_NAME AS ASSET_GROUP_NAME,
 		convert(nvarchar(20), FGA.CRE_DATE, 103) AS CRE_DATE,
 		FGA.BRANCH_CODE AS COST_CENTER,
-		FGA.FA_LOCATION AS LOCATION,
+		FL.LOC_NAME AS LOCATION,
 		ISNULL(FGAD.TOTAL_ASSET, 0) AS TOTAL_ASSET,
 		CASE 
 			WHEN FGA.IS_ACTIVE = 1 THEN 'Active'
@@ -28,17 +29,10 @@ BEGIN
 		WHERE IS_ACTIVE = '1'
 		GROUP BY FA_GA_CODE
 	) FGAD ON FGA.FA_GROUP_ASSET_CODE = FGAD.FA_GA_CODE
+	INNER JOIN FA_LOCATION FL with (nolock) on FGA.FA_LOCATION = FL.loc_code
 	LEFT JOIN EMPLOYEE_MAIN EM ON (FGA.MOD_BY = EM.EMP_CODE)
-	where 
-		(
-			@p_status = 'ALL'
-			OR FGA.IS_ACTIVE = 
-				CASE 
-					WHEN @p_status = '1' THEN 1
-					WHEN @p_status = '0' THEN 0
-				END
-		)
-	AND (FGA.BRANCH_CODE = @p_cost_center or @p_cost_center = 'ALL')
+	where (FGA.BRANCH_CODE = @p_cost_center or @p_cost_center = 'ALL')
+	AND (FGA.FA_LOCATION = @p_location or @p_location = 'ALL')
 	AND (
 			FGA.FA_GROUP_ASSET_CODE LIKE '%'+ @P_KEYWORDS +'%'
 			OR FGA.BRANCH_CODE LIKE '%'+ @P_KEYWORDS +'%'
