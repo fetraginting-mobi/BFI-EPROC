@@ -28,7 +28,7 @@ public partial class module_fa_fadisposalheader : BasePage
 
 
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FADISP&parc_fa_disposal_code={0}&gvw={1}&parc_branch_code={2}&parc_location={3}&parc_owner={4}');", txtCodeBarcode.ClientID, btnSearch.UniqueID, ddlBranch.ClientID, ddlFromLocationCode.ClientID, ddlOwner.ClientID);
-           
+
             Shared.BindGeneralSubCode(ddlReason, "RSN");
 
             if (Request.Params["action"].Equals("edit"))
@@ -75,7 +75,7 @@ public partial class module_fa_fadisposalheader : BasePage
                     ddlReason.Enabled = false;
                     btnViewHistory.Visible = true;
 
-                  
+
                 }
                 if (!lblApprovalRequestTargetID.Text.Equals(""))
                     btnApprovalTiered.Visible = true;
@@ -90,17 +90,18 @@ public partial class module_fa_fadisposalheader : BasePage
                 Shared.BindBranchEmployee(ddlBranch);
                 Shared.BindFaLocationAll(ddlFromLocationCode, ddlBranch.SelectedValue);
                 btnViewHistory.Visible = false;
-               
+
             }
         }
         Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY] = "../module/fa/fadisposalheaderlist.aspx";
-        btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000021&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID, lblAmount.ClientID, lblbranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
+        btnPost.Attributes.Remove("href");
+        //btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000021&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID, lblAmount.ClientID, lblbranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
         //btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalDialog('../../approval/generic.aspx?code=AP000021&parc_object_id={0}&parc_object_branch={1}');", lblCodeBarcode.ClientID, lblbranch.ClientID);
         btnApprovalTiered.Attributes["href"] = String.Format("javascript:fnShowApprovalTieredDialog('../../approval/generictiered.aspx?parc_id_ar_target={0}&nexturl={1}&spname={2}');", lblApprovalRequestTargetID.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert");
         btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000022&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblbranch.ClientID);
-       // btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalDialog('../../approval/generic.aspx?code=AP000022&parc_object_id={0}&parc_object_branch={1}');", lblCodeBarcode.ClientID, lblbranch.ClientID);
+        // btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalDialog('../../approval/generic.aspx?code=AP000022&parc_object_id={0}&parc_object_branch={1}');", lblCodeBarcode.ClientID, lblbranch.ClientID);
         LoadAfterInit();
-      
+
     }
     private void LoadData()
     {
@@ -119,7 +120,7 @@ public partial class module_fa_fadisposalheader : BasePage
 
             Shared.BindFaLocationAll(ddlFromLocationCode, ddlBranch.SelectedValue);
             Shared.BindBranchEmployee(ddlBranch);
-         
+
         }
         catch (Exception ex)
         {
@@ -163,22 +164,24 @@ public partial class module_fa_fadisposalheader : BasePage
         GeneralDAL _dal = null;
         Hashtable _ht = null;
 
-        try
-        {
+        //try
+        //{
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
-            MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
+            _ht["p_code_barcode"] = lblCodeBarcode.Text;
+            // MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
             Shared.ApplyDefaultProp(_ht);
 
-            _dal.ExecRawSP("xsp_fa_disposal_header_post", _ht);
+            //_dal.ExecRawSP("xsp_fa_disposal_header_post", _ht);
+            _dal.ExecRawSP("xsp_fa_disposal_header_post_validate", _ht);
 
-            Shared.ShowSuccessGritter(this, string.Format("fadisposalheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
-        }
-        catch (Exception ex)
-        {
-            Shared.ShowErrorDialog(this, ex);
-        }
+            //Shared.ShowSuccessGritter(this, string.Format("fadisposalheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
+        //}
+        //catch (Exception ex)
+        //{
+        //    Shared.ShowErrorDialog(this, ex);
+        //}
     }
 
     private void CancelData()
@@ -222,14 +225,26 @@ public partial class module_fa_fadisposalheader : BasePage
     }
     protected void btnPost_Click(object sender, EventArgs e)
     {
-        PostData();
+        try
+        {
+            PostData();
+
+            string approvalUrl = GetPostApprovalUrl();
+            string script = String.Format("fnShowApprovalWithCommentDialog('{0}');", EscapeJavaScript(approvalUrl));
+            ScriptManager.RegisterStartupScript(this, GetType(), "OpenFaDisposalPostApproval", script, true);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+
     }
     protected void btnReject_Click(object sender, EventArgs e)
     {
         CancelData();
     }
 
-    #region fa mutation detail
+    #region fa Diposal detail
 
     private void BindData()
     {
@@ -281,7 +296,7 @@ public partial class module_fa_fadisposalheader : BasePage
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-        Response.Redirect("fadisposaldetail.aspx?action=add&codebarcode=" + lblCodeBarcode.Text+ "&location=" + ddlFromLocationCode.SelectedValue);
+        Response.Redirect("fadisposaldetail.aspx?action=add&codebarcode=" + lblCodeBarcode.Text + "&location=" + ddlFromLocationCode.SelectedValue);
     }
 
     protected void btnDelete_Click(object sender, EventArgs e)
@@ -402,6 +417,32 @@ public partial class module_fa_fadisposalheader : BasePage
 
     #endregion
 
+    #region fa Diposal with FA Asset Grouping
+    private string GetPostApprovalUrl()
+    {
+        return String.Format(
+            "../../approval/genericapplication.aspx?code=AP000021&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');",
+            lblCodeBarcode.ClientID,
+            Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY],
+            "POST",
+            lblbranch.ClientID,
+            lblAmount.ClientID,
+             lblbranch.ClientID,
+             txtRemarks.ClientID, lblCode.ClientID);
+    }
+    private string EscapeJavaScript(string value)
+    {
+        if (String.IsNullOrEmpty(value))
+            return String.Empty;
+
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("'", "\\'")
+            .Replace("\r", "\\r")
+            .Replace("\n", "\\n");
+    }
+
+    #endregion
 
 }
 
