@@ -1,12 +1,3 @@
-USE [LIVE_BFI_DEV]
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 IF OBJECT_ID('[dbo].[xsp_fa_request_mutation_upload_id_getrow]', 'P') IS NOT NULL
     DROP PROCEDURE [dbo].[xsp_fa_request_mutation_upload_id_getrow]
 GO

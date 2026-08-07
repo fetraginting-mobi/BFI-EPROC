@@ -1,16 +1,3 @@
-USE [LIVE_BFI_DEV]
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-IF OBJECT_ID('[dbo].[xsp_fa_mutation_upload_generated_trx_getrows]', 'P') IS NOT NULL
-    DROP PROCEDURE [dbo].[xsp_fa_mutation_upload_generated_trx_getrows]
-GO
-
 CREATE PROCEDURE [dbo].[xsp_fa_mutation_upload_generated_trx_getrows]
 (
     @p_upload_id UNIQUEIDENTIFIER,

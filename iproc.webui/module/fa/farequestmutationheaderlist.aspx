@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="col-sm-3">Cost Center</label>
+                                            <label class="col-sm-3">Branch</label>
                                             <div class="col-sm-5">
                                                 <cc1:XUIDropDownList ID="ddlBranch" runat="server"
                                                     CssClass="form-control" DBColumnName="BRANCH_CODE"
@@ -392,10 +392,10 @@
                                                     DataFormatString="{0:dd/MM/yyyy}">
                                                     <ItemStyle Width="15%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Cost Center">
+                                                <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="TO_BRANCH" HeaderText="To Cost Center">
+                                                <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">

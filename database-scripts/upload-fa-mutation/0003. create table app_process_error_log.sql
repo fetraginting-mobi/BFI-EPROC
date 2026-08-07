@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[APP_PROCESS_ERROR_LOG](
+CREATE TABLE [dbo].[app_process_error_log](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[CODE_BARCODE] [nvarchar](28) NULL,
 	[PROCESS_NAME] [varchar](100) NULL,

@@ -1,4 +1,3 @@
-
 CREATE PROCEDURE [dbo].[xsp_fa_mutation_upload_bulk_process] (
 @p_upload_id UNIQUEIDENTIFIER,
 @p_cre_by NVARCHAR(50),
