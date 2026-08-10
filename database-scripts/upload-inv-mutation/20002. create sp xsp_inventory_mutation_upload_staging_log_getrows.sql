@@ -17,5 +17,6 @@ BEGIN
     WHERE upload_id = @p_upload_id
     GROUP BY upload_id;
 END
+GO
 
 
