@@ -33,6 +33,8 @@
                 <div class="panel-body form-horizontal">
                     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                         <ContentTemplate>
+                            <h4><strong><u>Inventory Mutation Information</u></strong></h4>
+                            <br />
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -60,10 +62,71 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <cc1:XUILinkButton ID="btnViewHistory" runat="server" CausesValidation="false"
-                                        Text="Approval History"></cc1:XUILinkButton>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">Status</label>
+                                        <div class="col-sm-8">
+                                            <cc1:XUILabel ID="lblTransFlagCode" runat="server"
+                                                DBColumnName="TRANS_FLAG_DESC" BindType="DBToUIOnly" DataType="String"
+                                                Text="--"></cc1:XUILabel>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-4 col-sm-8">
+                                            <cc1:XUILinkButton ID="btnViewHistory" runat="server" CausesValidation="false"
+                                                Text="Approval History"></cc1:XUILinkButton>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">Date *</label>
+                                        <div class="col-sm-4">
+                                            <cc1:XUITextBox ID="txtMutationDate" runat="server"
+                                                CssClass="form-control default-date-picker" placeholder="Mutation Date"
+                                                DBColumnName="MUTATION_DATE" SPParameterName="p_mutation_date"
+                                                MaxLength="10" DataType="Datetime" BindType="Both" Format="dd/MM/yyyy">
+                                            </cc1:XUITextBox>
+                                            <asp:RequiredFieldValidator ID="rfvMutationDate" runat="server"
+                                                ErrorMessage="Required Field!" ControlToValidate="txtMutationDate"
+                                                Display="Dynamic"></asp:RequiredFieldValidator>
+                                        </div>
+                                        <asp:RegularExpressionValidator ID="revDisbursementDate" runat="server"
+                                            ErrorMessage="Format Date Invalid! Format = dd/MM/yyyy"
+                                            ControlToValidate="txtMutationDate"
+                                            ValidationExpression="(^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$)"
+                                            Display="Dynamic"></asp:RegularExpressionValidator>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">Requestor *</label>
+                                        <div class="col-sm-6">
+                                            <asp:LinkButton runat="server" ID="btnLookUpRequestoro"
+                                                class="btn btn-primary" data-toggle="modal" CausesValidation="false"><i
+                                                    class="icon-table"></i></asp:LinkButton>
+                                            <cc1:XUITextBox ID="txtRequestorCode" style="display:none" runat="server"
+                                                CssClass="form-control" DBColumnName="REQUESTOR"
+                                                SPParameterName="p_requestor" DataType="String" BindType="Both">
+                                            </cc1:XUITextBox>
+                                            <cc1:XUITextBox ID="txtRequestorName" Enabled="false" runat="server"
+                                                CssClass="form-control" DBColumnName="REQUESTOR_DESC"
+                                                SPParameterName="p_requestor" DataType="String" BindType="DBToUIOnly">
+                                            </cc1:XUITextBox>
+                                            <asp:RequiredFieldValidator ID="rfvRequestorName" runat="server"
+                                                ErrorMessage="Required Field!" ControlToValidate="txtRequestorCode">
+                                            </asp:RequiredFieldValidator>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-sm-4">Branch</label>
@@ -78,18 +141,6 @@
                                             </cc1:XUILabel>
                                             <%--<cc1:XUILabel ID="lblBranch" runat="server" DBColumnName="DESCRIPTION"
                                                 DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel> --%>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-4">Status</label>
-                                        <div class="col-sm-8">
-                                            <cc1:XUILabel ID="lblTransFlagCode" runat="server"
-                                                DBColumnName="TRANS_FLAG_DESC" BindType="DBToUIOnly" DataType="String"
-                                                Text="--"></cc1:XUILabel>
                                         </div>
                                     </div>
                                 </div>
@@ -117,37 +168,11 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
                                         <label class="col-sm-4">Process</label>
                                         <div class="col-sm-8">
                                             <cc1:XUILabel ID="lblProcess" runat="server" DBColumnName="PROCESS"
                                                 DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-4">Date *</label>
-                                        <div class="col-sm-4">
-                                            <cc1:XUITextBox ID="txtMutationDate" runat="server"
-                                                CssClass="form-control default-date-picker" placeholder="Mutation Date"
-                                                DBColumnName="MUTATION_DATE" SPParameterName="p_mutation_date"
-                                                MaxLength="10" DataType="Datetime" BindType="Both" Format="dd/MM/yyyy">
-                                            </cc1:XUITextBox>
-                                            <asp:RequiredFieldValidator ID="rfvMutationDate" runat="server"
-                                                ErrorMessage="Required Field!" ControlToValidate="txtMutationDate"
-                                                Display="Dynamic"></asp:RequiredFieldValidator>
-                                        </div>
-                                        <asp:RegularExpressionValidator ID="revDisbursementDate" runat="server"
-                                            ErrorMessage="Format Date Invalid! Format = dd/MM/yyyy"
-                                            ControlToValidate="txtMutationDate"
-                                            ValidationExpression="(^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$)"
-                                            Display="Dynamic"></asp:RegularExpressionValidator>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -176,25 +201,12 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-6" id="divUploadID" runat="server">
                                     <div class="form-group">
-                                        <label class="col-sm-4">Requestor *</label>
-                                        <div class="col-sm-6">
-                                            <asp:LinkButton runat="server" ID="btnLookUpRequestoro"
-                                                class="btn btn-primary" data-toggle="modal" CausesValidation="false"><i
-                                                    class="icon-table"></i></asp:LinkButton>
-                                            <cc1:XUITextBox ID="txtRequestorCode" style="display:none" runat="server"
-                                                CssClass="form-control" DBColumnName="REQUESTOR"
-                                                SPParameterName="p_requestor" DataType="String" BindType="Both">
-                                            </cc1:XUITextBox>
-                                            <cc1:XUITextBox ID="txtRequestorName" Enabled="false" runat="server"
-                                                CssClass="form-control" DBColumnName="REQUESTOR_DESC"
-                                                SPParameterName="p_requestor" DataType="String" BindType="DBToUIOnly">
-                                            </cc1:XUITextBox>
-
-                                            <asp:RequiredFieldValidator ID="rfvRequestorName" runat="server"
-                                                ErrorMessage="Required Field!" ControlToValidate="txtRequestorCode">
-                                            </asp:RequiredFieldValidator>
+                                        <label class="col-sm-4">Upload ID</label>
+                                        <div class="col-sm-8">
+                                            <cc1:XUILabel ID="lblUploadID" runat="server"
+                                                DataType="String" Text="--" ForeColor="Red"></cc1:XUILabel>
                                         </div>
                                     </div>
                                 </div>
@@ -225,7 +237,14 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-6" id="divFileName" runat="server">
+                                    <div class="form-group">
+                                        <label class="col-sm-4">File Name</label>
+                                        <div class="col-sm-8">
+                                            <cc1:XUILabel ID="lblFileName" runat="server" 
+                                                DataType="String" Text="--" ForeColor="Red"></cc1:XUILabel>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -250,6 +269,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <br />
+                            <h4><strong><u>Inventory Mutation Location</u></strong></h4>
+                            <br />
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -295,7 +317,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">From Location *</label>
+                                        <label class="col-sm-4">From Warehouse *</label>
                                         <div class="col-sm-7">
                                             <asp:LinkButton runat="server" ID="btnFromLocation" class="btn btn-primary"
                                                 data-toggle="modal" CausesValidation="false"><i class="icon-table"></i>
@@ -315,7 +337,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">To Location *</label>
+                                        <label class="col-sm-4">To Warehouse *</label>
                                         <div class="col-sm-5">
                                             <asp:LinkButton runat="server" ID="btnToLocation" class="btn btn-primary"
                                                 data-toggle="modal" CausesValidation="false"><i class="icon-table"></i>
@@ -518,7 +540,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">Created</label>
+                                        <label class="col-sm-4">Created By</label>
                                         <div class="col-sm-8">
                                             <cc1:XUILabel ID="lblCreby" runat="server" DBColumnName="EMP_CRE"
                                                 DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
@@ -531,7 +553,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">Modified</label>
+                                        <label class="col-sm-4">Modify By</label>
                                         <div class="col-sm-8">
                                             <cc1:XUILabel ID="lblModBy" runat="server" DBColumnName="EMP_MOD"
                                                 DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>

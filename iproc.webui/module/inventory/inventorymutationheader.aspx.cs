@@ -44,46 +44,12 @@ public partial class module_inventory_inventorymutationheader : BasePage
 
             if (Request.Params["action"].Equals("edit"))
             {
-                // LoadData();
-                // BindTOP();
-                // ddlBranch.Enabled = false;
-                // ddlDivision.Enabled = false;
-                // ddlDepartment.Enabled = false;
-                // ddlSubDepartment.Enabled = false;
-                // ddlUnits.Enabled = false;
-                // txtMutationDate.Enabled = false;
-                // btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
-                // btnCancel.CssClass = "btn btn-custome";
-                // btnLookUpRequestoro.Enabled = false;
-                // btnFromLocation.Enabled = false;
-                // btnLookUpFromLotCode.Enabled = false;
-                // btnLookUpFromRakCode.Enabled = false;
-                // btnLookUpFromSlotCode.Enabled = false;
-                // btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
-
-                // BindData();
-                // btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
-                // btnDeleteTOP.OnClientClick = "return confirm('Delete selected data?');";
-                // lblApprovalRequestTargetID.Text = Request.Params["idartarget"];
-
-                // if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "ON-PROGRESS" || lblTransFlagCode.Text == "CANCEL")
-                // {
-                //     btnSave.Visible  = btnReject.Visible = false;
-                //     btnPost.Visible = false;
-                //     txtMutationDate.Enabled = false;
-                //     txtRemarks.Enabled = false;
-                //     txtExpeditionDescription.Enabled = false;
-                //     btnAddTOP.Visible = false;
-                //     btnDeleteTOP.Visible = false;
-                //     gvwList.Columns[1].Visible = false;
-                //     ddlBranch.Enabled = false;
-                //     ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = ddlUnits.Enabled = false;                
-
-                // }
                 // Load Data Utama dari Database
                 LoadData();
                 BindTOP();
+                BindUploadId();
                 BindMutationUploadLog();
+
 
                 // Setting Default untuk Mode Edit
                 ddlBranch.Enabled = false;
@@ -167,6 +133,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 txtRequestorCode.Text = Shared.CurrentUID;
                 txtRequestorName.Text = Shared.CurrentEmpName;
             }
+            SetUploadInfoVisibility();
             if (!lblApprovalRequestTargetID.Text.Equals(""))
                 btnApprovalTiered.Visible = true;
         }
@@ -176,6 +143,14 @@ public partial class module_inventory_inventorymutationheader : BasePage
         btnApprovalTiered.Attributes["href"] = String.Format("javascript:fnShowApprovalTieredDialog('../../approval/generictiered.aspx?parc_id_ar_target={0}&nexturl={1}&spname={2}');", lblApprovalRequestTargetID.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert");
         btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000014&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblbranch.ClientID);
         LoadAfterInit();
+    }
+
+    private void SetUploadInfoVisibility()
+    {
+        bool isUploadProcess = lblProcess.Text.Equals("UPLOAD", StringComparison.OrdinalIgnoreCase);
+
+        divUploadID.Visible = isUploadProcess;
+        divFileName.Visible = isUploadProcess;
     }
 
     private void LoadData()
@@ -533,6 +508,37 @@ public partial class module_inventory_inventorymutationheader : BasePage
         gvwListmutationuploadlog.PageIndex = e.NewPageIndex;
         BindMutationUploadLog();
     }
+    private void BindUploadId()
+    {
+        lblUploadID.Text = "-";
+
+        if (lblProcess.Text.Trim().ToUpper() != "UPLOAD" && lblProcess.Text.Trim().ToUpper() != "UPL")
+            return;
+
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+            _ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+            DataTable dtUpload = _dal.GetRows("", "xsp_inv_request_mutation_upload_id_getrow", _ht);
+            if (dtUpload.Rows.Count == 0)
+                return;
+
+            DataRow _dr = dtUpload.Rows[0];
+            if (_dr["upload_id"] != DBNull.Value && _dr["upload_id"].ToString() != "")
+                lblUploadID.Text = _dr["upload_id"].ToString();
+                lblFileName.Text = _dr["FILE_NAME"].ToString();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
     private void BindMutationUploadLog()
     {
         GeneralDAL _dal = null;

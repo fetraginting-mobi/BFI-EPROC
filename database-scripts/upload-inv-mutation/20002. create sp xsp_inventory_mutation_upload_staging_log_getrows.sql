@@ -1,22 +1,6 @@
-CREATE PROCEDURE [dbo].[xsp_inventory_mutation_upload_staging_log_getrows]
-(
-    @p_upload_id UNIQUEIDENTIFIER
-    ,@p_file_name NVARCHAR(255)
-)
-AS
-BEGIN
-    SELECT 
-        upload_id,
-        @p_file_name AS file_name,
-        CONVERT(VARCHAR(10), MAX(upload_date), 103) + ' ' + 
-        CONVERT(VARCHAR(8), MAX(upload_date), 108) AS UPLOAD_DATE, 
-        COUNT(*) AS total_rows,    
-        SUM(CASE WHEN process_flag = 's' THEN 1 ELSE 0 END) AS total_valid,
-        SUM(CASE WHEN process_flag = 'e' THEN 1 ELSE 0 END) AS total_error
-    FROM inv_mutation_upload_staging
-    WHERE upload_id = @p_upload_id
-    GROUP BY upload_id;
-END
-GO
+exec xsp_INVENTORY_MUTATION_HEADER_getrows @p_keywords=N'',@p_status=N'ALL',@p_cre_by=N'048115',@p_branch_code=N'KPO'
+exec xsp_INVENTORY_MUTATION_UPLOAD_HEADER_getrows @p_keywords=N'',@p_branch_code=N'KPO',@p_from_location=N'',@p_to_branch=N'',@p_to_location=N''
+UPLOAD_ID
 
-
+(CASE WHEN Rtrim(Ltrim(frmh.flag_process)) = 'upl' THEN 'UPLOAD'
+			ELSE 'MANUAL' END) 'is_upload',
