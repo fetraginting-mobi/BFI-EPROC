@@ -4,6 +4,25 @@
     <%@ Register Assembly="MPF23.XUI" Namespace="MPF23.XUI.Control" TagPrefix="cc1" %>
 
         <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
+            <script type="text/javascript">
+                function fnShowFaMutationUploadLogTab() {
+                    $('#mutation').removeClass('active');
+                    $('#mutationuploadlog').addClass('active');
+                    $('#mutdetail').parent().removeClass('active');
+                    $('#lnkMutationUploadLog').parent().addClass('active');
+                    fnSetTab('mutationuploadlog');
+                    return false;
+                }
+
+                function fnShowFaMutationDetailTab() {
+                    $('#mutationuploadlog').removeClass('active');
+                    $('#mutation').addClass('active');
+                    $('#lnkMutationUploadLog').parent().removeClass('active');
+                    $('#mutdetail').parent().addClass('active');
+                    fnSetTab('mutdetail');
+                    return false;
+                }
+            </script>
         </asp:Content>
         <asp:Content ID="Content2" ContentPlaceHolderID="cpb" Runat="Server">
             <section class="panel">
@@ -378,14 +397,14 @@
                     <header class="panel-heading tab-bg-dark-navy-blue">
                         <ul class="nav nav-tabs nav-justified">
                             <li class="active">
-                                <a href="#mutation" id="mutdetail" onclick="javascript:fnSetTab('mutdetail');"
+                                <a href="#mutation" id="mutdetail" onclick="return fnShowFaMutationDetailTab();"
                                     data-toggle="tab" style="padding-bottom:28px">
                                     Mutation Detail
                                 </a>
                             </li>
                             <li id="liMutationUploadLog" runat="server">
                                 <a href="#mutationuploadlog" id="lnkMutationUploadLog"
-                                    onclick="javascript:fnSetTab('mutationuploadlog');" data-toggle="tab"
+                                    onclick="return fnShowFaMutationUploadLogTab();" data-toggle="tab"
                                     style="padding-bottom:28px">
                                     Post Upload Mutation History
                                 </a>
@@ -489,7 +508,7 @@
                                                 CssClass="display table table-bordered table-striped" AllowPaging="true"
                                                 PageSize="10" DataKeyNames="code_barcode"
                                                 OnPageIndexChanging="gvwListMutationUploadlog_PageIndexChanging"
-                                                EmptyDataText="There is no data" Width="100%">
+                                                EmptyDataText="There Is No Data" Width="100%">
                                                 <Columns>
                                                     <asp:TemplateField>
                                                         <HeaderTemplate><span>No</span></HeaderTemplate>

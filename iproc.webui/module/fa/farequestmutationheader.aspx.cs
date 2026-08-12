@@ -49,6 +49,7 @@ public partial class module_fa_farequestmutationheader : BasePage
             {
                 LoadData();
                 BindData();
+                SetMutationUploadLogVisibility();
 
                 btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
                 txtRequestDate.Enabled = false;
@@ -108,6 +109,7 @@ public partial class module_fa_farequestmutationheader : BasePage
                 pnlInventoryRequest.Visible = false;
                 txtRequestDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 txtRequestDate.Enabled = false;
+                SetMutationUploadLogVisibility();
             }
         }
 
@@ -134,6 +136,17 @@ public partial class module_fa_farequestmutationheader : BasePage
             }
         }
         LoadAfterInit();
+    }
+
+    private void SetMutationUploadLogVisibility()
+    {
+        bool isUploadProcess = lblProcess.Text.Trim().Equals("UPLOAD", StringComparison.OrdinalIgnoreCase)
+            || lblProcess.Text.Trim().Equals("UPL", StringComparison.OrdinalIgnoreCase);
+
+        liMutationUploadLog.Visible = isUploadProcess;
+
+        if (isUploadProcess)
+            BindMutationUploadLog();
     }
 
     private void LoadData()
