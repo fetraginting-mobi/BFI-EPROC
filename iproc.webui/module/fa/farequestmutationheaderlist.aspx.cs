@@ -62,7 +62,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             BindData();
             BindUploadData();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
-        }        
+        }
         LoadAfterInit();
     }
 
@@ -82,6 +82,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_process"] = ddlProcess.SelectedValue;
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
             _htupload["p_branch_code"] = ddlFromBranch.SelectedValue;
@@ -167,6 +168,10 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     {
         BindData();
     }
+    protected void ddlProcess_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
     # region Upload bulk mutation    
     protected void btnDownload_Click(object sender, EventArgs e)
     {
@@ -247,14 +252,14 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
              "&parc_branch_code={5}" +
              "&parc_object_description={6}" +
              "&parc_object_code={7}",
-             lblTempBarcode.ClientID,         
-             Server.UrlEncode(nextUrlRaw),     
-             "POST",                           
-             lblTempBranch.ClientID,          
-             lblTempAmount.ClientID,          
-             lblTempBranch.ClientID,          
-             lblTempRemarks.ClientID,         
-             lblTempCode.ClientID             
+             lblTempBarcode.ClientID,
+             Server.UrlEncode(nextUrlRaw),
+             "POST",
+             lblTempBranch.ClientID,
+             lblTempAmount.ClientID,
+             lblTempBranch.ClientID,
+             lblTempRemarks.ClientID,
+             lblTempCode.ClientID
          );
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
