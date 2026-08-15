@@ -64,10 +64,14 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
             //    _ht["p_upload_id"] = DBNull.Value;
             //}
 
-            _ht["p_file_name "] = Request.Params["filename"];
+            _ht["p_file_name"] = Request.Params["filename"];
             _ht["p_status"] = Request.Params["status"];
 
-            gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_detail_upload_getrows", _ht);
+            if (Request.Params["status"] == "TRX")
+                gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_upload_generated_trx_getrows", _ht);
+            else
+                gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_detail_upload_getrows", _ht);
+
             gvwList.DataBind();
         }
         catch (Exception ex)
