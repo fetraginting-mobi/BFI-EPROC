@@ -13,12 +13,14 @@ public partial class module_fa_farequestmutationheader : BasePage
 {
     private static string TABLE_NAME_DETAIL = "FA_REQUEST_MUTATION_DETAIL";
     private static string TABLE_NAME_HEADER = "FA_REQUEST_MUTATION_HEADER";
+    private static string TABLE_NAME_POST_HISTORY = "INVENTORY_POST_MUTATION_UPLOAD_HISTORY";
     private static Boolean EMPLOYEE_HO = false;
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
         txtBranch.Text = Shared.CurrentEmployeeBranchCode;
         EMPLOYEE_HO = IsEmployeeHo(txtBranch.Text);
+
         if (!Page.IsPostBack)
         {
             txtBranch.Text = Shared.CurrentEmployeeBranchCode;
@@ -31,12 +33,14 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindBranchEmployeeAll1SEL(ddlTocc);
             Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
             Shared.BindUnitsItemOwnMutation(ddlOwner);
+
             //(+)gustian 19102023 
-            if(EMPLOYEE_HO)
+            if (EMPLOYEE_HO)
             {
                 Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
             }
-            else {
+            else
+            {
                 Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
             }
             ddlBranch.SelectedValue = Shared.CurrentEmployeeBranchCode;
@@ -44,24 +48,21 @@ public partial class module_fa_farequestmutationheader : BasePage
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
-
-
                 BindData();
+                SetMutationUploadLogVisibility();
+
                 btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
                 txtRequestDate.Enabled = false;
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
                 btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
-                // btnPost.OnClientClick = "return confirm('Post selected data?');";
-                //btnReject.OnClientClick = "return confirm('Cancel selected data?');";
+
                 ddlBranch.Enabled = false;
                 ddlUnits.Enabled = false;
                 ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = false;
-                //btnPrint.Visible = true;
                 ddlFromLocationCode.Enabled = false;
                 ddlToLocationCode.Enabled = false;
                 ddlOwner.Enabled = false;
-
                 ddlTocc.Enabled = false;
 
                 if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CANCEL" || lblTransFlagCode.Text == "PENDING")
@@ -70,23 +71,18 @@ public partial class module_fa_farequestmutationheader : BasePage
                     btnAddRequestDetail.Visible = btnDeleteRequestDetail.Visible = false;
                     txtRemarks.Enabled = false;
                     txtRequestDate.Enabled = false;
-                    //ddlDepartment.Enabled = false;
-                    txtRemarks.Enabled = false;
                     gvwList.Columns[1].Visible = false;
                     ddlBranch.Enabled = false;
                     ddlUnits.Enabled = false;
                     btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
                     ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = false;
-                    //btnPrint.Visible = true;
                     ddlFromLocationCode.Enabled = false;
                     ddlToLocationCode.Enabled = false;
-
                     ddlTocc.Enabled = false;
                 }
             }
             else
             {
-                //lblRequestorUID.Text = Shared.CurrentUID;
                 lblRequestor.Text = Shared.CurrentEmpName;
                 ddlBranch.SelectedValue = Shared.CurrentEmployeeBranchDesc;
                 ddlDivision.SelectedValue = Shared.CurrentEmployeeDivCode;
@@ -98,7 +94,7 @@ public partial class module_fa_farequestmutationheader : BasePage
                 Shared.BindBranchEmployeeAll1SEL(ddlTocc);
                 Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
 
-                //(+)gustian 19102023
+                //(+)gustian 19102023 
                 if (EMPLOYEE_HO)
                 {
                     Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
@@ -107,24 +103,50 @@ public partial class module_fa_farequestmutationheader : BasePage
                 {
                     Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
                 }
-                //Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text); //disini
-                //Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
-
 
                 btnReject.Visible = btnPost.Visible = false;
                 btnAddRequestDetail.Visible = btnDeleteRequestDetail.Visible = false;
                 pnlInventoryRequest.Visible = false;
                 txtRequestDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 txtRequestDate.Enabled = false;
+                SetMutationUploadLogVisibility();
             }
         }
-        Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY] = "../module/fa/farequestmutationheaderlist.aspx";
 
+        Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY] = "../module/fa/farequestmutationheaderlist.aspx";
 
         btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=APP0067&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID, lblAmount.ClientID, lblbranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
         btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=APP0068&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblbranch.ClientID);
-        //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericwithcomment.aspx?code=AP000008&parc_object_id={0}&nexturl={1}&spname={2}&status={3}');", lblNo.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert", "REJECT");
+
+        if (Request.Params["action"] != null && Request.Params["action"].Equals("edit"))
+        {
+            if (lblProcess != null && (lblProcess.Text.Trim().ToUpper() == "UPLOAD" || lblProcess.Text.Trim().ToUpper() == "UPL"))
+            {
+                btnSave.Visible = false;
+                btnPost.Visible = false;
+                btnReject.Visible = false;
+                btnAddRequestDetail.Visible = false;
+                btnDeleteRequestDetail.Visible = false;
+                txtRemarks.Enabled = false;
+                txtRequestDate.Enabled = false;
+                if (gvwList != null && gvwList.Columns.Count > 1)
+                {
+                    gvwList.Columns[1].Visible = false;
+                }
+            }
+        }
         LoadAfterInit();
+    }
+
+    private void SetMutationUploadLogVisibility()
+    {
+        bool isUploadProcess = lblProcess.Text.Trim().Equals("UPLOAD", StringComparison.OrdinalIgnoreCase)
+            || lblProcess.Text.Trim().Equals("UPL", StringComparison.OrdinalIgnoreCase);
+
+        liMutationUploadLog.Visible = isUploadProcess;
+
+        if (isUploadProcess)
+            BindMutationUploadLog();
     }
 
     private void LoadData()
@@ -141,6 +163,7 @@ public partial class module_fa_farequestmutationheader : BasePage
             DataRow _dr = _dal.GetRow(TABLE_NAME_HEADER, _ht);
 
             DBToUI.Map(this.Controls, _dr);
+            BindUploadId();
             ddlTocc.SelectedValue = _dr["TO_COST_CENTER"].ToString();
             //ddlFromLocationCode.SelectedValue = _dr["FROM_LOCATION_CODE"].ToString();
             Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
@@ -160,10 +183,36 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindBranchEmployeeSort(ddlBranch);
             Shared.BindSubDepartment(ddlSubDepartment, ddlDepartment.SelectedValue);
             Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
-           
-          
-           
-           
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void BindUploadId()
+    {
+        lblUploadId.Text = "-";
+
+        if (lblProcess.Text.Trim().ToUpper() != "UPLOAD" && lblProcess.Text.Trim().ToUpper() != "UPL")
+            return;
+
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+            _ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+            DataTable dtUpload = _dal.GetRows("", "xsp_fa_request_mutation_upload_id_getrow", _ht);
+            if (dtUpload.Rows.Count == 0)
+                return;
+
+            DataRow _dr = dtUpload.Rows[0];
+            if (_dr["upload_id"] != DBNull.Value && _dr["upload_id"].ToString() != "")
+                lblUploadId.Text = _dr["upload_id"].ToString();
         }
         catch (Exception ex)
         {
@@ -380,4 +429,34 @@ public partial class module_fa_farequestmutationheader : BasePage
         }
         return false;
     }
+
+    #region Bulk Upload 
+    protected void gvwListMutationUploadlog_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListmutationuploadlog.PageIndex = e.NewPageIndex;
+        BindMutationUploadLog();
+    }
+
+    private void BindMutationUploadLog()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_im_code"] = lblCodeBarcode.Text;
+
+            gvwListmutationuploadlog.DataSource = _dal.GetRows(TABLE_NAME_POST_HISTORY, _ht);
+            gvwListmutationuploadlog.DataBind();
+            updmutationuploadlog.Update();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+    #endregion
 }
