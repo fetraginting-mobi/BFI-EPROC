@@ -70,9 +70,9 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 lblID.Enabled = false;
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
-                btnSave.Visible = false;
-                btnSaveItemList.Enabled = false;
-                btnLookUpItem.Enabled = false;
+                btnSave.Visible = true;
+                btnSaveItemList.Enabled = true;
+                btnLookUpItem.Enabled = true;
                 txtCodeBarcode.Enabled = false;
                 ddlTerminType.Enabled = false;
                 ddlTRX.Enabled = false;
@@ -372,11 +372,6 @@ public partial class module_purchaseorder_termofpayment : BasePage
             }
         }
         return 0;
-    }
-
-    protected void btnLookUpItem_Click(object sender, EventArgs e)
-    {
-
     }
     protected void btnRefreshAmount_Click(object sender, EventArgs e)
     {

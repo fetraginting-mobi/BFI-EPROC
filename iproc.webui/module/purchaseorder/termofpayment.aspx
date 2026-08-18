@@ -107,7 +107,7 @@
                                                     <div class="col-sm-8">
                                                         <asp:LinkButton runat="server" ID="btnLookUpItem"
                                                             class="btn btn-primary" data-toggle="modal"
-                                                            CausesValidation="false" onclick="btnLookUpItem_Click">
+                                                            CausesValidation="false">
                                                             <i class="icon-table"></i>
                                                         </asp:LinkButton>
                                                     </div>
@@ -219,7 +219,7 @@
                                 <cc1:XUILinkButton ID="btnSaveItemList" RoleCode="R80000010E" runat="server"
                                     CssClass="btn btn-primary" onclick="btnSaveItemList_Click"><i class="icon-save"></i>
                                     Save</cc1:XUILinkButton>
-                                <cc1:XUILinkButton ID="btnDeleteItemList" RoleCode="90000065E" runat="server"
+                                <cc1:XUILinkButton ID="btnDeleteItemList" RoleCode="R80000010E" runat="server"
                                     CssClass="btn btn-danger" onclick="btnDeleteItemList_Click"><i class="icon-trash"></i> Delete</cc1:XUILinkButton>
                             </div>
                         </div>
@@ -293,7 +293,7 @@
                                                                 CssClass="form-control"
                                                                 Text='<%# Bind("TOTAL_AMOUNT_TERMIN") %>' />
                                                             <asp:RegularExpressionValidator ID="revAmount"
-                                                                runat="server" ErrorMessage="Format Invalid!"
+                                                                runat="server" ErrorMessage="Format Invalid! Numeric Only!"
                                                                 ControlToValidate="txtTerminAmount"
                                                                 ValidationExpression="^[0-9.,]*$" Display="Dynamic"
                                                                 ForeColor="Red" />
