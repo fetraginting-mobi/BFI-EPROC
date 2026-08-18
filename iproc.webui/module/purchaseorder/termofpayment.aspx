@@ -220,7 +220,7 @@
                                     CssClass="btn btn-primary" onclick="btnSaveItemList_Click"><i class="icon-save"></i>
                                     Save</cc1:XUILinkButton>
                                 <cc1:XUILinkButton ID="btnDeleteItemList" RoleCode="90000065E" runat="server"
-                                    CssClass="btn btn-danger"><i class="icon-trash"></i> Delete</cc1:XUILinkButton>
+                                    CssClass="btn btn-danger" onclick="btnDeleteItemList_Click"><i class="icon-trash"></i> Delete</cc1:XUILinkButton>
                             </div>
                         </div>
                     </div>

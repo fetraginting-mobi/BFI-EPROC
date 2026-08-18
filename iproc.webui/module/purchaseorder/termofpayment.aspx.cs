@@ -14,6 +14,7 @@ using MPF23.Shared.Mapper;
 public partial class module_purchaseorder_termofpayment : BasePage
 {
     private static string TABLE_NAME = "TERM_OF_PAYMENT";
+    private static string TABLE_NAME_DETAIL = "TERM_OF_PAYMENT_DETAIL";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -556,6 +557,38 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 CheckBox chk = (CheckBox)e.Row.FindControl("chbChecked");
                 if (chk != null) chk.Enabled = false;
             }
+        }
+    }
+    protected void btnDeleteItemList_Click(object sender, EventArgs e)
+    {
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
+            if (chb.Checked)
+            {
+                DeleteDataItemList(gvwList.DataKeys[row.RowIndex][0].ToString());
+            }
+        }
+        LoadItemList();
+    }
+    private void DeleteDataItemList(string ID)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_id"] = ID;
+            _ht["p_po_barcode"] = Request.Params["codebarcode"];
+
+            _dal.Delete(TABLE_NAME_DETAIL, _ht);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
         }
     }
 }
