@@ -31,12 +31,14 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindBranchEmployeeAll1SEL(ddlTocc);
             Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
             Shared.BindUnitsItemOwnMutation(ddlOwner);
+            btnAddRequestDetail.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAMTT&parc_ir_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
             //(+)gustian 19102023 
-            if(EMPLOYEE_HO)
+            if (EMPLOYEE_HO)
             {
                 Shared.BindFaLocationAllMut(ddlFromLocationCode, txtBranch.Text);
             }
-            else {
+            else
+            {
                 Shared.BindFaLocationAllMut(ddlFromLocationCode, ddlBranch.SelectedValue);
             }
             ddlBranch.SelectedValue = Shared.CurrentEmployeeBranchCode;
@@ -51,7 +53,7 @@ public partial class module_fa_farequestmutationheader : BasePage
                 txtRequestDate.Enabled = false;
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
-                btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
+                btnPost.OnClientClick = "";
                 // btnPost.OnClientClick = "return confirm('Post selected data?');";
                 //btnReject.OnClientClick = "return confirm('Cancel selected data?');";
                 ddlBranch.Enabled = false;
@@ -75,7 +77,7 @@ public partial class module_fa_farequestmutationheader : BasePage
                     gvwList.Columns[1].Visible = false;
                     ddlBranch.Enabled = false;
                     ddlUnits.Enabled = false;
-                    btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
+                    btnPost.OnClientClick = "";
                     ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = false;
                     //btnPrint.Visible = true;
                     ddlFromLocationCode.Enabled = false;
@@ -121,7 +123,7 @@ public partial class module_fa_farequestmutationheader : BasePage
         Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY] = "../module/fa/farequestmutationheaderlist.aspx";
 
 
-        btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=APP0067&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID, lblAmount.ClientID, lblbranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
+        btnPost.Attributes.Remove("href");
         btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=APP0068&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblbranch.ClientID);
         //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericwithcomment.aspx?code=AP000008&parc_object_id={0}&nexturl={1}&spname={2}&status={3}');", lblNo.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert", "REJECT");
         LoadAfterInit();
@@ -160,10 +162,10 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindBranchEmployeeSort(ddlBranch);
             Shared.BindSubDepartment(ddlSubDepartment, ddlDepartment.SelectedValue);
             Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
-           
-          
-           
-           
+
+
+
+
         }
         catch (Exception ex)
         {
@@ -211,6 +213,59 @@ public partial class module_fa_farequestmutationheader : BasePage
     protected void btnCancel_Click(object sender, EventArgs e)
     {
         Response.Redirect("farequestmutationheaderlist.aspx");
+    }
+
+    protected void btnPost_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            ValidatePostData();
+
+            string approvalUrl = GetPostApprovalUrl();
+            string script = String.Format("fnShowApprovalWithCommentDialog('{0}');", EscapeJavaScript(approvalUrl));
+            ScriptManager.RegisterStartupScript(this, GetType(), "OpenFaRequestMutationPostApproval", script, true);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void ValidatePostData()
+    {
+        GeneralDAL dal = new GeneralDAL();
+        Hashtable ht = new Hashtable();
+
+        ht["p_code_barcode"] = lblCodeBarcode.Text;
+        Shared.ApplyDefaultProp(ht);
+
+        dal.ExecRawSP("xsp_fa_request_mutation_header_post_validate", ht);
+    }
+
+    private string GetPostApprovalUrl()
+    {
+        return String.Format(
+            "../../approval/genericapplication.aspx?code=APP0067&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}",
+            lblCodeBarcode.ClientID,
+            Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY],
+            "POST",
+            lblbranch.ClientID,
+            lblAmount.ClientID,
+            lblbranch.ClientID,
+            txtRemarks.ClientID,
+            lblCode.ClientID);
+    }
+
+    private string EscapeJavaScript(string value)
+    {
+        if (String.IsNullOrEmpty(value))
+            return String.Empty;
+
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("'", "\\'")
+            .Replace("\r", "\\r")
+            .Replace("\n", "\\n");
     }
 
     protected void ddlDivision_SelectedIndexChanged(object sender, EventArgs e)

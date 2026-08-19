@@ -29,7 +29,7 @@ public partial class module_fa_fasaleheader : BasePage
         if (!Page.IsPostBack)
         {
             Shared.BindFaLocationAll(ddlFromLocationCode, ddlBranch.SelectedValue);
-            
+
             Shared.BindBranchEmployee(ddlBranch);
             btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FASALE&parc_fa_sale_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
             Shared.BindSubBranch(ddlSubBranch, ddlBranch.SelectedValue);
@@ -136,7 +136,7 @@ public partial class module_fa_fasaleheader : BasePage
                 {
                     ddlBranch.Enabled = true;
                 }
-               
+
 
             }
         }
@@ -505,8 +505,8 @@ public partial class module_fa_fasaleheader : BasePage
         _dal = new GeneralDAL();
         _ht = new Hashtable();
 
-       // MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
-       // System.Diagnostics.Debugger.Break();
+        // MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
+        // System.Diagnostics.Debugger.Break();
         try
         {
             foreach (GridViewRow row in gvwList.Rows)
@@ -546,7 +546,7 @@ public partial class module_fa_fasaleheader : BasePage
         {
 
             TextBox txtSaleValue = (TextBox)e.Row.FindControl("txtSaleValue");
-           
+
             txtSaleValue.Text = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "SALE_VALUE"));
 
         }
