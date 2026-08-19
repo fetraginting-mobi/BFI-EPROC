@@ -11,17 +11,16 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
-
 using iProc.DataAccessLayer;
 
-public partial class module_inventory_inventorymutationuploadlog : BasePageList
+
+public partial class module_fa_farequestmutationuploadlog : BasePageList
 {
     protected void Page_Init(object sender, EventArgs e)
     {
-        PAGE_LIST = "INV_MUTATION_DETAIL_UPLOAD";
+        PAGE_LIST = "FA_MUTATION_DETAIL_UPLOAD";
         NEXT_PAGE = "";
     }
-
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
@@ -33,9 +32,17 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
             {
                 gvwList.Columns[4].Visible = false; // index kolom ERROR_MESSAGE
             }
+            else if (lblStatus.Text == "TRX")
+            {
+                lblTitle.Text = "FA Mutation Req No.";
+                gvwList.Columns[1].HeaderText = "FA Mutation Req No.";
+                gvwList.Columns[2].Visible = false;
+                gvwList.Columns[4].Visible = false;
+            }
 
         }
         LoadAfterInit();
+
     }
     private void BindData()
     {
@@ -44,34 +51,25 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
 
         try
         {
-            _dal = new GeneralDAL();
             _ht = new Hashtable();
 
             _ht["p_keywords"] = txtSearch.Text;
-
-            //convert string upload id menjadii GUID
             string p_upload_id = Request.Params["uploadid"];
-            //Response.Write("Nilai uploadIdStr: <b>" + p_upload_id + "</b><br/>");
-            //string guidPattern = @"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+            string status = Request.Params["status"];
 
-
-            //if (!string.IsNullOrEmpty(p_upload_id) && Regex.IsMatch(p_upload_id, guidPattern))
-            //{
-                _ht["p_upload_id"] = new Guid(p_upload_id);
-            //}
-            //else
-            //{
-            //    _ht["p_upload_id"] = DBNull.Value;
-            //}
-
-            _ht["p_file_name"] = Request.Params["filename"];
-            _ht["p_status"] = Request.Params["status"];
-
-            if (Request.Params["status"] == "TRX")
-                gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_upload_generated_trx_getrows", _ht);
+            if (status == "TRX")
+            {
+                gvwList.DataSource = GetGeneratedTrxUpload(new Guid(p_upload_id), Request.Params["filename"], txtSearch.Text);
+            }
             else
-                gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_detail_upload_getrows", _ht);
+            {
+                _dal = new GeneralDAL();
+                _ht["p_upload_id"] = new Guid(p_upload_id);
+                _ht["p_file_name"] = Request.Params["filename"];
+                _ht["p_status"] = status;
 
+                gvwList.DataSource = _dal.GetRows("", "xsp_fa_mutation_detail_upload_getrows", _ht);
+            }
             gvwList.DataBind();
         }
         catch (Exception ex)
@@ -118,5 +116,18 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
                 lbl.EnableViewState = false;
             }
         }
+    }
+
+
+    private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName, string keywords)
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        _ht["p_upload_id"] = uploadId;
+        _ht["p_file_name"] = fileName;
+        _ht["p_keywords"] = keywords == null ? "" : keywords.Trim();
+
+        return _dal.GetRows("", "xsp_fa_mutation_upload_generated_trx_getrows", _ht);
     }
 }

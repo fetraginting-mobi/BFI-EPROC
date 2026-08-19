@@ -39,6 +39,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
 
             BindData();
+            BindUploadData();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
         }
         LoadAfterInit();
@@ -58,6 +59,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_process"] = ddlProcess.SelectedValue;
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
             _htupload["p_branch_code"] = "KPO";
@@ -138,6 +140,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         BindData();
     }
+    protected void ddlProcess_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
     # region Upload bulk mutation
     protected void btnUploadRowFormat_Click(object sender, EventArgs e)
     {
@@ -196,7 +202,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             }
             BulkInsertToStaging(dt);
             ExecuteBulkProcess(uploadId, fileName);
-            BindUploadData(uploadId, fileName); ;
+            BindUploadData();
             BindData();
 
             string script = @"
@@ -416,6 +422,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     protected void btnSearchUpload_Click(object sender, EventArgs e)
     {
         BindData();
+        BindUploadData();
     }
     protected void gvwListUpload_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
@@ -470,31 +477,66 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             ht
         );
     }
-    private void BindUploadData(Guid uploadId, String fileName)
+    private void BindUploadData()
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        _ht["p_upload_id"] = "";
+
+        DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
+        AddTotalTrxUpload(dtUploadLog);
+
+        gvwUploadLog.DataSource = dtUploadLog;
+        gvwUploadLog.DataBind();
+
+    }
+    private void AddTotalTrxUpload(DataTable dtUploadLog)
+    {
+        if (!dtUploadLog.Columns.Contains("total_trx_upload"))
+            dtUploadLog.Columns.Add("total_trx_upload", typeof(int));
+
+        foreach (DataRow row in dtUploadLog.Rows)
+        {
+            Guid uploadId;
+            try
+            {
+                uploadId = new Guid(row["upload_id"].ToString());
+            }
+            catch
+            {
+                row["total_trx_upload"] = 0;
+                continue;
+            }
+
+            row["total_trx_upload"] = GetGeneratedTrxUpload(uploadId, row["file_name"].ToString()).Rows.Count;
+        }
+    }
+    private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName)
     {
         GeneralDAL _dal = new GeneralDAL();
         Hashtable _ht = new Hashtable();
 
         _ht["p_upload_id"] = uploadId;
         _ht["p_file_name"] = fileName;
+        _ht["p_keywords"] = "";
 
-        gvwUploadLog.DataSource = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
-        gvwUploadLog.DataBind();
-
+        return _dal.GetRows("", "xsp_inv_mutation_upload_generated_trx_getrows", _ht);
     }
     protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwUploadLog.PageIndex = e.NewPageIndex;
+        BindUploadData();
     }
     protected void gvwUploadLog_RowCommand(object sender, GridViewCommandEventArgs e)
     {
-        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR")
+        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR" || e.CommandName == "VIEW_TRX")
         {
             string[] param = e.CommandArgument.ToString().Split('|');
 
             string uploadid = param[0];
             string filename = param[1];
-            string status = e.CommandName == "VIEW_VALID" ? "VALID" : "ERROR";
+            string status = e.CommandName == "VIEW_VALID" ? "VALID" : e.CommandName == "VIEW_ERROR" ? "ERROR" : "TRX";
 
             string url = string.Format(
                     "../inventory/inventorymutationuploadlog.aspx?uploadid={0}&filename={1}&status={2}",
