@@ -1,3 +1,6 @@
+insert into MASTER_LOOKUP
+	select 'FGAMV','LOOKUP GROUPING ASSET FOR MOVEMENT','xsp_grouping_asset_movement_getrows_for_lookup',getdate(),'1000000001','127.0.0.1',getdate(),'1000000001','127.0.0.1'
+
 IF NOT EXISTS (
     SELECT 1 
     FROM dbo.MASTER_LOOKUP_COLUMN 

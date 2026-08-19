@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [dbo].[xsp_fa_sale_header_post]
+ALTER PROCEDURE [dbo].[xsp_fa_sale_header_post]
 (
     @p_code_barcode             nvarchar(14),
     @p_mod_by                   nvarchar(15),
