@@ -552,9 +552,6 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         GeneralDAL _dal = new GeneralDAL();
         Hashtable _ht = new Hashtable();
 
-        _ht["p_upload_id"] = "";
-        // _ht["p_file_name"] = fileName;
-
         DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
         AddTotalTrxUpload(dtUploadLog);
 

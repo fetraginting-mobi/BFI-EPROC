@@ -482,8 +482,6 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         GeneralDAL _dal = new GeneralDAL();
         Hashtable _ht = new Hashtable();
 
-        _ht["p_upload_id"] = "";
-
         DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
         AddTotalTrxUpload(dtUploadLog);
 
