@@ -132,12 +132,12 @@ body {
   background-color: #fdb45c;
 }
 h1 {
-  font-family: "proxima-nova";
+  font-family: RobotoLocal;
   font-weight: 600;
   font-size: 32px;
 }
 h2 {
-  font-family: "proxima-nova";
+  font-family: RobotoLocal;
   font-weight: 600;
   font-size: 22px;
   line-height: 40px;
@@ -166,7 +166,7 @@ h2 {
   top: 0;
   z-index: 0;
   padding: 40px 20px;
-  font-family: "proxima-nova";
+  font-family: RobotoLocal;
   background-color: #ebebeb;
 }
 #wrapper nav dl {
@@ -222,7 +222,7 @@ article h2 {
 }
 p,
 ul li {
-  font-family: "proxima-nova";
+  font-family: RobotoLocal;
   line-height: 20px;
   font-size: 16px;
   margin-top: 10px;
@@ -254,7 +254,7 @@ pre:before {
   font-size: 12px;
   top: -30px;
   left: 0;
-  font-family: "proxima-nova";
+  font-family: RobotoLocal;
   font-weight: 400;
   display: inline-block;
   padding: 2px 5px;

@@ -65,7 +65,7 @@ class Morris.Grid extends Morris.EventEmitter
     gridStrokeWidth: 0.5
     gridTextColor: '#888'
     gridTextSize: 12
-    gridTextFamily: 'sans-serif'
+    gridTextFamily: RobotoLocal
     gridTextWeight: 'normal'
     hideHover: false
     yLabelFormat: null

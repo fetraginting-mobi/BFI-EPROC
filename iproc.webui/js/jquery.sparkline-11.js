@@ -354,7 +354,7 @@
             'filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);' +
             '-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";' +
             'color: white;' +
-            'font: 10px arial, san serif;' +
+            'font: 10px RobotoLocal, OpenSansLocal;' +
             'text-align: left;' +
             'white-space: nowrap;' +
             'padding: 5px;' +
@@ -362,7 +362,7 @@
             '}' +
             '.jqsfield { ' +
             'color: white;' +
-            'font: 10px arial, san serif;' +
+            'font: 10px RobotoLocal, OpenSansLocal;' +
             'text-align: left;' +
             '}';
 

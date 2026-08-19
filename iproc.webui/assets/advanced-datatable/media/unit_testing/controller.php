@@ -13,7 +13,7 @@
 		
 		<style type="text/css" media="screen">
 			#controller {
-				font: 12px/1.45em "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+				font: 12px/1.45em RobotoLocal,OpenSansLocal;
 				margin: 0;
 				padding: 0 0 0 0.5em;
 				color: #333;

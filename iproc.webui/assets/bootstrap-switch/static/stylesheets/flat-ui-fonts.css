@@ -1,6 +1,6 @@
 /*@import url("https://fonts.googleapis.com/css?family=Lato:400,700,700italic,900,400italic,300");*/
 @font-face {
-  font-family: 'Flat-UI-Icons';
+  font-family: RobotoLocal;
   src: url('../fonts/Flat-UI-Icons.eot');
   src: url('../fonts/Flat-UI-Icons.eot?#iefix') format('embedded-opentype'), url('../fonts/Flat-UI-Icons.woff') format('woff'), url('../fonts/Flat-UI-Icons.ttf') format('truetype'), url('../fonts/Flat-UI-Icons.svg#Flat-UI-Icons') format('svg');
   font-weight: normal;
@@ -8,7 +8,7 @@
 }
 /* Use the following CSS code if you want to use data attributes for inserting your icons */
 [data-icon]:before {
-  font-family: 'Flat-UI-Icons';
+  font-family: RobotoLocal;
   content: attr(data-icon);
   speak: none;
   font-weight: normal;
@@ -53,7 +53,7 @@ you can use the generic selector below, but it's slower:
 .fui-play,
 .fui-check-inverted-2 {
   display: inline-block;
-  font-family: 'Flat-UI-Icons';
+  font-family: RobotoLocal;
   speak: none;
   font-style: normal;
   font-weight: normal;
