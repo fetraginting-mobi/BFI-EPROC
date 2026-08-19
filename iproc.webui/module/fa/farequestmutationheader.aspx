@@ -31,15 +31,6 @@
                 </header>
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-sm-4">Date *</label>
-                                <div class="col-sm-4">
-                                    <cc1:XUITextBox ID="txtRequestDate" runat="server" CssClass="form-control default-date-picker" placeholder="Request Date" DBColumnName="REQUEST_DATE" SPParameterName="p_request_date" MaxLength="10" DataType="DateTime" BindType="Both" Format="dd/MM/yyyy"></cc1:XUITextBox>
-                                    <asp:RequiredFieldValidator ID="rfvRequestDate" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtRequestDate" Display="Dynamic"></asp:RequiredFieldValidator>
-                                </div>
-                                    <asp:RegularExpressionValidator ID="revDisbursementDate" runat="server" ErrorMessage="Format Date Invalid! Format = dd/MM/yyyy" ControlToValidate="txtRequestDate" ValidationExpression="(^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$)" Display="Dynamic"></asp:RegularExpressionValidator>
-                            </div>                            
                         <div class="col-sm-12">
                             <cc1:XUILinkButton ID="btnSave" RoleCode="R90000080E" runat="server"
                                 CssClass="btn btn-primary" OnClick="btnSave_Click"><i class="icon-save"></i> Save
