@@ -95,4 +95,6 @@ public class SessionKey
     {
         get { return "SessionExtUserProfile"; }
     }
+    public const string POST_MUTATION_RESULTS = "POST_MUTATION_RESULTS";
+    public const string POST_MUTATION_LIST = "POST_MUTATION_LIST";
 }
