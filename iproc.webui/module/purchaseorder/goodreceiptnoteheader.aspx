@@ -24,7 +24,7 @@
                             <cc1:XUILinkButton ID="btnReject" RoleCode="R50000080O" runat="server"
                                 CssClass="btn btn-danger" CausesValidation="false"><i class="icon-remove"></i> Cancel
                             </cc1:XUILinkButton>
-                            <cc1:XUILinkButton ID="btnCancelGRN" RoleCode="" runat="server" CssClass="btn btn-danger"
+                            <cc1:XUILinkButton ID="btnCancelGRN" RoleCode="R50000080O" runat="server" CssClass="btn btn-danger"
                                 OnClick="btnCancelGRN_Click" CausesValidation="false"><i class="icon-remove"></i> Cancel
                                 GRN</cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnPrint" RoleCode="R50000080P" runat="server"
