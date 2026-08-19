@@ -28,6 +28,7 @@ public partial class module_purchaseorder_purchaserequestheaderlist : BasePageLi
             //Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "PR");
             txtempcode.Text = Shared.CurrentUID;
             Shared.BindBranchEmployeeAll(ddlBranch);
+            Shared.BindOwnerAll(ddlOwner);
             //(+) Ari 11-07-2022 ket : enhancement 2022
             if (string.IsNullOrEmpty(txtToDate.Text))
             {
@@ -58,6 +59,7 @@ public partial class module_purchaseorder_purchaserequestheaderlist : BasePageLi
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_owner"] = ddlOwner.SelectedValue;
             _ht["p_payment_by"] = ddlPaymentBy.SelectedValue;
             _ht["p_emp_code"] = txtempcode.Text;
             //(+) Ari 11-07-2022 ket : enhancement 2022
@@ -137,6 +139,10 @@ public partial class module_purchaseorder_purchaserequestheaderlist : BasePageLi
         BindData();
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
+    protected void ddlOwner_SelectedIndexChanged(object sender, EventArgs e)
     {
         BindData();
     }

@@ -37,6 +37,8 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
             Shared.BindGeneralSubCodeByTransflagCode(ddlStatus, "PO");
             Shared.BindBranchEmployeeSort(ddlBranch);
             Shared.BindBranchEmployeeSort(ddlBranchPO);
+            Shared.BindOwnerAll(ddlOwner);
+            Shared.BindOwnerAll(ddlOwnerPO);
             //Shared.BindCurrencyCode(ddlCurrencyShared);
 
             //(+) Ari 11-07-2022 ket : enhancement 2022
@@ -85,6 +87,7 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
             _ht["p_from_date_po"] = Shared.ToStartDateTime(txtFromDate.Text);
             _ht["p_to_date_po"] = Shared.ToStartDateTime(txtToDate.Text);
             //_ht["p_emp_code"] = Shared.CurrentUID;
+            _ht["p_owner"] = ddlOwner.SelectedValue;
 
 
             Shared.ApplyDefaultProp(_ht);
@@ -192,6 +195,7 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
             _ht["p_from_date"] = Shared.ToStartDateTime(txtFromDatePO.Text);
             _ht["p_to_date"] = Shared.ToStartDateTime(txtToDatePO.Text);
             //_ht["p_emp_code"] = Shared.CurrentUID;
+            _ht["p_owner_po"] = ddlOwnerPO.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -492,6 +496,12 @@ public partial class module_purchaseorder_purchaseorderheaderlist : BasePageList
     {
         BindDataGenerate();
     }
-
-   
+    protected void ddlOwner_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDataManual();
+    }
+    protected void ddlOwnerPO_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDataGenerate();
+    }
 }

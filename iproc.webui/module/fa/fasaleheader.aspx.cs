@@ -31,7 +31,7 @@ public partial class module_fa_fasaleheader : BasePage
             Shared.BindFaLocationAll(ddlFromLocationCode, ddlBranch.SelectedValue);
             
             Shared.BindBranchEmployee(ddlBranch);
-            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=FASALE&parc_fa_sale_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
+            btnAdd.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FASALE&parc_fa_sale_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
             Shared.BindSubBranch(ddlSubBranch, ddlBranch.SelectedValue);
             Shared.BindUnitsItemOwnSale(ddlOwner);
 
@@ -143,7 +143,7 @@ public partial class module_fa_fasaleheader : BasePage
         Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY] = "../module/fa/fasaleheaderlist.aspx";
 
         //System.Diagnostics.Debugger.Break();
-        btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000019&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "POST", lblbranch.ClientID, lblAmount.ClientID, lblbranch.ClientID, txtRemarks.ClientID, lblCode.ClientID);
+        btnPost.Attributes.Remove("href");
         //btnPost.Attributes["href"] = String.Format("javascript:fnShowApprovalDialog('../../approval/generic.aspx?code=AP000019&parc_object_id={0}&parc_object_branch={1}');", lblCodeBarcode.ClientID, lblbranch.ClientID);
         btnApprovalTiered.Attributes["href"] = String.Format("javascript:fnShowApprovalTieredDialog('../../approval/generictiered.aspx?parc_id_ar_target={0}&nexturl={1}&spname={2}');", lblApprovalRequestTargetID.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "xsp_application_approve_comment_insert");
         //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalDialog('../../approval/generic.aspx?code=AP000020&parc_object_id={0}&parc_object_branch={1}');", lblCodeBarcode.ClientID, lblbranch.ClientID);
@@ -342,16 +342,64 @@ public partial class module_fa_fasaleheader : BasePage
     {
         Response.Redirect("fasaleheaderlist.aspx");
     }
-    //protected void btnPost_Click(object sender, EventArgs e)
-    //{
-    //    PostData();
-    //}
+    protected void btnPost_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            ValidatePostData();
+
+            string approvalUrl = GetPostApprovalUrl();
+            string script = String.Format("fnShowApprovalWithCommentDialog('{0}');", EscapeJavaScript(approvalUrl));
+            ScriptManager.RegisterStartupScript(this, GetType(), "OpenFaSalePostApproval", script, true);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
     //protected void btnReject_Click(object sender, EventArgs e)
     //{
     //    CancelData();
     //}
 
     #region fa sale detail
+
+    private void ValidatePostData()
+    {
+        GeneralDAL dal = new GeneralDAL();
+        Hashtable ht = new Hashtable();
+
+        ht["p_code_barcode"] = lblCodeBarcode.Text;
+        Shared.ApplyDefaultProp(ht);
+
+        dal.ExecRawSP("xsp_fa_sale_header_post_validate", ht);
+    }
+
+    private string GetPostApprovalUrl()
+    {
+        return String.Format(
+            "../../approval/genericapplication.aspx?code=AP000019&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}",
+            lblCodeBarcode.ClientID,
+            Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY],
+            "POST",
+            lblbranch.ClientID,
+            lblAmount.ClientID,
+            lblbranch.ClientID,
+            txtRemarks.ClientID,
+            lblCode.ClientID);
+    }
+
+    private string EscapeJavaScript(string value)
+    {
+        if (String.IsNullOrEmpty(value))
+            return String.Empty;
+
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("'", "\\'")
+            .Replace("\r", "\\r")
+            .Replace("\n", "\\n");
+    }
 
     private void BindData()
     {
@@ -412,8 +460,8 @@ public partial class module_fa_fasaleheader : BasePage
     {
         foreach (GridViewRow row in gvwList.Rows)
         {
-            CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
-            if (chb.Checked)
+            CheckBox chb = row.FindControl("chbChecked") as CheckBox;
+            if (chb != null && chb.Checked)
             {
                 DeleteData(gvwList.DataKeys[row.RowIndex][0].ToString());
             }
@@ -463,12 +511,16 @@ public partial class module_fa_fasaleheader : BasePage
         {
             foreach (GridViewRow row in gvwList.Rows)
             {
-                CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
-                if (chb.Checked)
+                CheckBox chb = row.FindControl("chbChecked") as CheckBox;
+                if (chb != null && chb.Checked)
                 {
+                    TextBox txtSaleValue = row.FindControl("txtSaleValue") as TextBox;
+                    if (txtSaleValue == null)
+                        continue;
 
-                    string SaleValue = ((TextBox)row.Cells[6].Controls[1]).Text;
+                    string SaleValue = txtSaleValue.Text;
 
+                    _ht.Clear();
                     _ht["p_id"] = gvwList.DataKeys[row.RowIndex][0].ToString();
                     _ht["p_sale_value"] = SaleValue;
 
@@ -511,8 +563,8 @@ public partial class module_fa_fasaleheader : BasePage
         int _RowCount = 0;
         foreach (GridViewRow row in gvwList.Rows)
         {
-            CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
-            if (chb.Checked)
+            CheckBox chb = row.FindControl("chbChecked") as CheckBox;
+            if (chb != null && chb.Checked)
             {
                 _RowCount += 1;
             }

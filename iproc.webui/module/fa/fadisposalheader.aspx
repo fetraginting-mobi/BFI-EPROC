@@ -14,7 +14,7 @@
                 <div class="col-sm-12">
                     <cc1:XUILinkButton ID="btnSave" RoleCode="R90000090E" runat="server" CssClass="btn btn-primary" OnClick="btnSave_Click"><i class="icon-save"></i>  Save</cc1:XUILinkButton>
                     <cc1:XUILinkButton RoleCode="R90000090O" ID="btnApprovalTiered" runat="server" CssClass="btn btn-success" Visible="false"><i class="icon-ok"></i>  Approval</cc1:XUILinkButton>
-                    <cc1:XUILinkButton ID="btnPost" RoleCode="R90000090O" runat="server" CssClass="btn btn-success" ><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
+                    <cc1:XUILinkButton ID="btnPost" RoleCode="R90000090O" runat="server" CssClass="btn btn-success" OnClick="btnPost_Click" ><i class="icon-envelope"></i>  Post</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnReject" RoleCode="R90000090O" runat="server" CssClass="btn btn-danger"  CausesValidation="false"><i class="icon-remove"></i>  Cancel</cc1:XUILinkButton>
                     <cc1:XUILinkButton ID="btnCancel" RoleCode="" runat="server" CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i class="icon-remove"></i>  Cancel</cc1:XUILinkButton>
                 </div>
