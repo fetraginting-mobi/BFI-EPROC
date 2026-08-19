@@ -8,6 +8,7 @@ as
 	) 
 	SELECT 
 	  No AS 'No', 
+	  null as 'From Branch*',
 	  NULL AS 'From Location*', 
 	  NULL AS 'To Branch*', 
 	  NULL AS 'To Location*', 

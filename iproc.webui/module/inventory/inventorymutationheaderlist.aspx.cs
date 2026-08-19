@@ -221,7 +221,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private static readonly string[] INVENTORY_MUTATION_TEMPLATE_HEADERS =
     {
         "No",
-        "From Branch",
+        "From Branch*",
         "From Location*",
         "To Branch*",
         "To Location*",
