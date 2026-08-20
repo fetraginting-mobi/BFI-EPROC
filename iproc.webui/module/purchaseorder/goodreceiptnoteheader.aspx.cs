@@ -47,6 +47,8 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
             Shared.BindBranchEmployee(ddlBranch);
             btnPrint.Visible = false;
             btnPrintBAST.Visible = false;
+            btnCancelGRN.Visible = false;
+            btnCancelGRN.Enabled = false;
             txtBranch.Text = Shared.CurrentEmployeeBranchCode;
 
             if (Request.Params["action"].Equals("edit"))
@@ -81,6 +83,8 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                     btnPrint.Visible = true;
                     btnAddUploadDoc.Visible = false;
                     btnSaveDocumentDetail.Visible = false;
+                    btnCancelGRN.Visible = lblTransFlagCode.Text == "POST";
+                    btnCancelGRN.Enabled = lblTransFlagCode.Text == "POST";
 
                     if (lblOrderType.Text == "SPK")
                     {
@@ -105,6 +109,8 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                     btnPrintBAST.Visible = false;
                     btnAddUploadDoc.Visible = false;
                     btnSaveDocumentDetail.Visible = false;
+                    btnCancelGRN.Visible = false;
+                    btnCancelGRN.Enabled = false;
                 }
                 else if (lblTransFlagCode.Text == "ON-PROGRESS")
                 {
@@ -119,6 +125,8 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                     btnPrintBAST.Visible = false;
                     btnAddUploadDoc.Visible = false;
                     btnSaveDocumentDetail.Visible = false;
+                    btnCancelGRN.Visible = false;
+                    btnCancelGRN.Enabled = false;
 
                 }
 
@@ -748,59 +756,54 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
 
         try
         {
+            if (!lblTransFlagCode.Text.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception("Cancel GRN hanya dapat dilakukan untuk status POST.");
+            }
+
             _dal = new GeneralDAL();
             _ht = new Hashtable();
 
             MPF23.Shared.Mapper.UIToDB.Map(this.Controls, _ht);
             Shared.ApplyDefaultProp(_ht);
 
-            _ht.Add("p_code", lblPOCode.Text.Trim()); 
-            //_ht.Add("p_grn_code", lblCode.Text.Trim()); 
             DataTable dt = _dal.GetRows("grn", _ht);
             if (dt == null || dt.Rows.Count == 0)
             {
                 throw new Exception("Data tidak ditemukan");
             }
-             foreach (DataRow dr in dt.Rows)
-             {
-                 string poCode = Convert.ToString(dr["PO_CODE"]);
-                 string poQty = Convert.ToString(dr["PO_QTY"]);
-                 string poRemainQty = Convert.ToString(dr["PO_REMAIN_QTY"]);
-                 string grnCode = Convert.ToString(dr["GRN_CODE"]);
-                 string grnQty = Convert.ToString(dr["GRN_PO_QTY"]);
-                 string grnReceive = Convert.ToString(dr["GRN_RECEIVE"]);
-                 string grnRemainQty = Convert.ToString(dr["GRN_REMAIN_QTY"]);
-                 string itemCode = Convert.ToString(dr["POD_ITEM_CODE"]);
-                 string invCode = Convert.ToString(dr["INVOICE_REGIS_CODE"]);
-                 string invStatus = Convert.ToString(dr["INVOICE_REGIS_STATUS"]);
-                 string payemtnReqCode = Convert.ToString(dr["PAYMENT_REQ_CODE"]);
-                 string paymentStatus = Convert.ToString(dr["PAYMENT_REQ_STATUS"]);
-                 string paymentStatusBayar = Convert.ToString(dr["PAYMENT_STATUS_BAYAR"]);
+            foreach (DataRow dr in dt.Rows)
+            {
+                string invCode = Convert.ToString(dr["INVOICE_REGIS_CODE"]);
+                string invStatus = Convert.ToString(dr["INVOICE_REGIS_STATUS"]);
+                string paymentStatusBayar = Convert.ToString(dr["PAYMENT_STATUS_BAYAR"]);
 
-                 if (paymentStatusBayar == "1")
-                 {
-                     throw new Exception(
-                         "GRN tidak dapat dibatalkan, karena sudah dilakukan pembayaran dengan nomor invoice "+ invCode);
-                 }
-                 if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("POST", StringComparison.OrdinalIgnoreCase))
-                 {
-                     throw new Exception(
-                         "GRN tidak dapat dibatalkan, Invoice telah diposting dengan nomor invoice " + invCode);
-                 }
-                 if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("NEW", StringComparison.OrdinalIgnoreCase))
-                 {
-                     throw new Exception(
-                         "Terdapat invoice dengan nomor " + invCode +". Silahkan melakukan cancel invoice terlebih dahulu.");
-                 }
-                 if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("ONPROGRESS", StringComparison.OrdinalIgnoreCase))
-                 {
-                     throw new Exception(
-                         "Terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
-                 }
-                 //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000024&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblBranch.ClientID);
-                 _dal.Cancel("good_receipt_note_header", _ht);
-                 Shared.ShowSuccessGritter(this, string.Format("goodreceiptnoteheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));  
-             }
+                if (paymentStatusBayar == "1")
+                {
+                    throw new Exception(
+                        "GRN tidak dapat dibatalkan, karena sudah dilakukan pembayaran dengan nomor invoice " + invCode);
+                }
+                if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("POST", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception(
+                        "GRN tidak dapat dibatalkan, Invoice telah diposting dengan nomor invoice " + invCode);
+                }
+                if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("NEW", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception(
+                        "Terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
+                }
+                if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("ONPROGRESS", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception(
+                        "Terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
+                }
+            }
+
+            //btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=AP000024&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblBranch.ClientID);
+            _dal.Cancel("grn", _ht);
+            Response.Redirect(string.Format("goodreceiptnoteheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text), false);
+            Context.ApplicationInstance.CompleteRequest();
         }
         catch (Exception ex)
         {

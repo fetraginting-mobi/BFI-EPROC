@@ -1,6 +1,7 @@
 CREATE PROCEDURE [dbo].[xsp_grn_getrows]
 (
-	@p_code			nvarchar(50)
+	@p_purchase_order_code	nvarchar(50)
+   ,@p_code_barcode			nvarchar(28)
 )
 AS
 BEGIN
@@ -60,7 +61,7 @@ LEFT JOIN AP_PAYMENT_REQUEST_header aprh
 LEFT JOIN AP_PAYMENT_REQUEST_DETAIL aprd
     ON aprd.PAYMENT_CODE = aprh.CODE_BARCODE
    AND aprd.INVOICE_CODE = airh.CODE_BARCODE
-WHERE poh.code = @p_code;
+WHERE poh.CODE_BARCODE = @p_purchase_order_code and grnh.CODE_BARCODE=@p_code_barcode;
 
 end
 GO
