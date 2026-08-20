@@ -1,4 +1,4 @@
-CREATE procedure [dbo].[xsp_inventory_post_mutation_upload_history_getrows]
+ALTER procedure [dbo].[xsp_inventory_post_mutation_upload_history_getrows]
 (
 	@p_im_code			nvarchar(56) 
 
@@ -18,5 +18,3 @@ where code_barcode = @p_im_code
 order by apl.cre_date, apl.barcode desc
 end
 GO
-
-

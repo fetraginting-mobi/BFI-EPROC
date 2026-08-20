@@ -7,6 +7,12 @@ if not exists(select 1 from master_role_sec where code = 'R90000160' and NAME = 
 begin 
 	insert into master_role_sec
 		select 'R90000160','FA ITEM GROUP','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		union 
+		select 'R90000160C','FA ITEM GROUP CREATE','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		union
+		select 'R90000160D','FA ITEM GROUP DELETE','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		union
+		select 'R90000160E','FA ITEM GROUP FA ITEM GROUP EDIT','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
 end 
 ELSE 
 BEGIN 
@@ -22,3 +28,10 @@ ELSE
 BEGIN 
 SELECT 'DATA master_menu ALREADY EXIST'
 END
+
+insert into master_group_role_sec
+select 'SPR','R90000160C','PR',getdate(),'048115','127.0.0.1',getdate(), '048115','127.0.0.1'
+union 
+select 'SPR','R90000160D','PR',getdate(),'048115','127.0.0.1',getdate(), '048115','127.0.0.1'
+union 
+select 'SPR','R90000160E','PR',getdate(),'048115','127.0.0.1',getdate(), '048115','127.0.0.1'

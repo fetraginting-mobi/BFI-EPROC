@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[xsp_inventory_list_item_getrows]
+ALTER PROCEDURE [dbo].[xsp_inventory_list_item_getrows]
 as
 	begin 
 	WITH cte AS (
