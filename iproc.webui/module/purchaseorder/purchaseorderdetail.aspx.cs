@@ -14,6 +14,8 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
 {
 
     private static string TABLE_NAME = "PURCHASE_ORDER_DETAIL";
+    private static string TABLE_NAME_HEADER = "PURCHASE_ORDER_HEADER";
+    private static string TABLE_NAME_DETAIL_2 = "TERM_OF_PAYMENT";
     private static string GET_MULTIPLE_BRANCH = "GET_IS_AGAS"; // (+) Ari 04-07-2022 ket : enhancement 2022
 
     protected void Page_Load(object sender, EventArgs e)
@@ -514,7 +516,16 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
                 lblID.Text = iNextID.ToString();
             }
             else
+            {
+                if (IsPurchaseOrderTermin(_dal) && IsTaxTypeChanged(_dal) && IsTermOfPaymentExist(_dal))
+                {
+                    Shared.ShowValidationError(this, "Tax tidak dapat diubah karena data Term of Payment sudah ada. Silahkan hapus data pada tab termin terlebih dahulu.");
+                    LoadData();
+                    return;
+                }
+
                 _dal.Update(TABLE_NAME, _ht);
+            }
 
             Shared.ShowSuccessGritter(this, string.Format("purchaseorderdetail.aspx?action=edit&id={0}&codebarcode={1}&currency_code={2}&currency_desc={3}&flagrent={4}", lblID.Text, lblBarcode.Text , lblCurrencyUI.Text , lblCurrency.Text, Request.Params["flagrent"]));
         }
@@ -522,6 +533,42 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
         {
             Shared.ShowErrorDialog(this, ex);
         }
+    }
+
+    private bool IsPurchaseOrderTermin(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_code_barcode"] = Request.Params["codebarcode"];
+        ht["p_user_id"] = Shared.CurrentUID;
+
+        DataRow dr = dal.GetRow(TABLE_NAME_HEADER, ht);
+        if (dr == null || !dr.Table.Columns.Contains("IS_TERMIN"))
+            return false;
+
+        string isTermin = dr["IS_TERMIN"].ToString();
+        return isTermin == "1" || isTermin.ToLower() == "true";
+    }
+
+    private bool IsTaxTypeChanged(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_id"] = Request.Params["id"];
+
+        DataRow dr = dal.GetRow(TABLE_NAME, ht);
+        if (dr == null || !dr.Table.Columns.Contains("TAX_CODE"))
+            return false;
+
+        return dr["TAX_CODE"].ToString() != ddlTaxType.SelectedValue;
+    }
+
+    private bool IsTermOfPaymentExist(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_keywords"] = string.Empty;
+        ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+        DataTable dt = dal.GetRows(TABLE_NAME_DETAIL_2, ht);
+        return dt != null && dt.Rows.Count > 0;
     }
 
     protected void btnSave_Click(object sender, EventArgs e)
