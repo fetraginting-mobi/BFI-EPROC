@@ -31,6 +31,7 @@ BEGIN
             @ppn_pct DECIMAL(9, 6),
             @pph_pct DECIMAL(9, 6);
 
+    -- 1. AMBIL DATA HEADER & SCHEME PAJAK DI AWAL (WAJIB UNTUK KALKULASI)
     SELECT
         @is_termin = is_termin,
         @currency_code = CURRENCY_CODE,
@@ -48,6 +49,8 @@ BEGIN
     FROM master_tax_scheme
     WHERE tax_code = @tax_code;
 
+    -- 2. HITUNG NILAI PERSENTASE & PAJAK (Agar tidak NULL saat Update/Insert)
+    -- Hitung Total PO (Netto + PPN - PPH)
     SET @total_amount = ISNULL(@total_amount, 0) + ISNULL(@ppn_amt_awal, 0) - ISNULL(@pph_amt_awal, 0);
 
     IF ISNULL(@p_percentage, 0) = 0 AND ISNULL(@total_amount, 0) <> 0
@@ -84,6 +87,7 @@ BEGIN
         RETURN;
     END;
 
+    -- 4. VALIDASI TERMIN 1 TIDAK BOLEH 100% (Mengecek @p_percentage hasil kalkulasi di atas)
     IF (@p_trx_code IN ('TM1', 'tm1') AND @p_percentage >= 100)
     BEGIN
         RAISERROR('Termin pertama tidak dapat langsung diisi 100%%. Silakan bagi persentase ke termin berikutnya.', 16, 1);
@@ -97,8 +101,10 @@ BEGIN
     BEGIN
         IF (@p_termin_type = 'AMT')
         BEGIN
+            -- UPDATE: Pastikan Percentage, PPN, dan PPH ikut di-update
             UPDATE dbo.term_of_payment
             SET
+                percentage = @p_percentage, -- Perbaikan: @p_percentage tidak lagi NULL
                 amount = @p_amount,
                 ppn_amount = @ppn_amt,
                 pph_amount = @pph_amt,
@@ -122,6 +128,7 @@ BEGIN
         END
     END;
 
+    -- 6. INSERT SECTION (UNTUK DATA BARU)
     INSERT INTO dbo.term_of_payment (
         code_barcode, trx_code, percentage, amount, cre_date, cre_by, 
         cre_ip_address, mod_date, mod_by, mod_ip_address, remarks, 
@@ -136,6 +143,7 @@ BEGIN
 
 SYNC_DATA_LABEL:
     
+    -- Re-Calculate All Rows for this PO (Memastikan proporsi pajak konsisten)
     DECLARE @temp_id INT, @temp_amt DECIMAL(18, 2);
     DECLARE c_temp CURSOR FOR SELECT id, amount FROM dbo.term_of_payment WHERE code_barcode = @p_code_barcode;
     OPEN c_temp;
@@ -150,6 +158,7 @@ SYNC_DATA_LABEL:
     END;
     CLOSE c_temp; DEALLOCATE c_temp;
 
+    -- 8. ROUNDING ADJUSTMENT (PEMBULATAN PADA BARIS AKTIF)
     DECLARE @curr_ppn_total DECIMAL(18, 2), @curr_pph_total DECIMAL(18, 2);
     SELECT @curr_ppn_total = ISNULL(SUM(ppn_amount), 0), @curr_pph_total = ISNULL(SUM(pph_amount), 0)
     FROM dbo.term_of_payment WHERE code_barcode = @p_code_barcode;
@@ -175,6 +184,7 @@ SYNC_DATA_LABEL:
         RETURN;
     END;
 
+    -- 9. VALIDASI AKHIR PERSENTASE TOTAL
     SELECT @total_percentage = ISNULL(SUM(percentage), 0) FROM dbo.term_of_payment WHERE code_barcode = @p_code_barcode;
 
     IF (@total_percentage > 100.00001)
@@ -183,6 +193,3 @@ SYNC_DATA_LABEL:
         RETURN;
     END;
 END;
-GO
-
-

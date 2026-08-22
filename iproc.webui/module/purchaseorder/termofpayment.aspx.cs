@@ -309,7 +309,30 @@ public partial class module_purchaseorder_termofpayment : BasePage
         }
         catch (Exception ex)
         {
+            //CancelAmountTerminDetail();
             Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void CancelAmountTerminDetail()
+    {
+        string action = Request.Params["action"] != null ? Request.Params["action"].ToLower() : "";
+        if (action != "add" || !IsAmountTermin() || string.IsNullOrEmpty(txtCodeBarcode.Text) || ddlTRX.SelectedValue == "0")
+        {
+            return;
+        }
+
+        try
+        {
+            GeneralDAL _dal = new GeneralDAL();
+            Hashtable _ht = new Hashtable();
+            _ht["p_code_barcode"] = txtCodeBarcode.Text;
+            _ht["p_trx_code"] = ddlTRX.SelectedValue;
+
+            _dal.ExecRawSP("xsp_term_of_payment_detail_cancel", _ht);
+        }
+        catch
+        {
         }
     }
 
@@ -343,6 +366,7 @@ public partial class module_purchaseorder_termofpayment : BasePage
         }
         else
         {
+            CancelAmountTerminDetail();
             Response.Redirect("purchaseorderheader.aspx?action=edit&codebarcode=" + txtCodeBarcode.Text + "&code=" + lblBarcode.Text);
         }
     }
