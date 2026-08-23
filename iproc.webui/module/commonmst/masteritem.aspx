@@ -33,6 +33,7 @@
                                         <div class="col-sm-7">
                                             <cc1:XUILabel ID="lblItemCode" runat="server" DBColumnName="ITEM_CODE"
                                                 SPParameterName="p_item_code" DataType="String" BindType="Both">
+                                                &nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -75,9 +76,11 @@
                                             <cc1:XUITextBox ID="txtParentGroup" runat="server" CssClass="form-control"
                                                 style="display:none" DBColumnName="GROUP_CODE"
                                                 SPParameterName="p_group_code" DataType="String" BindType="Both">
+                                                &nbsp;
                                             </cc1:XUITextBox>
                                             <cc1:XUILabel ID="lblParentGroup" runat="server"
                                                 DBColumnName="DESCRIPTIONPG" DataType="String" BindType="DBToUIOnly">
+                                                &nbsp;
                                             </cc1:XUILabel>
                                             <asp:RequiredFieldValidator ID="rfvParentGroup" runat="server"
                                                 ErrorMessage="Required Field!" ControlToValidate="txtParentGroup"
@@ -111,6 +114,7 @@
                                                 BindType="Both"></cc1:XUITextBox>
                                             <cc1:XUILabel ID="lblMerk" runat="server" DBColumnName="MERK_CODE"
                                                 DataType="String" BindType="DBToUIOnly" Text="-" style="display:none;">
+                                                &nbsp;
                                             </cc1:XUILabel>
                                             <cc1:XUILabel ID="lblMerkName" runat="server" DBColumnName="MERK_NAME"
                                                 DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
@@ -146,6 +150,7 @@
                                                 BindType="Both"></cc1:XUITextBox>
                                             <cc1:XUILabel ID="lblType" runat="server" DBColumnName="TYPE_CODE"
                                                 DataType="String" BindType="DBToUIOnly" Text="-" style="display:none;">
+                                                &nbsp;
                                             </cc1:XUILabel>
                                             <cc1:XUILabel ID="lblTypeName" runat="server" DBColumnName="TYPE_NAME"
                                                 DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
@@ -181,6 +186,7 @@
                                                 BindType="Both"></cc1:XUITextBox>
                                             <cc1:XUILabel ID="lblModel" runat="server" DBColumnName="MODEL_CODE"
                                                 DataType="String" BindType="DBToUIOnly" Text="-" style="display:none;">
+                                                &nbsp;
                                             </cc1:XUILabel>
                                             <cc1:XUILabel ID="lblModelName" runat="server" DBColumnName="MODEL_NAME"
                                                 DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
@@ -388,6 +394,7 @@
                                             <cc1:XUITextBox ID="txtRounding" runat="server" CssClass="form-control"
                                                 placeholder="Rounding" DBColumnName="ROUNDING"
                                                 SPParameterName="p_rounding" DataType="Integer" BindType="Both">
+                                                &nbsp;
                                             </cc1:XUITextBox>
                                         </div>
                                     </div>
@@ -444,7 +451,7 @@
                             <li>
                                 <a href="#itemhistory" id="itemhistorylist" onclick="fnSetTab('itemhistorylist');"
                                     data-toggle="tab" style="padding-bottom:28px">
-                                    History Item
+                                    History Memo
                                 </a>
                             </li>
                         </ul>
@@ -520,45 +527,57 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="itemhistory">
-                                <div class="panel-heading">
-                                    <div class="row">
-                                        <div class="col-sm-8 ">
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearch"
-                                                class="input-group">
-                                                <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control"
-                                                    placeholder="Keywords"></asp:TextBox>
-                                                <div class="input-group-btn">
-                                                    <asp:LinkButton ID="btnSearch" runat="server"
-                                                        CssClass="btn btn-info"><i
-                                                            class="icon-search"></i> Search</asp:LinkButton>
-                                                </div>
-                                            </asp:Panel>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="panel-body">
-                                    <asp:UpdatePanel ID="gvwListitemhistory" runat="server">
+                                    <asp:UpdatePanel ID="updHistoryMemo" UpdateMode="Conditional" runat="server">
                                         <ContentTemplate>
                                             <asp:GridView ID="gvwListHist" runat="server" AutoGenerateColumns="false"
                                                 CssClass="display table table-bordered table-stripe" AllowPaging="true"
-                                                EmptyDataText="There Is No Data">
+                                                PageSize="10" DataKeyNames="PATHS,FILE" EmptyDataText="There Is No Data"
+                                                OnPageIndexChanging="gvwListHist_PageIndexChanging"
+                                                OnRowDataBound="gvwListDocHist_OnRowDataBound">
                                                 <Columns>
                                                     <asp:TemplateField>
-                                                        <HeaderTemplate>
-                                                            <span>No</span>
-                                                        </HeaderTemplate>
+                                                        <HeaderTemplate>No</HeaderTemplate>
                                                         <ItemTemplate>
                                                             <%# Container.DataItemIndex + 1 %>
+                                                        </ItemTemplate>
+                                                    </asp:TemplateField>
+                                                    <asp:TemplateField>
+                                                        <HeaderTemplate>
+                                                            <asp:CheckBox ID="chbSelectAll" runat="server"
+                                                                onclick="checkAll(this)" />
+                                                        </HeaderTemplate>
+                                                        <ItemTemplate>
+                                                            <asp:CheckBox ID="chbSelect" runat="server"
+                                                                onclick="Check_Click" />
+                                                        </ItemTemplate>
+                                                    </asp:TemplateField>
+                                                    <asp:BoundField DataField="ACTION" HeaderText="ACTION">
+                                                        <ItemStyle Width="40%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+
+                                                    <asp:BoundField DataField="REMARKS" HeaderText="REMARK">
+                                                        <ItemStyle Width="40%" HorizontalAlign="Center" />
+                                                    </asp:BoundField>
+
+                                                    <asp:TemplateField HeaderText="File Name">
+                                                        <ItemStyle Width="60%" HorizontalAlign="Left" />
+                                                        <ItemTemplate>
+                                                            <asp:Label runat="server" ID="lblFileNameHist"
+                                                                Text='<%# Eval("PATHS") %>' />
+                                                        </ItemTemplate>
+                                                    </asp:TemplateField>
+
+                                                    <asp:TemplateField>
+                                                        <ItemStyle Width="10%" />
+                                                        <ItemTemplate>
+                                                            <asp:LinkButton ID="btnPreviewDocHist" runat="server"
+                                                                Text="Preview" CausesValidation="false" />
                                                         </ItemTemplate>
                                                     </asp:TemplateField>
                                                 </Columns>
                                             </asp:GridView>
                                         </ContentTemplate>
-                                        <Triggers>
-                                            <asp:AsyncPostBackTrigger ControlID="btnSearch" EventName="Click" />
-                                        </Triggers>
                                     </asp:UpdatePanel>
                                 </div>
                             </div>

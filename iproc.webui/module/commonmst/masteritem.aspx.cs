@@ -13,6 +13,7 @@ public partial class module_commonmst_masteritem : BasePage
 {
     private static string TABLE_NAME = "MASTER_ITEM";
     private static string TABLE_NAME_DOC_DETAIL = "MASTER_ITEM_DOCUMENT";
+    private static string TABLE_NAME_DOC_DETAIL_HISTORY = "MASTER_ITEM_DOCUMENT_HISTORY";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -54,6 +55,7 @@ public partial class module_commonmst_masteritem : BasePage
             {
                 LoadData();
                 BindDataDocRequest();
+                BindDataHistoryDoc();
 
                 lblItemCode.Enabled = false;
                 ddlJenisItem.Enabled = false;
@@ -66,6 +68,7 @@ public partial class module_commonmst_masteritem : BasePage
             {
                 LoadData();
                 BindDataDocRequest();
+                BindDataHistoryDoc();
                 lblItemCode.Text = "";
                 ddlJenisItem.Enabled = true;
                 txtPOAverageCost.Text = "0";
@@ -253,11 +256,7 @@ public partial class module_commonmst_masteritem : BasePage
     }
     protected void btnAddUploadDoc_Click(object sender, EventArgs e)
     {
-        Response.Redirect("masteritemdocument.aspx?action=add&code=" + lblItemCode.Text + "&name=" + txtItemName.Text);
-    }
-    protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
-    {
-
+        Response.Redirect("masteritemdocument.aspx?action=add&code=" + HttpUtility.UrlEncode(lblItemCode.Text) + "&name=" + HttpUtility.UrlEncode(txtItemName.Text) + "&jenis=" + HttpUtility.UrlEncode(Request.Params["jenis"]));
     }
     protected void gvwListDocReq_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -267,6 +266,16 @@ public partial class module_commonmst_masteritem : BasePage
     {
         gvwListDocReq.PageIndex = e.NewPageIndex;
         BindDataDocRequest();
+    }
+    protected void gvwListHist_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListHist.PageIndex = e.NewPageIndex;
+        BindDataHistoryDoc();
+    }
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        gvwListHist.PageIndex = 0;
+        BindDataHistoryDoc();
     }
     protected void gvwListDocReq_OnRowDataBound(object sender, GridViewRowEventArgs e)
     {
@@ -284,6 +293,26 @@ public partial class module_commonmst_masteritem : BasePage
             string file = gvwListDocReq.DataKeys[e.Row.RowIndex]["FILE"].ToString();
 
             string filePath = gvwListDocReq.DataKeys[e.Row.RowIndex]["PATHS"].ToString();
+
+            btnPreview.Attributes["onclick"] =
+                "window.open('../../" + filePath +
+                "', 'viewer', 'width=600,height=400,scrollbars=1'); return false;";
+        }
+    }
+    protected void gvwListDocHist_OnRowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Label lblFileName = (Label)e.Row.FindControl("lblFileNameHist");
+            LinkButton btnPreview = (LinkButton)e.Row.FindControl("btnPreviewDocHist");
+
+            if (lblFileName == null || string.IsNullOrEmpty(lblFileName.Text))
+            {
+                btnPreview.Visible = false;
+                return;
+            }
+
+            string filePath = gvwListHist.DataKeys[e.Row.RowIndex]["PATHS"].ToString();
 
             btnPreview.Attributes["onclick"] =
                 "window.open('../../" + filePath +
@@ -414,11 +443,62 @@ public partial class module_commonmst_masteritem : BasePage
             CheckBox chbDoc = (CheckBox)row.Cells[1].Controls[1];
             if (chbDoc.Checked)
             {
-                // DeleteDataBank(gvwListBank.DataKeys[row.RowIndex][0].ToString());
+                DeleteItemDocument(gvwListDocReq.DataKeys[row.RowIndex]["ID"].ToString());
             }
         }
 
-        // BindDataBank();
+        BindDataDocRequest();
+        BindDataHistoryDoc();
     }
+    private void DeleteItemDocument(string id)
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
 
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_id"] = id;
+            _ht["p_item_code"] = Request.Params["itemcode"];
+            Shared.ApplyDefaultProp(_ht);
+
+            _dal.Update(TABLE_NAME_DOC_DETAIL, _ht);
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+    private void BindDataHistoryDoc()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+        DataView dvItemDoc = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            //_ht["p_keywords"] = txtSearch.Text;
+            _ht["p_item_code"] = lblItemCode.Text;
+            _ht["p_id"] = Request.Params["id"];
+
+            dvItemDoc = _dal.GetRows(TABLE_NAME_DOC_DETAIL_HISTORY, _ht).DefaultView;
+
+            if (dirItemDoc == SortDirection.Ascending)
+                dvItemDoc.Sort = ExpressionItemDoc + " ASC";
+            else
+                dvItemDoc.Sort = ExpressionItemDoc + " DESC";
+
+            gvwListHist.DataSource = dvItemDoc;
+            gvwListHist.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
 }

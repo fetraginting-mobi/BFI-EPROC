@@ -65,7 +65,12 @@ public partial class module_commonmst_masteritemdocument : BasePage
 
             sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ITEM_UPLOAD_MEMO/" + Request.Params["code"]));
             string sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
-            Regex regexFileName = new Regex(@"^[A-Za-z0-9_\-\s.]+\.[A-Za-z0-9]+$");
+            Regex regexFileName = new Regex(@"^[A-Za-z0-9._-]+\.[A-Za-z0-9]+$");
+
+            if (sfullname.Length > 100)
+            {
+                throw new Exception("Upload failed. File name cannot exceed 100 characters.");
+            }
 
             if (!regexFileName.IsMatch(sfullname))
             {
@@ -135,9 +140,8 @@ public partial class module_commonmst_masteritemdocument : BasePage
             else
                 _dal.Update("MASTER_ITEM_DOCUMENT", _ht);
 
-            Shared.ShowSuccessGritter(this, string.Format("masteritem.aspx?action=edit&itemcode={0}", lblCode.Text));
-            Shared.ShowSuccessGritter(this, string.Format("masteritemlist.aspx"));
-
+            Shared.ShowSuccessGritter(this, GetMasterItemReturnUrl());
+            // Shared.ShowSuccessGritter(this, string.Format("masteritemlist.aspx"));
         }
         catch (Exception ex)
         {
@@ -146,7 +150,15 @@ public partial class module_commonmst_masteritemdocument : BasePage
     }
     protected void btnCancel_Click(object sender, EventArgs e)
     {
-
+        Response.Redirect(GetMasterItemReturnUrl());
+    }
+    private string GetMasterItemReturnUrl()
+    {
+        return string.Format(
+            "masteritem.aspx?action=edit&itemcode={0}&jenis={1}",
+            HttpUtility.UrlEncode(Request.Params["code"]),
+            HttpUtility.UrlEncode(Request.Params["jenis"])
+        );
     }
     private void LoadData()
     {

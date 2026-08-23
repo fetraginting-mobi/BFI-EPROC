@@ -5,13 +5,13 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
+using System.Text.RegularExpressions;
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_purchaserequestdocument : BasePage
 {
- private static string TABLE_NAME = "PURCHASE_REQUEST_DOCUMENT";
+    private static string TABLE_NAME = "PURCHASE_REQUEST_DOCUMENT";
 
     string sfullname = string.Empty;
 
@@ -109,16 +109,32 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
             _ht = new Hashtable();
 
             sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["codebarcode"]));
+            sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
             string sFileType = System.IO.Path.GetExtension(fupFilename.FileName);  // (+) Ari 13-09-2022 ket : validasi extension
+            Regex regexFileName = new Regex(@"^[A-Za-z0-9._-]+\.[A-Za-z0-9]+$");
+
+            if (sfullname.Length > 100)
+            {
+                throw new Exception("Upload failed. File name cannot exceed 100 characters.");
+            }
+
+            if (!regexFileName.IsMatch(sfullname))
+            {
+                throw new Exception(
+                    "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), and the following symbols are allowed: (.),(_),(-)"
+                );
+            }
+
 
             if (
                                 sFileType == ".xls" || sFileType == ".xlsx"     // EXCEL
                                 || sFileType == ".doc" || sFileType == ".docx"     // WORD
                                 || sFileType == ".jpeg" || sFileType == ".jpg"      // Image
-                                || sFileType == ".png" //|| sFileType == ".gif"
+                                                                                    // || sFileType == ".png" //|| sFileType == ".gif"
                                 || sFileType == ".pdf" //|| sFileType == ".csv"      // PDF
-                                || sFileType == ".zip" || sFileType == ".rar"      // File
-                                || sFileType == ".7z"
+                                || sFileType == ".ppt" || sFileType == ".pptx"
+                // || sFileType == ".zip" || sFileType == ".rar"      // File
+                // || sFileType == ".7z"
                 //|| sFileType == ".7z"
 
                 )
@@ -127,25 +143,27 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
                     sFileType == ".xls" || sFileType == ".xlsx"     // EXCEL
                     || sFileType == ".doc" || sFileType == ".docx"     // WORD
                     || sFileType == ".jpeg" || sFileType == ".jpg"      // Image
-                    || sFileType == ".png" //|| sFileType == ".gif"
+                                                                        // || sFileType == ".png" //|| sFileType == ".gif"
                     || sFileType == ".pdf" //|| sFileType == ".csv"      // PDF
-                    || sFileType == ".zip" || sFileType == ".rar"      // File
-                    || sFileType == ".7z"
+                    || sFileType == ".ppt" || sFileType == ".pptx"
+                    // || sFileType == ".zip" || sFileType == ".rar"      // File
+                    // || sFileType == ".7z"
                     )
                 {
-                    sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
+                    // sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
 
                     sFilePath = Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["codebarcode"]) + sfullname;
                 }
                 else
                 {
-                    Shared.ShowValidationError(this, "Please upload file with format type (.pdf .zip .doc .xlx .png .jpg .jpeg). Max file size allowed is 3 mb.");
+                    // Shared.ShowValidationError(this, "Please upload file with format type (.pdf .zip .doc .xlx .png .jpg .jpeg). Max file size allowed is 3 mb.");
+                    Shared.ShowValidationError(this, "Invalid file format. Allowed file types are Excel, PDF, DOC, PowerPoint, JPEG, and JPG. Max file size allowed is 3 mb.");
                     return;
                 }
             }
             else
             {
-                Shared.ShowValidationError(this, "Please upload file with format type (.pdf .zip .doc .xlx .png .jpg .jpeg). Max file size allowed is 3 mb.");
+                Shared.ShowValidationError(this, "Invalid file format. Allowed file types are Excel, PDF, DOC, PowerPoint, JPEG, and JPG. Max file size allowed is 3 mb.");
                 return;
             }
 
@@ -181,9 +199,9 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
 
             }
             else
-                _dal.Update(TABLE_NAME, _ht);              
+                _dal.Update(TABLE_NAME, _ht);
 
-            Shared.ShowSuccessGritter(this, string.Format( "purchaserequestheader.aspx?action=edit&codebarcode={0}",  Request.Params["codebarcode"]));
+            Shared.ShowSuccessGritter(this, string.Format("purchaserequestheader.aspx?action=edit&codebarcode={0}", Request.Params["codebarcode"]));
         }
         catch (Exception ex)
         {
@@ -202,6 +220,6 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
         Response.Redirect("purchaserequestheader.aspx?action=edit&codebarcode=" + Request.Params["codebarcode"]);
     }
 
-    }
+}
 
 
