@@ -86,6 +86,7 @@
                                 CssClass="display table table-bordered table-striped grid-auto"
                                 AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
                                 DataKeyNames="ASSET_GROUP_CODE" onselectedindexchanged="gvwList_SelectedIndexChanged"
+                                OnPageIndexChanging="gvwList_PageIndexChanging"
                                 Width="100%">
                                 <Columns>
                                     <asp:TemplateField>

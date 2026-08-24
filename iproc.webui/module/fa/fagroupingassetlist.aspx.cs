@@ -53,11 +53,6 @@ public partial class module_fa_fagroupingassetlist : BasePageList
     {
 
     }
-    protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
-    {
-        gvwListFaGroupingAsset.PageIndex = e.NewPageIndex;
-        BindDataFaItemGroup();
-    }
     protected void gvwList_SelectedIndexChanged(object sender, EventArgs e)
     {
         Response.Redirect("fagroupingasset.aspx?action=edit&faGroupingAssetCode=" + gvwListFaGroupingAsset.SelectedValue.ToString());
@@ -84,6 +79,11 @@ public partial class module_fa_fagroupingassetlist : BasePageList
     }
     protected void ddlStatus_SelectedIndexChanged(object sender, EventArgs e)
     {
+        BindDataFaItemGroup();
+    }
+    protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListFaGroupingAsset.PageIndex = e.NewPageIndex;
         BindDataFaItemGroup();
     }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
