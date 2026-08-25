@@ -40,9 +40,39 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
             BindData();
             BindUploadData();
+            ShowPostMutationResult();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
         }
         LoadAfterInit();
+    }
+
+    private void ShowPostMutationResult()
+    {
+        object sessionResults = Session[SessionKey.POST_MUTATION_RESULTS];
+        if (sessionResults == null)
+            return;
+
+        Session.Remove(SessionKey.POST_MUTATION_RESULTS);
+
+        bool hasError = false;
+        IEnumerable postResults = sessionResults as IEnumerable;
+        if (postResults == null)
+            return;
+
+        foreach (object item in postResults)
+        {
+            PostMutationResult result = item as PostMutationResult;
+            if (result != null && !result.IsSuccess)
+            {
+                hasError = true;
+                break;
+            }
+        }
+
+        if (!hasError)
+            return;
+
+        Shared.ShowErrorDialog(this, new Exception("ERROR, silahkan check log error pada tab POST Upload Mutation History di Inventory Mutation."));
     }
     private void BindData()
     {
@@ -361,29 +391,31 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 }
             }
 
-            // Jika TIDAK ADA yang dicentang, maka ambil SEMUA data NEW (Logic Otomatis Anda)
+            // if (selectedCodes.Count == 0)
+            // {
+            //     GeneralDAL _dal = new GeneralDAL();
+            //     Hashtable _htupload = new Hashtable();
+            //     _htupload["p_keywords"] = txtSearchUpload.Text;
+            //     _htupload["p_status"] = "NEW";
+            //     _htupload["p_branch_code"] = ddlFromBranch.SelectedValue;
+            //     _htupload["p_from_location"] = ddlFromLocation.SelectedValue;
+            //     _htupload["p_to_branch"] = ddltoBranch.SelectedValue;
+            //     _htupload["p_to_location"] = ddltoLocation.SelectedValue;
+            //     Shared.ApplyDefaultProp(_htupload);
+
+            //     DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
+            //     if (dtTarget != null)
+            //     {
+            //         foreach (DataRow dr in dtTarget.Rows)
+            //         {
+            //             selectedCodes.Add(dr["CODE_BARCODE"].ToString());
+            //         }
+            //     }
+            // }
+
             if (selectedCodes.Count == 0)
             {
-                GeneralDAL _dal = new GeneralDAL();
-                Hashtable _htupload = new Hashtable();
-                _htupload["p_keywords"] = txtSearchUpload.Text;
-                _htupload["p_status"] = "NEW";
-                _htupload["p_branch_code"] = "KPO";
-                Shared.ApplyDefaultProp(_htupload);
-
-                DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
-                if (dtTarget != null)
-                {
-                    foreach (DataRow dr in dtTarget.Rows)
-                    {
-                        selectedCodes.Add(dr["CODE_BARCODE"].ToString());
-                    }
-                }
-            }
-
-            if (selectedCodes.Count == 0)
-            {
-                Shared.ShowErrorDialog(this, new Exception("Tidak ada data yang dipilih atau tersedia untuk di-post."));
+                Shared.ShowErrorDialog(this, new Exception("No Data Selected"));
                 return;
             }
 
