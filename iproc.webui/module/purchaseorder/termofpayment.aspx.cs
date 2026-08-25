@@ -305,11 +305,11 @@ public partial class module_purchaseorder_termofpayment : BasePage
                 _dal.Update(TABLE_NAME, _ht);
 
             Shared.ShowSuccessGritter(this, string.Format("purchaseorderheader.aspx?action=edit&codebarcode={0}&code={1}", txtCodeBarcode.Text, lblBarcode.Text));
-            Response.Redirect("purchaseorderheader.aspx?action=edit&codebarcode=" + txtCodeBarcode.Text + "&code=" + lblBarcode.Text);
+            Response.Redirect("purchaseorderheader.aspx?action=edit&codebarcode=" + txtCodeBarcode.Text + "&code=" + lblBarcode.Text,false);
         }
         catch (Exception ex)
         {
-            //CancelAmountTerminDetail();
+            CancelAmountTerminDetail();
             Shared.ShowErrorDialog(this, ex);
         }
     }
