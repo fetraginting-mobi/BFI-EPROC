@@ -27,13 +27,21 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
         LoadInit();
         if (!Page.IsPostBack)
         {
-            lblStatus.Text = Request.Params["status"]; ;
-            BindData();
+            lblStatus.Text = Request.Params["status"];            
             if (lblStatus.Text == "VALID")
             {
+                lblTitle.Text = "Review Data Valid";
                 gvwList.Columns[4].Visible = false; // index kolom ERROR_MESSAGE
             }
-
+            else if (lblStatus.Text == "TRX")
+            {
+                lblTitle.Text = "Review Data Valid";
+                gvwList.Columns[0].Visible = false;
+                gvwList.Columns[1].HeaderText = "Inventory Mutation No";
+                gvwList.Columns[2].HeaderText = "Item Name";
+                gvwList.Columns[4].Visible = false;
+            }
+            BindData();
         }
         LoadAfterInit();
     }
@@ -57,7 +65,7 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
 
             //if (!string.IsNullOrEmpty(p_upload_id) && Regex.IsMatch(p_upload_id, guidPattern))
             //{
-                _ht["p_upload_id"] = new Guid(p_upload_id);
+            _ht["p_upload_id"] = new Guid(p_upload_id);
             //}
             //else
             //{

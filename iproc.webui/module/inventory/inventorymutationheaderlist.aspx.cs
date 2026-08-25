@@ -189,12 +189,16 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Stream excelStream = FileUploadControlMutation.PostedFile.InputStream;
             string ext = Path.GetExtension(fileName).ToLower();
 
+            if (fileName.Length > 100)
+            {
+                throw new Exception("Upload failed. File name cannot exceed 100 characters.");
+            }
             if (ext == ".xls")
                 excelReader = ExcelReaderFactory.CreateBinaryReader(excelStream);
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Invalid template format. Please download and use the provided template.");
+                throw new Exception("The uploaded file does not match the required template. Please use the provided template.");
 
 
             DataTable dt = BuildStagingTable();
