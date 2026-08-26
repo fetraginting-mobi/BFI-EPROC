@@ -26,10 +26,10 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
         LoadInit();
         if (!Page.IsPostBack)
         {
-            lblStatus.Text = Request.Params["status"]; ;
-            BindData();
+            lblStatus.Text = Request.Params["status"];            
             if (lblStatus.Text == "VALID")
             {
+                lblTitle.Text = "Review Data Valid";
                 gvwList.Columns[4].Visible = false; // index kolom ERROR_MESSAGE
             }
             else if (lblStatus.Text == "TRX")
@@ -39,7 +39,7 @@ public partial class module_fa_farequestmutationuploadlog : BasePageList
                 gvwList.Columns[2].Visible = false;
                 gvwList.Columns[4].Visible = false;
             }
-
+            BindData();
         }
         LoadAfterInit();
 
