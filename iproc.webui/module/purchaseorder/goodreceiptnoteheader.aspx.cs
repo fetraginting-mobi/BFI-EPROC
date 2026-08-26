@@ -781,22 +781,22 @@ public partial class module_purchaseorder_goodreceiptnoteheader : BasePage
                 if (paymentStatusBayar == "1")
                 {
                     throw new Exception(
-                        "GRN tidak dapat dibatalkan, karena sudah dilakukan pembayaran dengan nomor invoice " + invCode);
+                        "GRN cannot be cancelled because an invoice " + invCode + " has been PAID.");
                 }
                 if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("POST", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new Exception(
-                        "GRN tidak dapat dibatalkan, Invoice telah diposting dengan nomor invoice " + invCode);
+                        "GRN cannot be cancelled because an invoice " + invCode + " has been POST.");
                 }
                 if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("NEW", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new Exception(
-                        "Terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
+                        "GRN cannot be cancelled because an invoice has already been created. Please cancel the invoice " + invCode + " first.");
                 }
                 if (!string.IsNullOrEmpty(invStatus) && invStatus.Equals("ONPROGRESS", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new Exception(
-                        "Terdapat invoice dengan nomor " + invCode + ". Silahkan melakukan cancel invoice terlebih dahulu.");
+                        "GRN cannot be cancelled because an invoice has already been created. Please cancel the invoice " + invCode + " first.");
                 }
             }
 

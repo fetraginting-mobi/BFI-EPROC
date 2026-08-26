@@ -76,7 +76,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4">Process</label>
                                 <div class="col-sm-8">
-                                    <cc1:XUILabel ID="lblProcess" runat="server" DBColumnName="PROCESS" BindType="DBToUIOnly" DataType="String" Text="--"></cc1:XUILabel>
+                                    <cc1:XUILabel ID="lblProcess" runat="server" DBColumnName="PROCESS" DataType="String"></cc1:XUILabel>
                                 </div>
                             </div>                            
                         </div>     

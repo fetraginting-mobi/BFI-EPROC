@@ -363,7 +363,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Format file tidak didukung");
+                throw new Exception("The uploaded file must be in .xlsx or .xls format.");
 
             DataTable dt = BuildStagingTable();
             int excelRowIndex = 0;
@@ -453,7 +453,8 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                errorMessage = "Invalid template file. Column header - " + (i + 1) + " muse be '" + expectedHeader + "'.";
+                //errorMessage = "Invalid template file. Column header - " + (i + 1) + " muse be '" + expectedHeader + "'.";
+                errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
                 LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER=" + actualHeader);
                 return false;
             }

@@ -122,12 +122,12 @@ public partial class module_fa_farequestmutationheader : BasePage
         {
             if (lblProcess != null && (lblProcess.Text.Trim().ToUpper() == "UPLOAD" || lblProcess.Text.Trim().ToUpper() == "UPL"))
             {
-                btnSave.Visible = false;
+                //btnSave.Visible = false;
                 btnPost.Visible = false;
                 btnReject.Visible = false;
                 btnAddRequestDetail.Visible = false;
                 btnDeleteRequestDetail.Visible = false;
-                txtRemarks.Enabled = false;
+                //txtRemarks.Enabled = false;
                 txtRequestDate.Enabled = false;
                 if (gvwList != null && gvwList.Columns.Count > 1)
                 {

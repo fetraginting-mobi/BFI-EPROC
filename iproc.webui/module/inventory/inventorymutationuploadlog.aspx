@@ -43,10 +43,10 @@
                                     <asp:BoundField DataField="row_number" HeaderText="Row">
                                         <ItemStyle Width="10%" HorizontalAlign="Center" />
                                     </asp:BoundField>
-                                    <asp:BoundField DataField="BARCODE" HeaderText="Barcode">
+                                    <asp:BoundField DataField="BARCODE" HeaderText="Item Code">
                                         <ItemStyle Width="10%" HorizontalAlign="Left" />
                                     </asp:BoundField>
-                                    <asp:BoundField DataField="item_name" HeaderText="Asset Name">
+                                    <asp:BoundField DataField="item_name" HeaderText="Item Name">
                                         <ItemStyle Width="20%" HorizontalAlign="Left" />
                                     </asp:BoundField>
                                     <asp:TemplateField HeaderText="Status">

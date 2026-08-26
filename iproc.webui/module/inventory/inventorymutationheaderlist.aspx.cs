@@ -16,6 +16,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private static string TABLE_NAME = "INVENTORY_MUTATION_HEADER";
     private static string TABLE_UPLOAD_NAME = "INVENTORY_MUTATION_UPLOAD_HEADER";
     private static string TABLE_UPLOAD_LOG = "INVENTORY_MUTATION_UPLOAD_STAGING_LOG";
+    private const string INV_MUTATION_UPLOAD_TEMPLATE_CODE = "INVENTORY_MUTATION_UPLOAD";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -278,7 +279,8 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         // === VALIDASI JUMLAH KOLOM ===
         if (reader.FieldCount != INVENTORY_MUTATION_TEMPLATE_HEADERS.Length)
         {
-            errorMessage = "Invalid template format. The number of columns is invalid.";
+            //errorMessage = "Invalid template format. The number of columns is invalid.";
+            errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
             htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
             htLog["p_file_name"] = fileName;
             htLog["p_row_number"] = 0;
@@ -303,7 +305,8 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                errorMessage = "Template mismatch: Column" + (i + 1) + " header must match '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
+                //errorMessage = "Template mismatch: Column" + (i + 1) + " header must match '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
+                errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
                 htLog.Clear();
                 htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
                 htLog["p_file_name"] = fileName;
