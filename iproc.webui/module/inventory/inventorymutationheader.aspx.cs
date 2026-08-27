@@ -74,9 +74,9 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 // lblProcess mendapatkan nilai dari kolom 'process'
                 if (lblProcess.Text == "UPLOAD")
                 {
-                    btnSave.Visible = false;
+                    //btnSave.Visible = false;
                     btnPost.Visible = false;
-                    btnReject.Visible = false;
+                    //btnReject.Visible = false;
                     btnApprovalTiered.Visible = false;
                     txtRemarks.Enabled = false;
                     txtExpeditionDescription.Enabled = false;

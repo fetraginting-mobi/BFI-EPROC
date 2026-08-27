@@ -357,10 +357,6 @@ public partial class module_fa_fasaleheader : BasePage
             Shared.ShowErrorDialog(this, ex);
         }
     }
-    //protected void btnReject_Click(object sender, EventArgs e)
-    //{
-    //    CancelData();
-    //}
 
     #region fa sale detail
 

@@ -11,7 +11,8 @@ begin
 			,@request_no				nvarchar(50) -- (+) Ari 20-01-2023
 			,@staff						nvarchar(15) -- (+) Ari 20-01-2023
 			,@staff_name				nvarchar(100)-- (+) Ari 20-01-2023
-			,@grouping_asset_name				nvarchar(100)
+			,@grouping_asset_name		nvarchar(100)
+			,@grouping_asset_id			nvarchar(100)
 
 	select @barcode = barcode
 	from dbo.fa_asset
@@ -23,7 +24,9 @@ begin
 	where barcode = @barcode
 
 	-- Iproc Phase III 
-	select @grouping_asset_name = isnull(fa_group_asset_name ,'') 
+	select 
+		@grouping_asset_name = isnull(fga.fa_group_asset_name ,''), 
+		@grouping_asset_id = isnull(fga.fa_group_asset_code ,'') 
 	from fa_asset fa with (nolock)
 	left join fa_grouping_asset_detail fgad with (nolock) on fa.id =fgad.fa_asset_id and fa.ast_code = fgad.code_asset and fa.barcode = fgad.barcode
 	left join fa_grouping_asset fga with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
@@ -102,7 +105,7 @@ begin
 			,poh.CODE
 			,@total_asset_maintenance 'maintenance'
 			,isnull(@staff_name,'-') 'used_by' -- (+) Ari 21-01-2023 ket : get item is used, enhancement 2023
-			,isnull(@grouping_asset_name,'-') 'grouping_asset_name' -- Iproc Phase III
+			,isnull(concat(@grouping_asset_id,' - ',@grouping_asset_name),'-') 'grouping_asset_name' -- Iproc Phase III
 	from	fa_asset fa
 			left join fa_category fc on (fa.cat_code = fc.cat_code)
 			left join dbo.fa_location msl on (msl.loc_code = fa.current_branch )

@@ -10,11 +10,13 @@ begin
 	SELECT TOP 100	fa.barcode 'code'
 			,ast_name + ' - ' + fl.LOC_NAME + ' (' + mb.DESCRIPTION + ')' 'description'
 			,isnull(ga.is_parent,'No') 'parent'
+			,isnull(mu.DESCRIPTION,'') 'owner'
 			,isnull(ga.fa_group_asset_name,'') 'Group Asset Name'
 	from	dbo.fa_asset fa
 	INNER JOIN dbo.FA_LOCATION fl with (nolock) ON (fl.LOC_CODE = CURRENT_BRANCH)
 	left JOIN dbo.MASTER_BRANCH mb with (nolock) ON (mb.CODE = fa.BRANCH_CODE)
 	INNER JOIN dbo.MASTER_ITEM mi with (nolock) ON (mi.ITEM_CODE = fa.AST_CODE)
+	left join master_units mu with (nolock) on mi.owner = mu.code and mu.IS_ACTIVE = 1 and mu.IS_OWNER = 1
 	left join (
 					select fgad.BARCODE, 
 				case when fgad.IS_PARENT = '1' then 'Yes'
@@ -68,6 +70,7 @@ begin
 		select	ib.barcode as 'code'
 			,ib.item_code + ' - ' + mi.item_name + ' - ' + ml.description 'description'
 			,isnull(ga.is_parent,'No') 'parent'
+			,isnull(mu.DESCRIPTION,'') 'owner'
 			,isnull(ga.fa_group_asset_name,'') 'Group Asset Name'
 		from	dbo.inventory_barcode ib
 				inner join dbo.master_item mi on (ib.item_code = mi.item_code)
