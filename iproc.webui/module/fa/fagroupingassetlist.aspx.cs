@@ -21,7 +21,7 @@ public partial class module_fa_fagroupingassetlist : BasePageList
         LoadInit();
         if (!Page.IsPostBack)
         {
-            Shared.BindBranchEmployeeSort(ddlCostCenter);
+            Shared.BindBranchAll(ddlCostCenter);
             Shared.BindFaLocationAll(ddlLocation, ddlCostCenter.SelectedValue);
             BindDataFaItemGroup();
             btnDeleteFaGroup.OnClientClick = "return confirm('Delete selected data?');";
