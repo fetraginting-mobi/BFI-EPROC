@@ -33,6 +33,7 @@ public partial class module_fa_farequestmutationheader : BasePage
             Shared.BindBranchEmployeeAll1SEL(ddlTocc);
             Shared.BindFaLocationAllMut(ddlToLocationCode, ddlTocc.SelectedValue);
             Shared.BindUnitsItemOwnMutation(ddlOwner);
+            btnAddRequestDetail.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscriptionCustom.aspx?code=FAMTT&parc_ir_code={0}&gvw={1}&parc_location={2}&parc_branch_code={3}&parc_owner={4}');", txtBarcode.ClientID, btnSearch.UniqueID, ddlFromLocationCode.ClientID, ddlBranch.ClientID, ddlOwner.ClientID);
 
             //(+)gustian 19102023 
             if (EMPLOYEE_HO)
@@ -55,8 +56,8 @@ public partial class module_fa_farequestmutationheader : BasePage
                 txtRequestDate.Enabled = false;
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
-                btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
-
+                //btnPost.OnClientClick = "return confirm('Apakah Data Sudah Disimpan? Jika Sudah Silahkan Tekan OK Untuk Melanjutkan Proses!');";
+                btnPost.OnClientClick = "";
                 ddlBranch.Enabled = false;
                 ddlUnits.Enabled = false;
                 ddlDepartment.Enabled = ddlDivision.Enabled = ddlSubDepartment.Enabled = false;
