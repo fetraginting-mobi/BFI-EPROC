@@ -45,6 +45,9 @@ BEGIN
             OR fgad.code_asset LIKE '%' + @p_keywords + '%'
             OR fgad.name_asset LIKE '%' + @p_keywords + '%'
             OR fgad.barcode    LIKE '%' + @p_keywords + '%'
+			OR fc.cat_name	   LIKE '%' + @p_keywords + '%'
+			OR mu.DESCRIPTION  LIKE '%' + @p_keywords + '%'
+			OR em.emp_name     LIKE '%' + @p_keywords + '%'
           )
 
     UNION ALL 
@@ -80,6 +83,8 @@ BEGIN
             OR fgad.code_asset LIKE '%' + @p_keywords + '%'
             OR fgad.name_asset LIKE '%' + @p_keywords + '%'
             OR fgad.barcode    LIKE '%' + @p_keywords + '%'
+			OR mu.DESCRIPTION  LIKE '%' + @p_keywords + '%'
+			OR em.emp_name     LIKE '%' + @p_keywords + '%'
           )
           
     ORDER BY fgad.is_parent DESC;

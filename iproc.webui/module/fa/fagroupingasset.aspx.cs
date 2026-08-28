@@ -289,7 +289,8 @@ public partial class module_fa_fagroupingasset : BasePage
         // Response.Redirect(redirectUrl);
     }
     protected void btnDelete_Click(object sender, EventArgs e)
-    {
+    {   
+        ArrayList selectedCodes = new ArrayList();
         foreach (GridViewRow row in gvwList.Rows)
         {
             CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
@@ -297,6 +298,11 @@ public partial class module_fa_fagroupingasset : BasePage
             {
                 DeleteData(gvwList.DataKeys[row.RowIndex][0].ToString());
             }
+        }
+        if (selectedCodes.Count == 0)
+        {
+            Shared.ShowErrorDialog(this, new Exception("There is no data selected!"));
+            return;
         }
 
         BindData();

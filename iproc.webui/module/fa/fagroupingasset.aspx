@@ -349,7 +349,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#MovementHistory" id="movementhistory" onclick="javascript:fnSetTab('insuranc');"
+                            <a href="#MovementHistory" id="movementhistory" onclick="javascript:fnSetTab('movementhistory');"
                                 style="padding-bottom:28px" data-toggle="tab">
                                 Movement History
                             </a>
@@ -540,7 +540,7 @@
                                                                     <hr
                                                                         style="margin: 3px 0; border-top: 1px solid #000;" />
                                                                     <strong>
-                                                                        <%# Eval("mod_date")%>
+                                                                        <%# Eval("mod_date", "{0:yyyy-MM-dd HH:mm:ss}") %>
                                                                     </strong>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>

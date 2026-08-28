@@ -1,4 +1,4 @@
-ALTER PROCEDURE [dbo].[xsp_fa_asset_getrows_for_subscription]
+CREATE PROCEDURE [dbo].[xsp_fa_asset_getrows_for_subscription]
 (
 	@p_keywords			nvarchar(50)
 	,@p_location		nvarchar(20)
@@ -10,11 +10,13 @@ begin
 	SELECT TOP 100	fa.barcode 'code'
 			,ast_name + ' - ' + fl.LOC_NAME + ' (' + mb.DESCRIPTION + ')' 'description'
 			,isnull(ga.is_parent,'No') 'parent'
+			,isnull(mu.DESCRIPTION,'') 'owner'
 			,isnull(ga.fa_group_asset_name,'') 'Group Asset Name'
 	from	dbo.fa_asset fa
 	INNER JOIN dbo.FA_LOCATION fl with (nolock) ON (fl.LOC_CODE = CURRENT_BRANCH)
 	left JOIN dbo.MASTER_BRANCH mb with (nolock) ON (mb.CODE = fa.BRANCH_CODE)
 	INNER JOIN dbo.MASTER_ITEM mi with (nolock) ON (mi.ITEM_CODE = fa.AST_CODE)
+	left join master_units mu with (nolock) on mi.owner = mu.code and mu.IS_ACTIVE = 1 and mu.IS_OWNER = 1
 	left join (
 					select fgad.BARCODE, 
 				case when fgad.IS_PARENT = '1' then 'Yes'
@@ -68,6 +70,7 @@ begin
 		select	ib.barcode as 'code'
 			,ib.item_code + ' - ' + mi.item_name + ' - ' + ml.description 'description'
 			,isnull(ga.is_parent,'No') 'parent'
+			,isnull(mu.DESCRIPTION,'') 'owner'
 			,isnull(ga.fa_group_asset_name,'') 'Group Asset Name'
 		from	dbo.inventory_barcode ib
 				inner join dbo.master_item mi on (ib.item_code = mi.item_code)
@@ -79,14 +82,14 @@ begin
 							case when fgad.IS_PARENT = '1' then 'Yes'
 						else 'No'
 						end as 'is_parent',
-					fga.fa_group_asset_code,
-					fga.fa_group_asset_name,
-					fga.branch_code,
-					fga.fa_location
-					from fa_grouping_asset fga with (nolock)
-					inner join fa_grouping_asset_detail fgad with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
-					where fgad.IS_ACTIVE = 1 and fga.branch_code = @p_branch_code and fga.FA_LOCATION = @p_location
-				) ga on ib.barcode =ga.barcode				
+						fga.fa_group_asset_code,
+						fga.fa_group_asset_name,
+						fga.branch_code,
+						fga.fa_location
+						from fa_grouping_asset fga with (nolock)
+						inner join fa_grouping_asset_detail fgad with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
+						where fgad.IS_ACTIVE = 1 and fga.branch_code = @p_branch_code and (fga.FA_LOCATION = @p_location or @p_location = 'ALL')
+					) ga on ib.barcode =ga.barcode				
 		where	ib.barcode_status = 'AVAILABLE' and mi.RENT_FLAG = 1
 		AND NOT EXISTS (
 			SELECT 1
