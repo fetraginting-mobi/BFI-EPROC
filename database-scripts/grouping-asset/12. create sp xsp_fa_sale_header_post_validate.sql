@@ -1,18 +1,17 @@
 CREATE PROCEDURE [dbo].[xsp_fa_sale_header_post_validate]
 (
-    @p_code_barcode     NVARCHAR(14),
-    @p_mod_by           NVARCHAR(15) = NULL,
-    @p_mod_date         DATETIME = NULL,
-    @p_mod_ip_address   NVARCHAR(15) = NULL
+    @p_code_barcode     NVARCHAR(14)
 )
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @ErrorMessage NVARCHAR(MAX);
-    DECLARE @missing_asset NVARCHAR(MAX);
-    DECLARE @invalid_child_assets NVARCHAR(MAX);
+    DECLARE @ErrorMessage NVARCHAR(MAX)
+			,@missing_asset NVARCHAR(MAX)
+			,@invalid_child_assets NVARCHAR(MAX)
+			,@other_transaction NVARCHAR(MAX);
 
     -- 1. Buat Tabel Temporer
+	--drop table #TEMPASSETSALE
     CREATE TABLE #TEMPASSETSALE (
         CODE_ASSET      NVARCHAR(36),
         BARCODE         NVARCHAR(50),
@@ -20,15 +19,15 @@ BEGIN
         FA_GA_CODE      NVARCHAR(48),
         IS_PARENT       BIT
     );
-
-    CREATE TABLE #TEMPASSETGROUPING (
+	--drop table #TEMPTRANSACTION
+	CREATE TABLE #TEMPTRANSACTION (
         CODE_ASSET      NVARCHAR(36),
         BARCODE         NVARCHAR(50),
-        FA_GA_CODE      NVARCHAR(48),
-        FA_ASSET_ID     INT,
-        IS_PARENT       BIT
-    );
-
+        TRANS_CODE		NVARCHAR(28),
+        TRANS_STATUS    NVARCHAR(48),
+        [TRANSACTION]   NVARCHAR(48)
+    ); 
+	
     -- 2. Populate Data Penjualan Aset ke #TEMPASSETSALE
     INSERT INTO #TEMPASSETSALE (CODE_ASSET, BARCODE, FA_SALE_CODE, FA_GA_CODE, IS_PARENT)
     SELECT 
@@ -43,8 +42,85 @@ BEGIN
        AND fgad.CODE_ASSET = fsd.CODE_ASSET 
        AND fgad.IS_ACTIVE = 1
     WHERE fsd.FA_SALE_CODE = @p_code_barcode;
+    
+	--insert data  #TEMPTRANSACTION
+	insert into #TEMPTRANSACTION
+	SELECT 
+		tas.CODE_ASSET,
+		tas.BARCODE,
+		t.TRANS_CODE,
+		t.TRANS_STATUS,
+		t.[TRANSACTION]
+	FROM #TEMPASSETSALE tas
+	INNER JOIN FA_ASSET fa WITH (NOLOCK) 
+		ON fa.BARCODE = tas.BARCODE 
+	   AND fa.TRANS_FLAG_CODE = 'AVAILABLE'
+	CROSS APPLY (
+		SELECT 
+			frmh.CODE AS TRANS_CODE,
+			frmh.TRANS_FLAG_CODE AS TRANS_STATUS,
+			'MUTATION' AS [TRANSACTION]
+		FROM FA_REQUEST_MUTATION_DETAIL frmd WITH (NOLOCK)
+		INNER JOIN FA_REQUEST_MUTATION_HEADER frmh WITH (NOLOCK) 
+			ON frmd.IR_CODE = frmh.CODE_BARCODE
+		WHERE frmd.ITEM_CODE = tas.BARCODE
+		  AND frmh.TRANS_FLAG_CODE IN ('NEW', 'PENDING')
 
-    -- 3. Populate Data Seluruh Anggota Group ke #TEMPASSETGROUPING
+		UNION 
+		SELECT 
+			fsh.CODE AS TRANS_CODE,
+			fsh.TRANS_FLAG_CODE AS TRANS_STATUS,
+			'SALE' AS [TRANSACTION]
+		FROM FA_SALE_DETAIL fsd WITH (NOLOCK)
+		INNER JOIN FA_SALE_HEADER fsh WITH (NOLOCK) 
+			ON fsd.FA_SALE_CODE = fsh.CODE_BARCODE
+		WHERE fsd.BARCODE = tas.BARCODE
+		  AND fsd.FA_SALE_CODE <> @p_code_barcode
+		  AND fsh.TRANS_FLAG_CODE IN ('NEW', 'ONPROGRESS')
+
+		UNION
+		SELECT 
+			fdh.CODE AS TRANS_CODE,
+			fdh.TRANS_FLAG_CODE AS TRANS_STATUS,
+			'DISPOSAL' AS [TRANSACTION]
+		FROM FA_DISPOSAL_DETAIL fdd WITH (NOLOCK)
+		INNER JOIN FA_DISPOSAL_HEADER fdh WITH (NOLOCK) 
+			ON fdd.FA_DISPOSAL_CODE = fdh.CODE_BARCODE
+		WHERE fdd.BARCODE = tas.BARCODE
+		  AND fdh.TRANS_FLAG_CODE IN ('NEW', 'ONPROGRESS')
+	) t
+	order by t.TRANS_CODE
+
+	IF EXISTS (select 1 from #TEMPTRANSACTION)
+	BEGIN
+		SELECT @other_transaction = STUFF((
+			SELECT DISTINCT 
+				' ( Asset Barcode: ' + transc.BARCODE+ ')'
+				+ ' is on transaction ' + transc.[TRANSACTION]
+				+ ' : ' + transc.TRANS_CODE
+			FROM #TEMPTRANSACTION transc 
+           
+			FOR XML PATH(''), TYPE
+		).value('.', 'NVARCHAR(MAX)'), 1, 2, '');
+		IF ISNULL(@other_transaction, '') <> ''
+		BEGIN
+			DROP TABLE #TEMPASSETSALE;
+			DROP TABLE #TEMPTRANSACTION;
+			SET @ErrorMessage = @other_transaction;
+			RAISERROR (@ErrorMessage, 16, 1);
+			RETURN;
+		END 		
+	END
+			
+	CREATE TABLE #TEMPASSETGROUPING (
+        CODE_ASSET      NVARCHAR(36),
+        BARCODE         NVARCHAR(50),
+        FA_GA_CODE      NVARCHAR(48),
+        FA_ASSET_ID     INT,
+        IS_PARENT       BIT
+    );
+
+	-- 3. Populate Data Seluruh Anggota Group ke #TEMPASSETGROUPING
     IF EXISTS (SELECT 1 FROM #TEMPASSETSALE WHERE FA_GA_CODE <> '')
     BEGIN
         INSERT INTO #TEMPASSETGROUPING (CODE_ASSET, BARCODE, FA_GA_CODE, FA_ASSET_ID, IS_PARENT)
@@ -59,7 +135,7 @@ BEGIN
             ON fgad.FA_GA_CODE = temp.FA_GA_CODE 
            AND fgad.IS_ACTIVE = 1;
     END
-		
+
 	-- is parent = 1 and fa_asset_id = 0 (Inventory)
 	 IF EXISTS ( 
         SELECT 1 
@@ -67,7 +143,6 @@ BEGIN
         WHERE tag.IS_PARENT = 1  AND FA_ASSET_ID = 0
     )
     BEGIN
-		select 'masuk inventory'
 		SELECT @invalid_child_assets = STUFF((
 			SELECT DISTINCT 
 				'\n- Asset Code: ' + ISNULL(tag.CODE_ASSET, '-') 
@@ -131,28 +206,40 @@ BEGIN
 
 	-- IS_PARENT = 0 AND FA_ASSET_ID <> 0)
 	IF EXISTS (
-        SELECT 1 
-        FROM #TEMPASSETSALE tas 
-		inner join #TEMPASSETGROUPING tag on tag.BARCODE = tas.BARCODE and tag.CODE_ASSET = tas.CODE_ASSET
-        WHERE tas.IS_PARENT = 0  AND tas.fa_ga_code <> '' and tag.IS_PARENT = 0
-    )
-    BEGIN
-		SELECT @invalid_child_assets = STUFF((
-			SELECT DISTINCT 
-				' (Barcode: ' + ISNULL(tag.BARCODE, '-') + ')'
-				+ ' n in Grouping Asset: ' + ISNULL(tag.FA_GA_CODE, '-')
-			FROM #TEMPASSETSALE tag 
-			WHERE tag.BARCODE in (select barcode from #TEMPASSETGROUPING where is_parent = 0)            
-			FOR XML PATH(''), TYPE
-		).value('.', 'NVARCHAR(MAX)'), 1, 2, '');
-		IF ISNULL(@invalid_child_assets, '') <> ''
+		SELECT 1 
+		FROM #TEMPASSETSALE tas 
+		INNER JOIN #TEMPASSETGROUPING tag 
+			ON tag.BARCODE = tas.BARCODE AND tag.CODE_ASSET = tas.CODE_ASSET
+		WHERE tas.IS_PARENT = 0 
+		  AND tas.FA_GA_CODE <> '' 
+		  AND tag.IS_PARENT = 0
+		)
 		BEGIN
-			DROP TABLE #TEMPASSETSALE;
-			DROP TABLE #TEMPASSETGROUPING;
-			SET @ErrorMessage = 'please remove :\n ' 
-								+ @invalid_child_assets;
-			RAISERROR (@ErrorMessage, 16, 1);
-			RETURN;
-		END 
-	END
+			SELECT @invalid_child_assets = STUFF((
+				SELECT DISTINCT 
+					'\n- Barcode: ' + ISNULL(tag.BARCODE, '-') 
+					+ ' is missing from Grouping Asset: ' + ISNULL(tag.FA_GA_CODE, '-')
+				FROM #TEMPASSETGROUPING tag
+				LEFT JOIN #TEMPASSETSALE tam 
+					ON tam.FA_GA_CODE = tag.FA_GA_CODE 
+				   AND LTRIM(RTRIM(tam.BARCODE)) = LTRIM(RTRIM(tag.BARCODE))
+				WHERE tam.BARCODE IS NULL 
+				  AND ISNULL(tag.FA_ASSET_ID, 0) <> 0 
+				  AND tag.FA_GA_CODE IN (
+					  SELECT DISTINCT FA_GA_CODE FROM #TEMPASSETSALE WHERE FA_GA_CODE <> ''
+				  )
+				FOR XML PATH(''), TYPE
+			).value('.', 'NVARCHAR(MAX)'), 1, 2, '');
+
+			IF ISNULL(@invalid_child_assets, '') <> ''
+			BEGIN
+				DROP TABLE #TEMPASSETSALE;
+				DROP TABLE #TEMPASSETGROUPING;
+
+				SET @ErrorMessage = 'Please remove the asset from the group first or include all group assets:\n' 
+									+ @invalid_child_assets;
+				RAISERROR (@ErrorMessage, 16, 1);
+				RETURN;
+			END
+		END
 END

@@ -29,6 +29,7 @@ public partial class module_fa_farequestmutationdetail : BasePage
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
+                btnLookUpInventoryRequestItem.Enabled = false;
             }
             else
             {
