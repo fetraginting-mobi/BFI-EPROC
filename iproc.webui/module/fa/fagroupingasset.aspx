@@ -379,7 +379,7 @@
                                                     CssClass="btn btn-danger" OnClick="btnDelete_Click"
                                                     CausesValidation="false"><i class="icon-trash"></i> Delete
                                                 </cc1:XUILinkButton>
-                                                <a id="btnMove" href="#" class="btn btn-purple"
+                                                <a id="btnMove" runat="server" href="#" class="btn btn-purple"
                                                     onclick="return handleMovePopup();">
                                                     <i class="icon-arrow-right"></i> Move
                                                 </a>

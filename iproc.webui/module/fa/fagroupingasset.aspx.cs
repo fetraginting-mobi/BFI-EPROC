@@ -35,7 +35,11 @@ public partial class module_fa_fagroupingasset : BasePage
             {
                 LoadData();
                 BindData();
-                ddlBranch.Enabled = ddlLocation.Enabled = false;
+                ddlBranch.Enabled = ddlLocation.Enabled = chbIsActive.Enabled = false;
+                btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
+
+                if (!chbIsActive.Checked)
+                    DisableInactiveMode();
             }
             else
             {
@@ -73,6 +77,45 @@ public partial class module_fa_fagroupingasset : BasePage
         catch (Exception ex)
         {
             Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
+    private void DisableInactiveMode()
+    {
+        btnSave.Enabled = false;
+        btnAdd.Enabled = false;
+        btnSaveDetail.Enabled = false;
+        btnDelete.Enabled = false;
+        btnSearch.Enabled = false;
+        btnSearchHistory.Enabled = false;
+
+        btnMove.Attributes["class"] = (btnMove.Attributes["class"] + " disabled").Trim();
+        btnMove.Attributes["onclick"] = "return false;";
+        btnMove.Attributes["href"] = "#";
+
+        txtAssetGroupName.Enabled = false;
+        txtRemarks.Enabled = false;
+        txtSearch.Enabled = false;
+        txtSearchHistory.Enabled = false;
+        txtAssetGroupDate.Enabled = false;
+        ddlBranch.Enabled = false;
+        ddlLocation.Enabled = false;
+        chbIsActive.Enabled = false;
+
+        SetGridEnabled(gvwList, false);
+        SetGridEnabled(gvwMovementHistory, false);
+    }
+
+    private void SetGridEnabled(Control parent, bool enabled)
+    {
+        foreach (Control control in parent.Controls)
+        {
+            WebControl webControl = control as WebControl;
+            if (webControl != null)
+                webControl.Enabled = enabled;
+
+            if (control.HasControls())
+                SetGridEnabled(control, enabled);
         }
     }
     protected void btnSave_Click(object sender, EventArgs e)
@@ -289,8 +332,15 @@ public partial class module_fa_fagroupingasset : BasePage
         // Response.Redirect(redirectUrl);
     }
     protected void btnDelete_Click(object sender, EventArgs e)
-    {   
-        ArrayList selectedCodes = new ArrayList();
+    {
+        if (!SelectedExistItem())
+        {
+            Exception ex = null;
+            ex = new Exception("No Transaction Selected !");
+            Shared.ShowErrorDialog(this, ex);
+            return;
+        }
+
         foreach (GridViewRow row in gvwList.Rows)
         {
             CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
@@ -299,13 +349,25 @@ public partial class module_fa_fagroupingasset : BasePage
                 DeleteData(gvwList.DataKeys[row.RowIndex][0].ToString());
             }
         }
-        if (selectedCodes.Count == 0)
-        {
-            Shared.ShowErrorDialog(this, new Exception("There is no data selected!"));
-            return;
-        }
 
         BindData();
+    }
+    private Boolean SelectedExistItem()
+    {
+        int _RowCount = 0;
+        foreach (GridViewRow row in gvwList.Rows)
+        {
+            CheckBox chb = row.FindControl("chbSelect") as CheckBox;
+            if (chb != null && chb.Checked)
+            {
+                _RowCount += 1;
+            }
+        }
+
+        if (_RowCount > 0)
+            return true;
+        else
+            return false;
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {

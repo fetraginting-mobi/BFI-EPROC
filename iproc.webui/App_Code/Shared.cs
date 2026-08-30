@@ -4315,7 +4315,7 @@ public class Shared
 
                 // --- STYLESHEET ---
                 WorkbookStylesPart stylePart = workbookPart.AddNewPart<WorkbookStylesPart>();
-                stylePart.Stylesheet = CreateStylesheet();
+                stylePart.Stylesheet = CreateGroupingAssetReportStylesheet();
                 stylePart.Stylesheet.Save();
 
                 WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
@@ -4325,6 +4325,7 @@ public class Shared
                 Spreadsheet.SheetData sheetData = new Spreadsheet.SheetData();
 
                 worksheetPart.Worksheet = new Spreadsheet.Worksheet();
+                worksheetPart.Worksheet.Append(CreateGroupingAssetSheetViews());
                 worksheetPart.Worksheet.Append(columns);
                 worksheetPart.Worksheet.Append(sheetData);
 
@@ -4337,8 +4338,14 @@ public class Shared
                 };
                 sheets.Append(sheet);
 
+                uint headerRowIndex = 6;
+                uint dataStartRowIndex = headerRowIndex + 1;
+                string lastColumnName = GetExcelColumnName(dt.Columns.Count);
+
+                AppendReportInfoRows(sheetData, tableName, reportParameters);
+
                 // --- HEADER ---
-                Spreadsheet.Row headerRow = new Spreadsheet.Row();
+                Spreadsheet.Row headerRow = new Spreadsheet.Row() { RowIndex = headerRowIndex };
                 foreach (DataColumn column in dt.Columns)
                 {
                     // Gunakan Spreadsheet.CellValues
@@ -4349,23 +4356,36 @@ public class Shared
                 sheetData.AppendChild(headerRow);
 
                 // --- DATA ---
+                uint rowIndex = dataStartRowIndex;
                 foreach (DataRow dsrow in dt.Rows)
                 {
-                    Spreadsheet.Row newRow = new Spreadsheet.Row();
+                    Spreadsheet.Row newRow = new Spreadsheet.Row() { RowIndex = rowIndex };
+                    bool isTotalRow = IsGroupingAssetTotalRow(dsrow);
                     foreach (DataColumn col in dt.Columns)
                     {
                         string cellValue = dsrow[col].ToString();
+                        bool isAmountColumn = IsAmountColumn(col.ColumnName);
 
                         // Deteksi tipe data
                         Spreadsheet.CellValues dataType = IsNumericType(col.DataType) ?
                             Spreadsheet.CellValues.Number : Spreadsheet.CellValues.InlineString;
 
-                        if (dataType == Spreadsheet.CellValues.Number && string.IsNullOrEmpty(cellValue))
-                            cellValue = "0";
+                        if (dataType == Spreadsheet.CellValues.Number && String.IsNullOrEmpty(cellValue))
+                            dataType = Spreadsheet.CellValues.InlineString;
 
-                        newRow.AppendChild(CreateCell(cellValue, dataType));
+                        Spreadsheet.Cell cell = CreateCell(cellValue, dataType);
+                        cell.StyleIndex = GetGroupingAssetDataStyleIndex(col, isAmountColumn, isTotalRow);
+
+                        newRow.AppendChild(cell);
                     }
                     sheetData.AppendChild(newRow);
+                    rowIndex++;
+                }
+
+                if (dt.Columns.Count > 0)
+                {
+                    uint lastRowIndex = rowIndex > dataStartRowIndex ? rowIndex - 1 : dataStartRowIndex;
+                    worksheetPart.Worksheet.Append(new Spreadsheet.AutoFilter() { Reference = "A" + headerRowIndex + ":" + lastColumnName + lastRowIndex });
                 }
 
                 workbookPart.Workbook.Save();
@@ -4384,7 +4404,172 @@ public class Shared
         }
     }
 
+    private static void AppendReportInfoRows(Spreadsheet.SheetData sheetData, string tableName, Hashtable reportParameters)
+    {
+        string branch = GetReportParameterValue(reportParameters, "p_branch_code");
+        string location = GetReportParameterValue(reportParameters, "p_location_code");
+        string category = GetReportParameterValue(reportParameters, "p_category");
+
+        Spreadsheet.Row titleRow = new Spreadsheet.Row() { RowIndex = 1, Height = 24, CustomHeight = true };
+        Spreadsheet.Cell titleCell = CreateCell(GetReportTitle(tableName), Spreadsheet.CellValues.InlineString);
+        titleCell.StyleIndex = 2;
+        titleRow.AppendChild(titleCell);
+        sheetData.AppendChild(titleRow);
+
+        AppendInfoRow(sheetData, 2, "Generated Date", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
+        AppendInfoRow(sheetData, 3, "Branch", NormalizeReportFilter(branch));
+        AppendInfoRow(sheetData, 4, "Location", NormalizeReportFilter(location));
+        AppendInfoRow(sheetData, 5, "Category", NormalizeReportFilter(category));
+    }
+
+    private static void AppendInfoRow(Spreadsheet.SheetData sheetData, uint rowIndex, string label, string value)
+    {
+        Spreadsheet.Row row = new Spreadsheet.Row() { RowIndex = rowIndex };
+        Spreadsheet.Cell labelCell = CreateCell(label, Spreadsheet.CellValues.InlineString);
+        labelCell.StyleIndex = 3;
+        row.AppendChild(labelCell);
+
+        Spreadsheet.Cell valueCell = CreateCell(value, Spreadsheet.CellValues.InlineString);
+        valueCell.StyleIndex = 4;
+        row.AppendChild(valueCell);
+        sheetData.AppendChild(row);
+    }
+
+    private static string GetReportParameterValue(Hashtable reportParameters, string key)
+    {
+        if (reportParameters == null || !reportParameters.ContainsKey(key) || reportParameters[key] == null)
+            return String.Empty;
+
+        return Convert.ToString(reportParameters[key]);
+    }
+
+    private static string NormalizeReportFilter(string value)
+    {
+        if (String.IsNullOrEmpty(value) || value.Equals("all", StringComparison.OrdinalIgnoreCase))
+            return "All";
+
+        return value;
+    }
+
+    private static string GetReportTitle(string tableName)
+    {
+        if (String.IsNullOrEmpty(tableName))
+            return "Report";
+
+        return tableName.Replace("_", " ");
+    }
+
+    private static Spreadsheet.SheetViews CreateGroupingAssetSheetViews()
+    {
+        Spreadsheet.SheetView sheetView = new Spreadsheet.SheetView()
+        {
+            WorkbookViewId = 0,
+            ShowGridLines = false
+        };
+
+        sheetView.Append(new Spreadsheet.Pane()
+        {
+            VerticalSplit = 6D,
+            TopLeftCell = "A7",
+            ActivePane = Spreadsheet.PaneValues.BottomLeft,
+            State = Spreadsheet.PaneStateValues.Frozen
+        });
+
+        return new Spreadsheet.SheetViews(sheetView);
+    }
+
+    private static UInt32Value GetGroupingAssetDataStyleIndex(DataColumn column, bool isAmountColumn, bool isTotalRow)
+    {
+        if (isTotalRow && isAmountColumn)
+            return 7;
+
+        if (isTotalRow)
+            return IsNumericType(column.DataType) ? (UInt32Value)7U : (UInt32Value)6U;
+
+        if (isAmountColumn)
+            return 5;
+
+        if (column.DataType == typeof(DateTime))
+            return 9;
+
+        return 8;
+    }
+
+    private static bool IsAmountColumn(string columnName)
+    {
+        return !String.IsNullOrEmpty(columnName)
+            && (columnName.IndexOf("Price", StringComparison.OrdinalIgnoreCase) >= 0
+                || columnName.IndexOf("Value", StringComparison.OrdinalIgnoreCase) >= 0
+                || columnName.IndexOf("Amount", StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+
+    private static bool IsGroupingAssetTotalRow(DataRow row)
+    {
+        if (row == null || !row.Table.Columns.Contains("Group Code"))
+            return false;
+
+        return Convert.ToString(row["Group Code"]).Equals("Total Asset Value", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetExcelColumnName(int columnNumber)
+    {
+        string columnName = String.Empty;
+        while (columnNumber > 0)
+        {
+            int modulo = (columnNumber - 1) % 26;
+            columnName = Convert.ToChar(65 + modulo) + columnName;
+            columnNumber = (columnNumber - modulo) / 26;
+        }
+        return columnName;
+    }
+
     // Perhatikan penggunaan 'Spreadsheet.' pada return type dan isi fungsi
+    private static Spreadsheet.Stylesheet CreateGroupingAssetReportStylesheet()
+    {
+        return new Spreadsheet.Stylesheet(
+            new Spreadsheet.NumberingFormats(
+                new Spreadsheet.NumberingFormat() { NumberFormatId = 164, FormatCode = "#,##0" },
+                new Spreadsheet.NumberingFormat() { NumberFormatId = 165, FormatCode = "dd/mm/yyyy hh:mm:ss" }
+            ),
+            new Spreadsheet.Fonts(
+                new Spreadsheet.Font(),
+                new Spreadsheet.Font(new Spreadsheet.Bold(), new Spreadsheet.Color() { Rgb = "FFFFFF" }),
+                new Spreadsheet.Font(new Spreadsheet.Bold(), new Spreadsheet.FontSize() { Val = 14 }, new Spreadsheet.Color() { Rgb = "1F2937" }),
+                new Spreadsheet.Font(new Spreadsheet.Bold(), new Spreadsheet.Color() { Rgb = "374151" }),
+                new Spreadsheet.Font(new Spreadsheet.Bold(), new Spreadsheet.Color() { Rgb = "111827" })
+            ),
+            new Spreadsheet.Fills(
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill() { PatternType = Spreadsheet.PatternValues.None }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill() { PatternType = Spreadsheet.PatternValues.Gray125 }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill(new Spreadsheet.ForegroundColor() { Rgb = "305496" }) { PatternType = Spreadsheet.PatternValues.Solid }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill(new Spreadsheet.ForegroundColor() { Rgb = "EAF2F8" }) { PatternType = Spreadsheet.PatternValues.Solid }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill(new Spreadsheet.ForegroundColor() { Rgb = "D9EAD3" }) { PatternType = Spreadsheet.PatternValues.Solid }),
+                new Spreadsheet.Fill(new Spreadsheet.PatternFill(new Spreadsheet.ForegroundColor() { Rgb = "F3F4F6" }) { PatternType = Spreadsheet.PatternValues.Solid })
+            ),
+            new Spreadsheet.Borders(
+                new Spreadsheet.Border(),
+                new Spreadsheet.Border(
+                    new Spreadsheet.LeftBorder(new Spreadsheet.Color() { Rgb = "D1D5DB" }) { Style = Spreadsheet.BorderStyleValues.Thin },
+                    new Spreadsheet.RightBorder(new Spreadsheet.Color() { Rgb = "D1D5DB" }) { Style = Spreadsheet.BorderStyleValues.Thin },
+                    new Spreadsheet.TopBorder(new Spreadsheet.Color() { Rgb = "D1D5DB" }) { Style = Spreadsheet.BorderStyleValues.Thin },
+                    new Spreadsheet.BottomBorder(new Spreadsheet.Color() { Rgb = "D1D5DB" }) { Style = Spreadsheet.BorderStyleValues.Thin },
+                    new Spreadsheet.DiagonalBorder())
+            ),
+            new Spreadsheet.CellFormats(
+                new Spreadsheet.CellFormat(),
+                new Spreadsheet.CellFormat() { FontId = 1, FillId = 2, BorderId = 1, ApplyFill = true, ApplyFont = true, ApplyBorder = true, Alignment = new Spreadsheet.Alignment() { Horizontal = Spreadsheet.HorizontalAlignmentValues.Center, Vertical = Spreadsheet.VerticalAlignmentValues.Center, WrapText = true } },
+                new Spreadsheet.CellFormat() { FontId = 2, ApplyFont = true },
+                new Spreadsheet.CellFormat() { FontId = 3, ApplyFont = true },
+                new Spreadsheet.CellFormat(),
+                new Spreadsheet.CellFormat() { NumberFormatId = 164, BorderId = 1, ApplyNumberFormat = true, ApplyBorder = true, Alignment = new Spreadsheet.Alignment() { Horizontal = Spreadsheet.HorizontalAlignmentValues.Right } },
+                new Spreadsheet.CellFormat() { FontId = 4, FillId = 4, BorderId = 1, ApplyFill = true, ApplyFont = true, ApplyBorder = true },
+                new Spreadsheet.CellFormat() { FontId = 4, FillId = 4, BorderId = 1, NumberFormatId = 164, ApplyFill = true, ApplyFont = true, ApplyBorder = true, ApplyNumberFormat = true, Alignment = new Spreadsheet.Alignment() { Horizontal = Spreadsheet.HorizontalAlignmentValues.Right } },
+                new Spreadsheet.CellFormat() { BorderId = 1, ApplyBorder = true },
+                new Spreadsheet.CellFormat() { NumberFormatId = 165, BorderId = 1, ApplyNumberFormat = true, ApplyBorder = true }
+            )
+        );
+    }
+
     private static Spreadsheet.Stylesheet CreateStylesheet()
     {
         return new Spreadsheet.Stylesheet(
