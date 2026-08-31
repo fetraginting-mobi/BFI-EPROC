@@ -540,7 +540,7 @@
                                                                     <hr
                                                                         style="margin: 3px 0; border-top: 1px solid #000;" />
                                                                     <strong>
-                                                                        <%# Eval("mod_date", "{0:yyyy-MM-dd HH:mm:ss}") %>
+                                                                        <%# Eval("mod_date", "{0:dd/MM/yyyy HH:mm:ss}") %>
                                                                     </strong>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
