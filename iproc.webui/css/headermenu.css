@@ -1,7 +1,7 @@
 /* Windows Chrome ugly fix http://stackoverflow.com/questions/13674808/chrome-svg-font-rendering-breaks-layout/14345363#14345363 */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
 	@font-face {
-		font-family: 'icomoon';
+        font-family: 'RobotoLocal', 'OpenSansLocal';
 		src: url('../fonts/icomoon.svg#icomoon') format('svg');
 	};
 }
@@ -28,7 +28,7 @@ a {
 }
 
 .icon-team, .icon-blog, .icon-home, .icon-portfolio, .icon-services, .icon-contact, .icon-menu {
-	font-family: 'icomoon';
+    font-family: 'RobotoLocal', 'OpenSansLocal';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
