@@ -21,7 +21,7 @@ public partial class module_fa_fagroupingassetlist : BasePageList
         LoadInit();
         if (!Page.IsPostBack)
         {
-            Shared.BindBranchEmployeeSort(ddlCostCenter);
+            Shared.BindBranchAll(ddlCostCenter);
             Shared.BindFaLocationAll(ddlLocation, ddlCostCenter.SelectedValue);
             BindDataFaItemGroup();
             btnDeleteFaGroup.OnClientClick = "return confirm('Delete selected data?');";
@@ -51,12 +51,7 @@ public partial class module_fa_fagroupingassetlist : BasePageList
     }
     protected void btnFaGroupSearch_Click(object sender, EventArgs e)
     {
-
-    }
-    protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
-    {
-        gvwListFaGroupingAsset.PageIndex = e.NewPageIndex;
-        BindDataFaItemGroup();
+         BindDataFaItemGroup();
     }
     protected void gvwList_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -86,6 +81,11 @@ public partial class module_fa_fagroupingassetlist : BasePageList
     {
         BindDataFaItemGroup();
     }
+    protected void gvwList_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvwListFaGroupingAsset.PageIndex = e.NewPageIndex;
+        BindDataFaItemGroup();
+    }
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
         Shared.BindFaLocationAll(ddlLocation, ddlCostCenter.SelectedValue);
@@ -100,6 +100,7 @@ public partial class module_fa_fagroupingassetlist : BasePageList
             _ht["p_status"] = "";
             _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
             _ht["p_location"] = "ALL";
+            _ht["p_status"] = ddlStatus.SelectedValue;
             gvwListFaGroupingAsset.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
             gvwListFaGroupingAsset.DataBind();
         }
@@ -122,6 +123,7 @@ public partial class module_fa_fagroupingassetlist : BasePageList
             _ht["p_status"] = "";
             _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
             _ht["p_location"] = ddlLocation.SelectedValue;
+            _ht["p_status"] = ddlStatus.SelectedValue;
             gvwListFaGroupingAsset.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
             gvwListFaGroupingAsset.DataBind();
         }
@@ -144,9 +146,9 @@ public partial class module_fa_fagroupingassetlist : BasePageList
             _ht = new Hashtable();
 
             _ht["p_keywords"] = txtFaGroupSearch.Text;
-            _ht["p_status"] = "";
             _ht["p_cost_center"] = ddlCostCenter.SelectedValue;
             _ht["p_location"] = ddlLocation.SelectedValue;
+            _ht["p_status"] = ddlStatus.SelectedValue;
             gvwListFaGroupingAsset.DataSource = _dal.GetRows(TABLE_NAME_HEADER, _ht);
             gvwListFaGroupingAsset.DataBind();
         }

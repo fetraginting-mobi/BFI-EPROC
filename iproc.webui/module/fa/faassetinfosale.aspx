@@ -188,13 +188,14 @@
                                         <cc1:XUITextBox ID="txtFAParent" style="display:none" runat="server" CssClass="form-control" DBColumnName="FA_PARENT_CODE" SPParameterName="p_fa_parent_code" MaxLength="10" DataType="String" BindType="Both"></cc1:XUITextBox>
                                         <cc1:XUILabel ID="lblFAParent" runat="server"  DBColumnName="FA_PARENT_NAME" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>                       
                                     </div>
-                                 </div>                            
+                                 </div>                        
                              </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
+                                    <label class="col-sm-4 ">Grouping Asset Name</label>
                                     <div class="col-sm-8">
-                                      
-                                    </div>
+                                        <cc1:XUILabel ID="XUILabel1" runat="server" DBColumnName="grouping_asset_name"  DataType="String" BindType="DBToUIOnly"></cc1:XUILabel>
+                                     </div>
                                  </div>                            
                              </div>
                         </div>

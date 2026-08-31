@@ -71,7 +71,15 @@
                                     <asp:RegularExpressionValidator runat="server" ID="valInput" ControlToValidate="txtDescription" ValidationExpression="^[\s\S]{0,100}$" ErrorMessage="Exceed maximum length 100" Display="Dynamic"></asp:RegularExpressionValidator>
                                 </div>
                             </div>
-                         </div>     
+                         </div>
+                         <div class="col-sm-6" style="display:none;">
+                            <div class="form-group">
+                                <label class="col-sm-4">Process</label>
+                                <div class="col-sm-8">
+                                    <cc1:XUILabel ID="lblProcess" runat="server" DBColumnName="PROCESS" DataType="String"></cc1:XUILabel>
+                                </div>
+                            </div>                            
+                        </div>     
                     </div>
                     <div class="row" style="display:none;" >
                          <div class="col-sm-12">

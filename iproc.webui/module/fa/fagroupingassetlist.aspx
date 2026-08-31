@@ -71,6 +71,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-3">Status</label>
+                                <div class="col-sm-5">
+                                    <cc1:XUIDropDownList ID="ddlStatus" runat="server" Width="200px"
+                                        CssClass="form-control" SPParameterName="p_status"
+                                        DataType="String" BindType="Both" AutoPostBack="true"
+                                        OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged">
+                                        <asp:ListItem Text="ALL" Value="ALL"></asp:ListItem>
+                                        <asp:ListItem Text="ACTIVE" Value="1"></asp:ListItem>
+                                        <asp:ListItem Text="NOT ACTIVE" Value="0"></asp:ListItem>
+                                    </cc1:XUIDropDownList>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-sm-6">
                             <div class="form-group"></div>
                         </div>
@@ -86,6 +101,7 @@
                                 CssClass="display table table-bordered table-striped grid-auto"
                                 AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
                                 DataKeyNames="ASSET_GROUP_CODE" onselectedindexchanged="gvwList_SelectedIndexChanged"
+                                OnPageIndexChanging="gvwList_PageIndexChanging"
                                 Width="100%">
                                 <Columns>
                                     <asp:TemplateField>
