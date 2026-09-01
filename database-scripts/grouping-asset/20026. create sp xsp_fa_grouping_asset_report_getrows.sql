@@ -1,8 +1,7 @@
-CREATE procedure [dbo].[xsp_fa_grouping_asset_report_getrows]
+alter procedure [dbo].[xsp_fa_grouping_asset_report_getrows]
 (
 	@p_branch_code nvarchar(20), 
-	@p_location_code nvarchar(20)='ALL',
-	@p_category nvarchar(20) ='ALL'
+	@p_location_code nvarchar(20)='ALL'
 )as
 begin			
 	if object_id('tempdb..#basedata') is not null drop table #basedata
@@ -12,7 +11,7 @@ begin
 		fa.ast_name,
 		fag.branch_code,
 		mi.group_code,
-		aird.purchase_amount,
+		fa.COST_PRICE 'PURCHASE_AMOUNT',
 		fa.trans_flag_code,
 		fagd.is_parent
 	into #basedata
