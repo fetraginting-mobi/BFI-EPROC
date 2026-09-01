@@ -241,7 +241,7 @@
                                     <ContentTemplate>
                                         <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
-                                            PageSize="3" DataKeyNames="upload_id,file_name"
+                                            PageSize="5" DataKeyNames="upload_id,file_name"
                                             OnPageIndexChanging="gvwUploadLog_PageIndexChanging"
                                             OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data"
                                             Width="100%">
@@ -411,7 +411,13 @@
                                                 <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
+                                                <asp:BoundField DataField="FROM_LOCATION" HeaderText="From Location">
+                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
                                                 <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
+                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
+                                                 <asp:BoundField DataField="TO_LOCATION" HeaderText="To Location">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">

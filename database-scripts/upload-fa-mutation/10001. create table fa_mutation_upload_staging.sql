@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[fa_mutation_upload_staging](
+﻿CREATE TABLE [dbo].[fa_mutation_upload_staging](
 	[upload_id] [uniqueidentifier] NULL,
 	[file_name] [nvarchar](255) NULL,
 	[row_number] [int] NULL,
@@ -16,8 +16,3 @@ CREATE TABLE [dbo].[fa_mutation_upload_staging](
 	[process_date] [datetime] NULL
 ) ON [PRIMARY]
 GO
-
-ALTER TABLE [dbo].[fa_mutation_upload_staging] ADD  DEFAULT (getdate()) FOR [upload_date]
-GO
-
-

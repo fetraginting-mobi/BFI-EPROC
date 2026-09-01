@@ -363,7 +363,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Format file tidak didukung");
+                throw new Exception("The uploaded file must be in .xlsx or .xls format.");
 
             DataTable dt = BuildStagingTable();
             int excelRowIndex = 0;
@@ -429,14 +429,14 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
 
         if (dtTemplate.Rows.Count == 0)
         {
-            errorMessage = "Template upload FA Mutation belum disetting.";
+            errorMessage = "The FA Mutation upload template has not been configured.";
             LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER TEMPLATE NOT FOUND");
             return false;
         }
 
         if (reader.FieldCount != dtTemplate.Rows.Count)
         {
-            errorMessage = "Format file tidak sesuai template. Jumlah kolom tidak valid.";
+            errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
             LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER VALIDATION");
             return false;
         }
@@ -453,7 +453,8 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                errorMessage = "Template file tidak sesuai. Header kolom ke-" + (i + 1) + " harus '" + expectedHeader + "'.";
+                //errorMessage = "Invalid template file. Column header - " + (i + 1) + " muse be '" + expectedHeader + "'.";
+                errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
                 LogFAMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER=" + actualHeader);
                 return false;
             }
@@ -551,9 +552,6 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     {
         GeneralDAL _dal = new GeneralDAL();
         Hashtable _ht = new Hashtable();
-
-        _ht["p_upload_id"] = "";
-        // _ht["p_file_name"] = fileName;
 
         DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
         AddTotalTrxUpload(dtUploadLog);
