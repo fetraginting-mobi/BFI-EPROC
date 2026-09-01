@@ -10,6 +10,7 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
+using System.IO; 
 
 using MessagingToolkit.QRCode.Codec;
 using MessagingToolkit.QRCode.Codec.Ecc;
@@ -22,7 +23,6 @@ public class qr_gen : System.Web.UI.Page
 {
     public void QRGen(string input)
     {
-        //qrlev(input.Length);
         try
         {
             string toenc = input;
@@ -30,15 +30,21 @@ public class qr_gen : System.Web.UI.Page
             MessagingToolkit.QRCode.Codec.QRCodeEncoder qe = new MessagingToolkit.QRCode.Codec.QRCodeEncoder();
             qe.QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE;
             qe.QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.L;
-            // Level 12 L - max 367 alphanumerics
             qe.QRCodeVersion = qrlevel;
-            System.Drawing.Bitmap bm = qe.Encode(toenc);
 
-            String Path = Server.MapPath(@"..\..\temp\qrcodes\");
-            //Path = "C:\\" + input + ".png";
-            bm.Save(Path + input + ".png");
+            string folderPath = Server.MapPath(@"..\..\temp\qrcodes\");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
 
-            ConvertPictureToByte(input, input + ".png", Path);
+            string fullFilePath = Path.Combine(folderPath, input + ".png");
+
+            using (System.Drawing.Bitmap bm = qe.Encode(toenc))
+            {
+                bm.Save(fullFilePath, System.Drawing.Imaging.ImageFormat.Png);
+            } 
+            ConvertPictureToByte(input, input + ".png", folderPath);
         }
         catch (Exception ex)
         {
@@ -50,10 +56,8 @@ public class qr_gen : System.Web.UI.Page
     {
         try
         {
-            String Path; ;
+            String Path;
             Path = Server.MapPath(@"..\temp\qrcodes\" + barcodes + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png");
-            //qr_pic.Image.Save( + @"\Code_" + DateTime.Now.ToString("d_MM_yy_HH_mm_ss") + ".png");
-
             return "Image Saved Successfully";
         }
         catch (Exception)
@@ -73,10 +77,19 @@ public class qr_gen : System.Web.UI.Page
             parameters = new Hashtable();
 
             parameters["p_barcode"] = barcode;
-            byte[] buffer = System.IO.File.ReadAllBytes(path + "/" + FileName);
-            parameters["p_barcode_image"] = buffer;
-            Shared.ApplyDefaultProp(parameters);
-            dal.Insert("FA_ASSET_BARCODE_IMAGE", parameters);
+            string targetFile = Path.Combine(path, FileName);
+
+            if (File.Exists(targetFile))
+            {
+                byte[] buffer = System.IO.File.ReadAllBytes(targetFile);
+                parameters["p_barcode_image"] = buffer;
+                Shared.ApplyDefaultProp(parameters);
+                dal.Insert("FA_ASSET_BARCODE_IMAGE", parameters);
+            }
+            else
+            {
+                throw new FileNotFoundException("File QR Code tidak ditemukan di path: " + targetFile);
+            }
         }
         catch (Exception ex)
         {

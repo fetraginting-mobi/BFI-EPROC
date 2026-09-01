@@ -22,13 +22,13 @@ Highcharts.theme = {
 	title: {
 		style: {
 			color: '#3E576F',
-			font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+			font: '16px RobotoLocal, OpenSansLocal'
 		}
 	},
 	subtitle: {
 		style: {
 			color: '#6D869F',
-			font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+			font: '12px RobotoLocal, OpenSansLocal'
 		}
 	},
 	xAxis: {
@@ -44,7 +44,7 @@ Highcharts.theme = {
 		title: {
 			style: {
 				color: '#666',
-				font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+				font: '12px RobotoLocal, OpenSansLocal'
 			}
 		}
 	},
@@ -62,13 +62,13 @@ Highcharts.theme = {
 		title: {
 			style: {
 				color: '#666',
-				font: '12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+				font: '12px RobotoLocal, OpenSansLocal'
 			}
 		}
 	},
 	legend: {
 		itemStyle: {
-			font: '9pt Trebuchet MS, Verdana, sans-serif',
+			font: '9pt RobotoLocal, OpenSansLocal',
 			color: '#3E576F'
 		},
 		itemHoverStyle: {

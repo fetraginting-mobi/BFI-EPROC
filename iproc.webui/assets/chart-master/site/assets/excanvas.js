@@ -486,7 +486,7 @@ if (!document.createElement('canvas').getContext) {
     variant: 'normal',
     weight: 'normal',
     size: 10,
-    family: 'sans-serif'
+    family: RobotoLocal,OpenSansLocal
   };
 
   // Internal text style cache
@@ -582,7 +582,7 @@ if (!document.createElement('canvas').getContext) {
     this.lineCap = 'butt';
     this.miterLimit = Z * 1;
     this.globalAlpha = 1;
-    this.font = '10px sans-serif';
+    this.font = '10px RobotoLocal';
     this.textAlign = 'left';
     this.textBaseline = 'alphabetic';
     this.canvas = canvasElement;

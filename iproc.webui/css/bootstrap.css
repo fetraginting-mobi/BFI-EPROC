@@ -41,7 +41,7 @@ template {
 }
 
 html {
-  font-family: sans-serif;
+  font-family: RobotoLocal;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
@@ -96,7 +96,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: monospace, serif;
+  font-family: RobotoLocal, OpenSansLocal;
   font-size: 1em;
 }
 
@@ -306,7 +306,7 @@ html {
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'RobotoLocal', 'OpenSansLocal';
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
@@ -482,7 +482,7 @@ h6,
 .h4,
 .h5,
 .h6 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'RobotoLocal', 'OpenSansLocal';
   font-weight: 500;
   line-height: 1.1;
   color: inherit;
@@ -741,7 +741,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  font-family: RobotoLocal, OpenSansLocal;
 }
 
 code {
@@ -2637,7 +2637,7 @@ input[type="button"].btn-block {
 }
 
 @font-face {
-  font-family: 'Glyphicons Halflings';
+  font-family: 'GlyphiconsLocal';
   src: url('../fonts/glyphicons-halflings-regular.eot');
   src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
 }
@@ -2646,7 +2646,7 @@ input[type="button"].btn-block {
   position: relative;
   top: 1px;
   display: inline-block;
-  font-family: 'Glyphicons Halflings';
+  font-family: 'GlyphiconsLocal';
   -webkit-font-smoothing: antialiased;
   font-style: normal;
   font-weight: normal;
@@ -6497,7 +6497,7 @@ button.close {
   height: 20px;
   margin-top: -10px;
   margin-left: -10px;
-  font-family: serif;
+  font-family: RobotoLocal, OpenSansLocal;
 }
 
 .carousel-control .icon-prev:before {
