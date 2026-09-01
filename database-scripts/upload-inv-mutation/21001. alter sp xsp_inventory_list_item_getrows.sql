@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[xsp_inventory_list_item_getrows]
+ALTER PROCEDURE [dbo].[xsp_inventory_list_item_getrows]
 as
 	begin 
 	WITH cte AS (
@@ -8,6 +8,7 @@ as
 	) 
 	SELECT 
 	  No AS 'No', 
+	  null as 'From Branch*',
 	  NULL AS 'From Location*', 
 	  NULL AS 'To Branch*', 
 	  NULL AS 'To Location*', 

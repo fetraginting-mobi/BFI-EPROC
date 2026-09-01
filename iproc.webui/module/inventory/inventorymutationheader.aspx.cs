@@ -34,7 +34,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
             btnLookUpToLotCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MLFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}');", txtToLotCode.ClientID, txtToLotName.ClientID, lblToLotName.ClientID, txtToLocationCode.ClientID);
             btnLookUpToRakCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MRGFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}&parc_lot_code={4}');", txtToRakCode.ClientID, txtToRakName.ClientID, lblToRakName.ClientID, txtToLocationCode.ClientID, txtToLotCode.ClientID);
             btnLookUpToSlotCode.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=MSGFL&acol_0={0}&bcol_1={1}&ccol_1={2}&parc_warehouse_code={3}&parc_lot_code={4}&parc_rak_code={5}');", txtToSlotCode.ClientID, txtToSlotName.ClientID, lblToSlotName.ClientID, txtToLocationCode.ClientID, txtToLotCode.ClientID, txtToRakCode.ClientID);
-            btnAddAdDep.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=ITMMUT&parc_code_barcode={0}&gvw={1}&parc_branch_code={2}&parc_location_code={3}');", txtCodeBarcode.ClientID, btnSearch.UniqueID, ddlBranch.ClientID, txtFromLocationCode.ClientID);
+            btnAddAdDep.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/subscription.aspx?code=ITMMUT&parc_code_barcode={0}&gvw={1}&parc_branch_code={2}&parc_location_code={3}&parc_to_branch_code={4}&parc_to_location_code={5}');", txtCodeBarcode.ClientID, btnSearch.UniqueID, ddlBranch.ClientID, txtFromLocationCode.ClientID, ddlToBranch.ClientID, txtToLocationCode.ClientID);
 
             Shared.BindDivision(ddlDivision);
             Shared.BindDepartment(ddlDepartment, ddlDivision.SelectedValue);
@@ -74,9 +74,9 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 // lblProcess mendapatkan nilai dari kolom 'process'
                 if (lblProcess.Text == "UPLOAD")
                 {
-                    btnSave.Visible = false;
+                    //btnSave.Visible = false;
                     btnPost.Visible = false;
-                    btnReject.Visible = false;
+                    //btnReject.Visible = false;
                     btnApprovalTiered.Visible = false;
                     txtRemarks.Enabled = false;
                     txtExpeditionDescription.Enabled = false;
@@ -86,9 +86,9 @@ public partial class module_inventory_inventorymutationheader : BasePage
                     btnLookUpToLotCode.Visible = false;
                     btnLookUpToRakCode.Visible = false;
                     btnLookUpToSlotCode.Visible = false;
-                    btnAddAdDep.Visible = false;
-                    btnDeleteRequestDetail.Enabled = false;
-                    btnSaveDetail.Enabled = false;
+                    //btnAddAdDep.Visible = false;
+                    //btnDeleteRequestDetail.Enabled = false;
+                    //btnSaveDetail.Enabled = false;
 
                     if (gvwList.Rows.Count > 0)
                     {

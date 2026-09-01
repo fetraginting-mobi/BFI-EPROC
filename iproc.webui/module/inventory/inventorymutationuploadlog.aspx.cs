@@ -27,13 +27,21 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
         LoadInit();
         if (!Page.IsPostBack)
         {
-            lblStatus.Text = Request.Params["status"]; ;
-            BindData();
+            lblStatus.Text = Request.Params["status"];            
             if (lblStatus.Text == "VALID")
             {
+                lblTitle.Text = "Review Data Valid";
                 gvwList.Columns[4].Visible = false; // index kolom ERROR_MESSAGE
             }
-
+            else if (lblStatus.Text == "TRX")
+            {
+                lblTitle.Text = "Review Data Valid";
+                gvwList.Columns[0].Visible = false;
+                gvwList.Columns[1].HeaderText = "Inventory Mutation No";
+                gvwList.Columns[2].HeaderText = "Item Name";
+                gvwList.Columns[4].Visible = false;
+            }
+            BindData();
         }
         LoadAfterInit();
     }
@@ -57,17 +65,21 @@ public partial class module_inventory_inventorymutationuploadlog : BasePageList
 
             //if (!string.IsNullOrEmpty(p_upload_id) && Regex.IsMatch(p_upload_id, guidPattern))
             //{
-                _ht["p_upload_id"] = new Guid(p_upload_id);
+            _ht["p_upload_id"] = new Guid(p_upload_id);
             //}
             //else
             //{
             //    _ht["p_upload_id"] = DBNull.Value;
             //}
 
-            _ht["p_file_name "] = Request.Params["filename"];
+            _ht["p_file_name"] = Request.Params["filename"];
             _ht["p_status"] = Request.Params["status"];
 
-            gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_detail_upload_getrows", _ht);
+            if (Request.Params["status"] == "TRX")
+                gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_upload_generated_trx_getrows", _ht);
+            else
+                gvwList.DataSource = _dal.GetRows("", "xsp_inv_mutation_detail_upload_getrows", _ht);
+
             gvwList.DataBind();
         }
         catch (Exception ex)

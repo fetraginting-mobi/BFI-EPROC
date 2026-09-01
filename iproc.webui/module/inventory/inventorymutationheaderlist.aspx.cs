@@ -16,6 +16,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private static string TABLE_NAME = "INVENTORY_MUTATION_HEADER";
     private static string TABLE_UPLOAD_NAME = "INVENTORY_MUTATION_UPLOAD_HEADER";
     private static string TABLE_UPLOAD_LOG = "INVENTORY_MUTATION_UPLOAD_STAGING_LOG";
+    private const string INV_MUTATION_UPLOAD_TEMPLATE_CODE = "INVENTORY_MUTATION_UPLOAD";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -39,9 +40,40 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
 
 
             BindData();
+            BindUploadData();
+            ShowPostMutationResult();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
         }
         LoadAfterInit();
+    }
+
+    private void ShowPostMutationResult()
+    {
+        object sessionResults = Session[SessionKey.POST_MUTATION_RESULTS];
+        if (sessionResults == null)
+            return;
+
+        Session.Remove(SessionKey.POST_MUTATION_RESULTS);
+
+        bool hasError = false;
+        IEnumerable postResults = sessionResults as IEnumerable;
+        if (postResults == null)
+            return;
+
+        foreach (object item in postResults)
+        {
+            PostMutationResult result = item as PostMutationResult;
+            if (result != null && !result.IsSuccess)
+            {
+                hasError = true;
+                break;
+            }
+        }
+
+        if (!hasError)
+            return;
+
+        Shared.ShowErrorDialog(this, new Exception("ERROR, silahkan check log error pada tab POST Upload Mutation History di Inventory Mutation."));
     }
     private void BindData()
     {
@@ -58,6 +90,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_process"] = ddlProcess.SelectedValue;
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
             _htupload["p_branch_code"] = "KPO";
@@ -138,6 +171,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         BindData();
     }
+    protected void ddlProcess_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
     # region Upload bulk mutation
     protected void btnUploadRowFormat_Click(object sender, EventArgs e)
     {
@@ -153,12 +190,16 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Stream excelStream = FileUploadControlMutation.PostedFile.InputStream;
             string ext = Path.GetExtension(fileName).ToLower();
 
+            if (fileName.Length > 100)
+            {
+                throw new Exception("Upload failed. File name cannot exceed 100 characters.");
+            }
             if (ext == ".xls")
                 excelReader = ExcelReaderFactory.CreateBinaryReader(excelStream);
             else if (ext == ".xlsx")
                 excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
             else
-                throw new Exception("Invalid template format. Please download and use the provided template.");
+                throw new Exception("The uploaded file does not match the required template. Please use the provided template.");
 
 
             DataTable dt = BuildStagingTable();
@@ -196,7 +237,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             }
             BulkInsertToStaging(dt);
             ExecuteBulkProcess(uploadId, fileName);
-            BindUploadData(uploadId, fileName); ;
+            BindUploadData();
             BindData();
 
             string script = @"
@@ -221,7 +262,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private static readonly string[] INVENTORY_MUTATION_TEMPLATE_HEADERS =
     {
         "No",
-        "From Branch",
+        "From Branch*",
         "From Location*",
         "To Branch*",
         "To Location*",
@@ -238,7 +279,8 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         // === VALIDASI JUMLAH KOLOM ===
         if (reader.FieldCount != INVENTORY_MUTATION_TEMPLATE_HEADERS.Length)
         {
-            errorMessage = "Invalid template format. The number of columns is invalid.";
+            //errorMessage = "Invalid template format. The number of columns is invalid.";
+            errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
             htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
             htLog["p_file_name"] = fileName;
             htLog["p_row_number"] = 0;
@@ -263,7 +305,8 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                errorMessage = "Template mismatch: Column" + (i + 1) + " header must match '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
+                //errorMessage = "Template mismatch: Column" + (i + 1) + " header must match '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
+                errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
                 htLog.Clear();
                 htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
                 htLog["p_file_name"] = fileName;
@@ -355,29 +398,31 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 }
             }
 
-            // Jika TIDAK ADA yang dicentang, maka ambil SEMUA data NEW (Logic Otomatis Anda)
+            // if (selectedCodes.Count == 0)
+            // {
+            //     GeneralDAL _dal = new GeneralDAL();
+            //     Hashtable _htupload = new Hashtable();
+            //     _htupload["p_keywords"] = txtSearchUpload.Text;
+            //     _htupload["p_status"] = "NEW";
+            //     _htupload["p_branch_code"] = ddlFromBranch.SelectedValue;
+            //     _htupload["p_from_location"] = ddlFromLocation.SelectedValue;
+            //     _htupload["p_to_branch"] = ddltoBranch.SelectedValue;
+            //     _htupload["p_to_location"] = ddltoLocation.SelectedValue;
+            //     Shared.ApplyDefaultProp(_htupload);
+
+            //     DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
+            //     if (dtTarget != null)
+            //     {
+            //         foreach (DataRow dr in dtTarget.Rows)
+            //         {
+            //             selectedCodes.Add(dr["CODE_BARCODE"].ToString());
+            //         }
+            //     }
+            // }
+
             if (selectedCodes.Count == 0)
             {
-                GeneralDAL _dal = new GeneralDAL();
-                Hashtable _htupload = new Hashtable();
-                _htupload["p_keywords"] = txtSearchUpload.Text;
-                _htupload["p_status"] = "NEW";
-                _htupload["p_branch_code"] = "KPO";
-                Shared.ApplyDefaultProp(_htupload);
-
-                DataTable dtTarget = _dal.GetRows(TABLE_UPLOAD_NAME, _htupload);
-                if (dtTarget != null)
-                {
-                    foreach (DataRow dr in dtTarget.Rows)
-                    {
-                        selectedCodes.Add(dr["CODE_BARCODE"].ToString());
-                    }
-                }
-            }
-
-            if (selectedCodes.Count == 0)
-            {
-                Shared.ShowErrorDialog(this, new Exception("Tidak ada data yang dipilih atau tersedia untuk di-post."));
+                Shared.ShowErrorDialog(this, new Exception("No Data Selected"));
                 return;
             }
 
@@ -416,6 +461,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     protected void btnSearchUpload_Click(object sender, EventArgs e)
     {
         BindData();
+        BindUploadData();
     }
     protected void gvwListUpload_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
@@ -470,31 +516,64 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             ht
         );
     }
-    private void BindUploadData(Guid uploadId, String fileName)
+    private void BindUploadData()
+    {
+        GeneralDAL _dal = new GeneralDAL();
+        Hashtable _ht = new Hashtable();
+
+        DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
+        AddTotalTrxUpload(dtUploadLog);
+
+        gvwUploadLog.DataSource = dtUploadLog;
+        gvwUploadLog.DataBind();
+
+    }
+    private void AddTotalTrxUpload(DataTable dtUploadLog)
+    {
+        if (!dtUploadLog.Columns.Contains("total_trx_upload"))
+            dtUploadLog.Columns.Add("total_trx_upload", typeof(int));
+
+        foreach (DataRow row in dtUploadLog.Rows)
+        {
+            Guid uploadId;
+            try
+            {
+                uploadId = new Guid(row["upload_id"].ToString());
+            }
+            catch
+            {
+                row["total_trx_upload"] = 0;
+                continue;
+            }
+
+            row["total_trx_upload"] = GetGeneratedTrxUpload(uploadId, row["file_name"].ToString()).Rows.Count;
+        }
+    }
+    private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName)
     {
         GeneralDAL _dal = new GeneralDAL();
         Hashtable _ht = new Hashtable();
 
         _ht["p_upload_id"] = uploadId;
         _ht["p_file_name"] = fileName;
+        _ht["p_keywords"] = "";
 
-        gvwUploadLog.DataSource = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
-        gvwUploadLog.DataBind();
-
+        return _dal.GetRows("", "xsp_inv_mutation_upload_generated_trx_getrows", _ht);
     }
     protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwUploadLog.PageIndex = e.NewPageIndex;
+        BindUploadData();
     }
     protected void gvwUploadLog_RowCommand(object sender, GridViewCommandEventArgs e)
     {
-        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR")
+        if (e.CommandName == "VIEW_VALID" || e.CommandName == "VIEW_ERROR" || e.CommandName == "VIEW_TRX")
         {
             string[] param = e.CommandArgument.ToString().Split('|');
 
             string uploadid = param[0];
             string filename = param[1];
-            string status = e.CommandName == "VIEW_VALID" ? "VALID" : "ERROR";
+            string status = e.CommandName == "VIEW_VALID" ? "VALID" : e.CommandName == "VIEW_ERROR" ? "ERROR" : "TRX";
 
             string url = string.Format(
                     "../inventory/inventorymutationuploadlog.aspx?uploadid={0}&filename={1}&status={2}",

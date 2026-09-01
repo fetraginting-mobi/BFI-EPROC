@@ -98,6 +98,21 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Process</label>
+                                            <div class="col-sm-5">
+                                                <cc1:XUIDropDownList ID="ddlProcess" Width="200px" runat="server"
+                                                    CssClass="form-control" SPParameterName="p_process"
+                                                    DataType="String" BindType="Both" AutoPostBack="true"
+                                                    OnSelectedIndexChanged="ddlProcess_SelectedIndexChanged">
+                                                    <asp:ListItem Text="ALL" Value="ALL"></asp:ListItem>
+                                                    <asp:ListItem Text="MANUAL" Value=""></asp:ListItem>
+                                                    <asp:ListItem Text="UPLOAD" Value="UPL"></asp:ListItem>
+                                                </cc1:XUIDropDownList>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -165,13 +180,13 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <asp:Panel ID="pnlSearchUpload" runat="server" DefaultButton="btnSearch"
+                                        <asp:Panel ID="pnlSearchUpload" runat="server" DefaultButton="btnSearchUpload"
                                             class="input-group">
                                             <asp:TextBox ID="txtSearchUpload" runat="server" CssClass="form-control"
                                                 placeholder="Keywords"></asp:TextBox>
                                             <div class="input-group-btn">
                                                 <asp:LinkButton ID="btnSearchUpload" runat="server"
-                                                    CssClass="btn btn-info" OnClick="btnSearch_Click">
+                                                    CssClass="btn btn-info" OnClick="btnSearchUpload_Click">
                                                     <i class="icon-search"></i> Search
                                                 </asp:LinkButton>
                                             </div>
@@ -179,33 +194,37 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-sm-8">
+                            </div>
+                            <div class="panel-body">
+                                <asp:UpdatePanel ID="updUploadLog" runat="server">
+                                    <ContentTemplate>
                                         <asp:GridView ID="gvwUploadLog" runat="server" AutoGenerateColumns="false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
                                             PageSize="5" DataKeyNames="upload_id,file_name"
                                             OnPageIndexChanging="gvwUploadLog_PageIndexChanging"
                                             OnRowCommand="gvwUploadLog_RowCommand" EmptyDataText="There Is No Data"
-                                            Width="100%" Style="margin-top:10px;">
+                                            Width="100%">
                                             <Columns>
-                                                <asp:TemplateField ItemStyle-Width="2%">
+                                                <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <span>No</span>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
                                                         <%# Container.DataItemIndex + 1 %>
                                                     </ItemTemplate>
+                                                    <ItemStyle Width="3%" HorizontalAlign="Center" />
                                                 </asp:TemplateField>
                                                 <asp:BoundField DataField="upload_date" HeaderText="Date Upload">
-                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="upload_id" Visible="false">
+                                                <asp:BoundField DataField="upload_id" HeaderText="Upload ID">
+                                                    <ItemStyle Width="22%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="file_name" HeaderText="File Name">
-                                                    <ItemStyle Width="30%" />
+                                                    <ItemStyle Width="28%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="total_rows" HeaderText="Total Upload Data">
-                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:TemplateField HeaderText="Total Valid">
                                                     <ItemTemplate>
@@ -214,14 +233,12 @@
                                                             Text='<%# Eval("total_valid") %>' CommandName="VIEW_VALID"
                                                             CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>'
                                                             Style="color:Green" />
-
                                                         <asp:Label ID="lblValid" runat="server"
                                                             Visible='<%# Convert.ToInt32(Eval("total_valid")) == 0 %>'
                                                             Text="0" />
                                                     </ItemTemplate>
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:TemplateField>
-
                                                 <asp:TemplateField HeaderText="Total Error">
                                                     <ItemTemplate>
                                                         <asp:LinkButton ID="lnkError" runat="server"
@@ -229,20 +246,35 @@
                                                             Text='<%# Eval("total_error") %>' CommandName="VIEW_ERROR"
                                                             CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>'
                                                             Style="color:Red" />
-
                                                         <asp:Label ID="lblError" runat="server"
                                                             Visible='<%# Convert.ToInt32(Eval("total_error")) == 0 %>'
                                                             Text="0" />
-
                                                     </ItemTemplate>
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
                                                 </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Total Trx Upload">
+                                                    <ItemTemplate>
+                                                        <asp:LinkButton ID="lnkTrxUpload" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_trx_upload")) > 0 %>'
+                                                            Text='<%# Eval("total_trx_upload") %>'
+                                                            CommandName="VIEW_TRX"
+                                                            CommandArgument='<%# Eval("upload_id") + "|" + Eval("file_name") %>'
+                                                            Style="color:Blue" />
+                                                        <asp:Label ID="lblTrxUpload" runat="server"
+                                                            Visible='<%# Convert.ToInt32(Eval("total_trx_upload")) == 0 %>'
+                                                            Text="0" />
+                                                    </ItemTemplate>
+                                                    <ItemStyle Width="7%" HorizontalAlign="Center" />
+                                                </asp:TemplateField>
                                             </Columns>
                                         </asp:GridView>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-body">
+                                    </ContentTemplate>
+                                    <Triggers>
+                                        <asp:AsyncPostBackTrigger ControlID="btnSearchUpload" EventName="Click" />
+                                    </Triggers>
+                                </asp:UpdatePanel>
+
+                                <hr style="border-top: 2px solid #ccc;" />
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label class="col-sm-3">From Branch</label>
@@ -292,7 +324,6 @@
                                     </div>
                                 </div>
 
-                                <hr style="border-top: 2px solid #ccc;" />
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group"></div>
@@ -335,7 +366,13 @@
                                                 <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
+                                                <asp:BoundField DataField="FROM_LOCATION" HeaderText="From Location">
+                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
                                                 <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
+                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="TO_LOCATION" HeaderText="To Location">
                                                     <ItemStyle Width="20%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">

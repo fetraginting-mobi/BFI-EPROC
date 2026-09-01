@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[APP_PROCESS_ERROR_LOG](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CODE_BARCODE] [nvarchar](28) NULL,
+	[PROCESS_NAME] [varchar](100) NULL,
+	[file_name] [varchar](max) NULL,
+	[BARCODE] [nvarchar](40) NULL,
+	[QUANTITY] [decimal](18, 2) NULL,
+	[ROW_NUMBER] [int] NULL,
+	[ERROR_MESSAGE] [varchar](max) NULL,
+	[RAW_DATA] [varchar](max) NULL,
+	[CRE_DATE] [datetime] NULL,
+	[CRE_BY] [varchar](50) NULL,
+	[CRE_IP_ADDRESS] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+`r`n
