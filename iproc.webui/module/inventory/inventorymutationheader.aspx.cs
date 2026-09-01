@@ -47,7 +47,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
                 // Load Data Utama dari Database
                 LoadData();
                 BindTOP();
-                BindUploadId();
                 BindMutationUploadLog();
 
 
@@ -167,6 +166,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
             DataRow _dr = _dal.GetRow(TABLE_NAME_HEADER, _ht);
 
             DBToUI.Map(this.Controls, _dr);
+            BindUploadInfo(_dr);
             Shared.BindDivision(ddlDivision);
             Shared.BindDepartment(ddlDepartment, ddlDivision.SelectedValue);
             Shared.BindBranchEmployee(ddlBranch);
@@ -511,6 +511,7 @@ public partial class module_inventory_inventorymutationheader : BasePage
     private void BindUploadId()
     {
         lblUploadID.Text = "-";
+        lblFileName.Text = "-";
 
         if (lblProcess.Text.Trim().ToUpper() != "UPLOAD" && lblProcess.Text.Trim().ToUpper() != "UPL")
             return;
@@ -530,13 +531,30 @@ public partial class module_inventory_inventorymutationheader : BasePage
 
             DataRow _dr = dtUpload.Rows[0];
             if (_dr["upload_id"] != DBNull.Value && _dr["upload_id"].ToString() != "")
+            {
                 lblUploadID.Text = _dr["upload_id"].ToString();
-                lblFileName.Text = _dr["FILE_NAME"].ToString();
+                lblFileName.Text = _dr["file_name"].ToString();
+            }
         }
         catch (Exception ex)
         {
             Shared.ShowErrorDialog(this, ex);
         }
+    }
+
+    private void BindUploadInfo(DataRow dr)
+    {
+        lblUploadID.Text = "-";
+        lblFileName.Text = "-";
+
+        if (dr == null || lblProcess.Text.Trim().ToUpper() != "UPLOAD")
+            return;
+
+        if (dr.Table.Columns.Contains("upload_id") && dr["upload_id"] != DBNull.Value && dr["upload_id"].ToString() != "")
+            lblUploadID.Text = dr["upload_id"].ToString();
+
+        if (dr.Table.Columns.Contains("file_name") && dr["file_name"] != DBNull.Value && dr["file_name"].ToString() != "")
+            lblFileName.Text = dr["file_name"].ToString();
     }
 
     private void BindMutationUploadLog()

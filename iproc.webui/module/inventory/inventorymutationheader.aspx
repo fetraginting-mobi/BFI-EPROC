@@ -77,8 +77,8 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <div class="col-sm-offset-4 col-sm-8">
-                                            <cc1:XUILinkButton ID="btnViewHistory" runat="server" CausesValidation="false"
-                                                Text="Approval History"></cc1:XUILinkButton>
+                                            <cc1:XUILinkButton ID="btnViewHistory" runat="server"
+                                                CausesValidation="false" Text="Approval History"></cc1:XUILinkButton>
                                         </div>
                                     </div>
                                 </div>
@@ -205,8 +205,8 @@
                                     <div class="form-group">
                                         <label class="col-sm-4">Upload ID</label>
                                         <div class="col-sm-8">
-                                            <cc1:XUILabel ID="lblUploadID" runat="server"
-                                                DataType="String" Text="--" ForeColor="Red"></cc1:XUILabel>
+                                            <cc1:XUILabel ID="lblUploadID" runat="server" DataType="String" Text="--"
+                                                ForeColor="Red"></cc1:XUILabel>
                                         </div>
                                     </div>
                                 </div>
@@ -241,8 +241,8 @@
                                     <div class="form-group">
                                         <label class="col-sm-4">File Name</label>
                                         <div class="col-sm-8">
-                                            <cc1:XUILabel ID="lblFileName" runat="server" 
-                                                DataType="String" Text="--" ForeColor="Red"></cc1:XUILabel>
+                                            <cc1:XUILabel ID="lblFileName" runat="server" DataType="String" Text="--"
+                                                ForeColor="Red"></cc1:XUILabel>
                                         </div>
                                     </div>
                                 </div>
@@ -317,7 +317,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">From Warehouse *</label>
+                                        <label class="col-sm-4">From Location *</label>
                                         <div class="col-sm-7">
                                             <asp:LinkButton runat="server" ID="btnFromLocation" class="btn btn-primary"
                                                 data-toggle="modal" CausesValidation="false"><i class="icon-table"></i>
@@ -337,7 +337,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">To Warehouse *</label>
+                                        <label class="col-sm-4">To Location *</label>
                                         <div class="col-sm-5">
                                             <asp:LinkButton runat="server" ID="btnToLocation" class="btn btn-primary"
                                                 data-toggle="modal" CausesValidation="false"><i class="icon-table"></i>

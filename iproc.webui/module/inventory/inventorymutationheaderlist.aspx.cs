@@ -16,7 +16,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private static string TABLE_NAME = "INVENTORY_MUTATION_HEADER";
     private static string TABLE_UPLOAD_NAME = "INVENTORY_MUTATION_UPLOAD_HEADER";
     private static string TABLE_UPLOAD_LOG = "INVENTORY_MUTATION_UPLOAD_STAGING_LOG";
-    private const string INV_MUTATION_UPLOAD_TEMPLATE_CODE = "INVENTORY_MUTATION_UPLOAD";
+    private const string INV_MUTATION_UPLOAD_TEMPLATE_CODE = "INV_MUTATION_UPLOAD";
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -33,8 +33,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Shared.BindGeneralLocationByBranch(ddlFromLocation, "KPO");
             ddlFromLocation.Items.Insert(0, new ListItem("ALL", ""));
             Shared.BindBranchEmployeeSort(ddlBranch);
+            Shared.BindGetBranch(ddlToBranch1);
             Shared.BindGetBranch(ddltoBranch);
             ddltoBranch.Items.Insert(0, new ListItem("ALL", ""));
+            ddlToBranch1.Items.Insert(0, new ListItem("ALL", ""));
             Shared.BindGeneralLocationByBranch(ddltoLocation, "");
             ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
 
@@ -90,6 +92,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _ht["p_keywords"] = txtSearch.Text;
             _ht["p_status"] = ddlStatus.SelectedValue;
             _ht["p_branch_code"] = ddlBranch.SelectedValue;
+            _ht["p_to_branch_code"] = ddlToBranch1.SelectedValue;
             _ht["p_process"] = ddlProcess.SelectedValue;
 
             _htupload["p_keywords"] = txtSearchUpload.Text;
@@ -171,6 +174,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         BindData();
     }
+    protected void ddlToBranch1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindData();
+    }
     protected void ddlProcess_SelectedIndexChanged(object sender, EventArgs e)
     {
         BindData();
@@ -194,15 +201,15 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             {
                 throw new Exception("Upload failed. File name cannot exceed 100 characters.");
             }
-            if (ext == ".xls")
-                excelReader = ExcelReaderFactory.CreateBinaryReader(excelStream);
-            else if (ext == ".xlsx")
-                excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
-            else
-                throw new Exception("The uploaded file does not match the required template. Please use the provided template.");
+            if (ext != ".xlsx")
+                throw new Exception("The uploaded file must be in .xlsx format.");
+
+            excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
 
 
             DataTable dt = BuildStagingTable();
+            Hashtable htDefault = new Hashtable();
+            Shared.ApplyDefaultProp(htDefault);
             int excelRowIndex = 0;
 
             while (excelReader.Read())
@@ -224,6 +231,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 DataRow row = dt.NewRow();
                 row["upload_id"] = uploadId;
                 row["file_name"] = fileName;
+                row["upload_by"] = htDefault["p_cre_by"];
                 row["row_number"] = excelRowIndex - 1;
                 row["from_branch"] = GetStringSafe(excelReader, 1);
                 row["from_location"] = GetStringSafe(excelReader, 2);
@@ -231,7 +239,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 row["to_location"] = GetStringSafe(excelReader, 4);
                 row["description"] = GetStringSafe(excelReader, 5);
                 row["item_code"] = GetStringSafe(excelReader, 6);
-                row["quantity"] = GetStringSafe(excelReader, 7);
+                row["quantity"] = IsEmpty(excelReader, 7) ? (object)DBNull.Value : GetStringSafe(excelReader, 7);
 
                 dt.Rows.Add(row);
             }
@@ -259,67 +267,75 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 excelReader.Close();
         }
     }
-    private static readonly string[] INVENTORY_MUTATION_TEMPLATE_HEADERS =
-    {
-        "No",
-        "From Branch*",
-        "From Location*",
-        "To Branch*",
-        "To Location*",
-        "Description*",
-        "ITEM_CODE*",
-        "Quantity*"
-    };
     private bool ValidateInventoryMutationTemplate(IExcelDataReader reader, string fileName, out string errorMessage)
     {
         errorMessage = string.Empty;
         GeneralDAL _dal = new GeneralDAL();
         Hashtable htLog = new Hashtable();
+        DataTable dtTemplate = GetUploadTemplateHeaders(_dal, INV_MUTATION_UPLOAD_TEMPLATE_CODE);
 
-        // === VALIDASI JUMLAH KOLOM ===
-        if (reader.FieldCount != INVENTORY_MUTATION_TEMPLATE_HEADERS.Length)
+        if (dtTemplate.Rows.Count == 0)
         {
-            //errorMessage = "Invalid template format. The number of columns is invalid.";
-            errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
-            htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
-            htLog["p_file_name"] = fileName;
-            htLog["p_row_number"] = 0;
-            htLog["p_error_message"] = errorMessage;
-            htLog["p_raw_data"] = "HEADER VALIDATION";
-            htLog["p_cre_by"] = Shared.CurrentUID;
-            htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-
-            _dal.InsertProcessErrorLog(htLog);
+            errorMessage = "The Inventory Mutation upload template has not been configured.";
+            LogInventoryMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER TEMPLATE NOT FOUND");
             return false;
         }
 
-        // === VALIDASI NAMA HEADER ===
-        for (int i = 0; i < INVENTORY_MUTATION_TEMPLATE_HEADERS.Length; i++)
+        if (reader.FieldCount != dtTemplate.Rows.Count)
+        {
+            errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
+            LogInventoryMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER VALIDATION");
+            return false;
+        }
+
+        for (int i = 0; i < dtTemplate.Rows.Count; i++)
         {
             string actualHeader = reader.GetValue(i) == null
                 ? ""
                 : reader.GetValue(i).ToString().Trim();
+            string expectedHeader = GetTemplateHeader(dtTemplate.Rows[i]);
 
             if (!actualHeader.Equals(
-                    INVENTORY_MUTATION_TEMPLATE_HEADERS[i],
+                    expectedHeader,
                     StringComparison.OrdinalIgnoreCase
                 ))
             {
-                //errorMessage = "Template mismatch: Column" + (i + 1) + " header must match '" + INVENTORY_MUTATION_TEMPLATE_HEADERS[i] + "'.";
                 errorMessage = "The uploaded file does not match the required template. Please use the provided template.";
-                htLog.Clear();
-                htLog["p_process_name"] = "INVENTORY_MUTATION_UPLOAD";
-                htLog["p_file_name"] = fileName;
-                htLog["p_row_number"] = 0;
-                htLog["p_error_message"] = errorMessage;
-                htLog["p_raw_data"] = "HEADER=" + actualHeader;
-                htLog["p_cre_by"] = Shared.CurrentUID;
-                htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
-                _dal.InsertProcessErrorLog(htLog);
+                LogInventoryMutationTemplateError(_dal, htLog, fileName, errorMessage, "HEADER=" + actualHeader);
                 return false;
             }
         }
         return true;
+    }
+
+    private DataTable GetUploadTemplateHeaders(GeneralDAL dal, string code)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_code"] = code;
+
+        return dal.GetRows("", "xsp_master_upload_template_getrows", ht);
+    }
+
+    private string GetTemplateHeader(DataRow row)
+    {
+        string description = row["description"] == null ? "" : row["description"].ToString().Trim();
+        bool mandatory = row["mandatory"] != DBNull.Value && Convert.ToBoolean(row["mandatory"]);
+
+        return mandatory ? description + "*" : description;
+    }
+
+    private void LogInventoryMutationTemplateError(GeneralDAL dal, Hashtable htLog, string fileName, string errorMessage, string rawData)
+    {
+        htLog.Clear();
+        htLog["p_process_name"] = INV_MUTATION_UPLOAD_TEMPLATE_CODE;
+        htLog["p_file_name"] = fileName;
+        htLog["p_row_number"] = 0;
+        htLog["p_error_message"] = errorMessage;
+        htLog["p_raw_data"] = rawData;
+        htLog["p_cre_by"] = Shared.CurrentUID;
+        htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+
+        dal.InsertProcessErrorLog(htLog);
     }
     private void BulkInsertToStaging(DataTable dt)
     {
@@ -363,7 +379,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _htParameters = new Hashtable();
 
             _htParameters.Clear();
-            _htParameters["p_code"] = Request.Params["code"];
+            _htParameters["p_code"] = INV_MUTATION_UPLOAD_TEMPLATE_CODE;
 
 
             string pdfName = "upload_invmutation" + Shared.CurrentUID + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx"; ;
@@ -478,6 +494,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         DataTable dt = new DataTable();
         dt.Columns.Add("upload_id", typeof(Guid));
         dt.Columns.Add("file_name", typeof(string));
+        dt.Columns.Add("upload_by", typeof(string));
         dt.Columns.Add("row_number", typeof(int));
         dt.Columns.Add("from_branch", typeof(string));
         dt.Columns.Add("from_location", typeof(string));
@@ -522,43 +539,10 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         Hashtable _ht = new Hashtable();
 
         DataTable dtUploadLog = _dal.GetRows(TABLE_UPLOAD_LOG, _ht);
-        AddTotalTrxUpload(dtUploadLog);
 
         gvwUploadLog.DataSource = dtUploadLog;
         gvwUploadLog.DataBind();
 
-    }
-    private void AddTotalTrxUpload(DataTable dtUploadLog)
-    {
-        if (!dtUploadLog.Columns.Contains("total_trx_upload"))
-            dtUploadLog.Columns.Add("total_trx_upload", typeof(int));
-
-        foreach (DataRow row in dtUploadLog.Rows)
-        {
-            Guid uploadId;
-            try
-            {
-                uploadId = new Guid(row["upload_id"].ToString());
-            }
-            catch
-            {
-                row["total_trx_upload"] = 0;
-                continue;
-            }
-
-            row["total_trx_upload"] = GetGeneratedTrxUpload(uploadId, row["file_name"].ToString()).Rows.Count;
-        }
-    }
-    private DataTable GetGeneratedTrxUpload(Guid uploadId, string fileName)
-    {
-        GeneralDAL _dal = new GeneralDAL();
-        Hashtable _ht = new Hashtable();
-
-        _ht["p_upload_id"] = uploadId;
-        _ht["p_file_name"] = fileName;
-        _ht["p_keywords"] = "";
-
-        return _dal.GetRows("", "xsp_inv_mutation_upload_generated_trx_getrows", _ht);
     }
     protected void gvwUploadLog_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
@@ -614,3 +598,4 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     }
     #endregion
 }
+
