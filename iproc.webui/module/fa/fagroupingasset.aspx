@@ -273,7 +273,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-4">Status Aktif</label>
+                                        <label class="col-sm-4" id="lblIsActive" runat="server">Status Aktif</label>
                                         <div class="col-sm-4">
                                             <cc1:XUICheckBox ID="chbIsActive" runat="server" DBColumnName="IS_ACTIVE"
                                                 SPParameterName="p_status" DataType="String" BindType="Both">

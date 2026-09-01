@@ -45,6 +45,8 @@ public partial class module_fa_fagroupingasset : BasePage
             {
                 pnlTabsHeader.Visible = false;
                 pnlAssetList.Visible = pnlMovementHistory.Visible = false;
+                lblIsActive.Visible = false;
+                chbIsActive.Visible = false;
             }
         }
         string currentGroupCode = string.IsNullOrEmpty(lblGroupAssetCode.Text) || lblGroupAssetCode.Text == "--"

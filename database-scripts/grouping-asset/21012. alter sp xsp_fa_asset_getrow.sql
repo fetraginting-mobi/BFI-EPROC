@@ -28,9 +28,9 @@ begin
 		@grouping_asset_name = isnull(fga.fa_group_asset_name ,''), 
 		@grouping_asset_id = isnull(fga.fa_group_asset_code ,'') 
 	from fa_asset fa with (nolock)
-	left join fa_grouping_asset_detail fgad with (nolock) on fa.id =fgad.fa_asset_id and fa.ast_code = fgad.code_asset and fa.barcode = fgad.barcode
-	left join fa_grouping_asset fga with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
-	where fga.is_active=1 and fgad.barcode = @barcode
+	inner join fa_grouping_asset_detail fgad with (nolock) on fa.id =fgad.fa_asset_id and fa.ast_code = fgad.code_asset and fa.barcode = fgad.barcode and fgad.is_active=1
+	inner join fa_grouping_asset fga with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code and fga.is_active=1
+	where fgad.barcode = @barcode
 
 	select	TOP 1 @request_no = isnull(request_no,'') --2409000007 ali add validasi untuk get latest data request peralatan kerja
 	from	dbo.request_peralatan_kerja_detail rpkd

@@ -1,4 +1,4 @@
-ALTER procedure [dbo].[xsp_fa_grouping_asset_report_getrows]
+CREATE procedure [dbo].[xsp_fa_grouping_asset_report_getrows]
 (
 	@p_branch_code nvarchar(20), 
 	@p_location_code nvarchar(20)='ALL',
@@ -9,6 +9,7 @@ begin
 	select
 		fagd.fa_ga_code,
 		fagd.barcode,
+		fa.ast_name,
 		fag.branch_code,
 		mi.group_code,
 		aird.purchase_amount,
@@ -34,11 +35,13 @@ begin
 			ROW_NUMBER() OVER (PARTITION BY p.FA_GA_CODE ORDER BY c.BARCODE) AS RN,
 			p.FA_GA_CODE,
 			p.BARCODE AS AssetCodeInduk,
+			p.ast_name AS AssetNameInduk,
 			p.BRANCH_CODE AS CostCenterInduk,
 			p.group_code AS CategoryCodeInduk,
 			p.PURCHASE_AMOUNT AS PriceInduk,
 			p.TRANS_FLAG_CODE AS StatusInduk,
 			c.BARCODE AS AssetCodeTerikat,
+			c.ast_name AS AssetNameTerikat,
 			c.TRANS_FLAG_CODE AS StatusTerikat,
 			c.group_code AS CategoryCodeTerikat,
 			c.PURCHASE_AMOUNT AS PriceTerikat,
@@ -54,12 +57,14 @@ begin
 		CASE WHEN GROUPING(AssetCodeTerikat) = 1 THEN 'Total Asset Value' 
 				WHEN RN = 1 THEN CAST(FA_GA_CODE AS VARCHAR) ELSE '' END AS [Group Code],         
 		CASE WHEN RN = 1 AND GROUPING(AssetCodeTerikat) = 0 THEN AssetCodeInduk ELSE NULL END AS 'Parent Asset Code',
+		CASE WHEN RN = 1 AND GROUPING(AssetCodeTerikat) = 0 THEN AssetNameInduk ELSE NULL END AS 'Parent Asset Name',
 		CASE WHEN RN = 1 AND GROUPING(AssetCodeTerikat) = 0 THEN CostCenterInduk ELSE NULL END AS 'Parent Branch Code',
 		CASE WHEN RN = 1 AND GROUPING(AssetCodeTerikat) = 0 THEN CategoryCodeInduk ELSE NULL END AS 'Parent Category Code',    
 		CASE WHEN (RN = 1 AND GROUPING(AssetCodeTerikat) = 0) OR GROUPING (AssetCodeTerikat) = 1 
 				THEN MAX(PriceInduk) ELSE NULL END AS 'Parent Purchase Price',         
 		CASE WHEN RN = 1 AND GROUPING(AssetCodeTerikat) = 0 THEN StatusInduk ELSE NULL END AS 'Parent Asset Status',    
 		AssetCodeTerikat 'Child Asset Code',
+		AssetNameTerikat 'Child Asset Name',
 		StatusTerikat 'Child Asset Status',
 		CategoryCodeTerikat AS 'Child Category Code',
 		PriceTerikat AS 'Child Purchase Price', 
@@ -67,7 +72,7 @@ begin
 				ELSE PriceTerikat END 'Total Child Assets Value'--,
 		--@generate_date 'Generated Date'
 	FROM FlattenedData
-	GROUP BY ROLLUP (FA_GA_CODE, (AssetCodeInduk, CostCenterInduk, CategoryCodeInduk, PriceInduk, StatusInduk, AssetCodeTerikat, StatusTerikat, CategoryCodeTerikat, PriceTerikat, RN,GENERATED_DATE))
+	GROUP BY ROLLUP (FA_GA_CODE, (AssetCodeInduk,AssetNameInduk, CostCenterInduk, CategoryCodeInduk, PriceInduk, StatusInduk, AssetCodeTerikat,AssetNameTerikat, StatusTerikat, CategoryCodeTerikat, PriceTerikat, RN,GENERATED_DATE))
 	HAVING FA_GA_CODE IS NOT NULL 
 		AND (GROUPING(AssetCodeTerikat) = 1 OR AssetCodeTerikat IS NOT NULL OR RN = 1)
 	ORDER BY FA_GA_CODE, GROUPING(AssetCodeTerikat), RN;
