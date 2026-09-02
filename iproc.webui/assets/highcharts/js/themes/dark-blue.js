@@ -24,13 +24,13 @@ Highcharts.theme = {
 	title: {
 		style: {
 			color: '#C0C0C0',
-			font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
+			font: 'bold 16px RobotoLocal, OpenSansLocal'
 		}
 	},
 	subtitle: {
 		style: {
 			color: '#666666',
-			font: 'bold 12px "Trebuchet MS", Verdana, sans-serif'
+			font: 'bold 12px RobotoLocal, OpenSansLocal'
 		}
 	},
 	xAxis: {
@@ -48,7 +48,7 @@ Highcharts.theme = {
 				color: '#CCC',
 				fontWeight: 'bold',
 				fontSize: '12px',
-				fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+				fontFamily: 'RobotoLocal, OpenSansLocal'
 
 			}
 		}
@@ -69,7 +69,7 @@ Highcharts.theme = {
 				color: '#CCC',
 				fontWeight: 'bold',
 				fontSize: '12px',
-				fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+				fontFamily: 'RobotoLocal, OpenSansLocal'
 			}
 		}
 	},
@@ -109,7 +109,7 @@ Highcharts.theme = {
 	},
 	legend: {
 		itemStyle: {
-			font: '9pt Trebuchet MS, Verdana, sans-serif',
+			font: '9pt RobotoLocal, OpenSansLocal',
 			color: '#A0A0A0'
 		},
 		itemHoverStyle: {

@@ -1295,7 +1295,6 @@ defaultOptions = {
 		//spacingBottom: 15,
 		//spacingLeft: 10,
 		//style: {
-		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
 		//	fontSize: '12px'
 		//},
 		backgroundColor: '#FFFFFF',
@@ -2478,8 +2477,6 @@ SVGElement.prototype = {
 
 			// Properties that affect bounding box
 			cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
-
-			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
 			// we assume that a label of n characters has the same bounding box as others 
 			// of the same length.
 			if (textStr === '' || numRegex.test(textStr)) {
@@ -3042,7 +3039,7 @@ SVGRenderer.prototype = {
 
 	getStyle: function (style) {
 		return (this.style = extend({
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
+			fontFamily: 'RobotoLocal, OpenSansLocal', // default font
 			fontSize: '12px'
 		}, style));
 	},
