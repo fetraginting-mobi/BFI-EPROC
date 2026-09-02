@@ -84,7 +84,19 @@ BEGIN
               AND ml.CODE IS NULL
 
             UNION ALL
-            SELECT s.row_number, 9, 'Invalid Item Code.'
+            SELECT s.row_number, 9, 'from branch and Location cannot be the sama as To Branch and Location'
+            FROM inv_mutation_upload_staging s
+            WHERE s.upload_id = @p_upload_id
+              AND s.process_flag IS NULL
+              AND ISNULL(LTRIM(RTRIM(s.from_branch)), '') <> ''
+              AND ISNULL(LTRIM(RTRIM(s.from_location)), '') <> ''
+              AND ISNULL(LTRIM(RTRIM(s.to_branch)), '') <> ''
+              AND ISNULL(LTRIM(RTRIM(s.to_location)), '') <> ''
+              AND LTRIM(RTRIM(s.from_branch)) = LTRIM(RTRIM(s.to_branch))
+              AND LTRIM(RTRIM(s.from_location)) = LTRIM(RTRIM(s.to_location))
+
+            UNION ALL
+            SELECT s.row_number, 10, 'Invalid Item Code.'
             FROM inv_mutation_upload_staging s
             LEFT JOIN MASTER_ITEM mi ON mi.ITEM_CODE = LTRIM(RTRIM(s.item_code))
                                     AND ISNULL(mi.IS_ACTIVE, '0') = '1'
@@ -94,14 +106,14 @@ BEGIN
               AND mi.ITEM_CODE IS NULL
 
             UNION ALL
-            SELECT s.row_number, 10, 'Description is required.'
+            SELECT s.row_number, 11, 'Description is required.'
             FROM inv_mutation_upload_staging s
             WHERE s.upload_id = @p_upload_id
               AND s.process_flag IS NULL
               AND ISNULL(LTRIM(RTRIM(s.description)), '') = ''
 
             UNION ALL
-            SELECT s.row_number, 11, 'Quantity cannot be empty.'
+            SELECT s.row_number, 12, 'Quantity cannot be empty.'
             FROM inv_mutation_upload_staging s
             WHERE s.upload_id = @p_upload_id
               AND s.process_flag IS NULL
@@ -118,9 +130,10 @@ BEGIN
                 UNION ALL SELECT 6 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x LEFT JOIN MASTER_BRANCH mb ON mb.CODE = LTRIM(RTRIM(x.to_branch)) AND ISNULL(mb.IS_ACTIVE, '0') = '1' WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.to_branch)), '') <> '' AND mb.CODE IS NULL)
                 UNION ALL SELECT 7 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.to_location)), '') = '')
                 UNION ALL SELECT 8 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x LEFT JOIN MASTER_LOCATION ml ON ml.CODE = LTRIM(RTRIM(x.to_location)) AND ml.BRANCH_CODE = LTRIM(RTRIM(x.to_branch)) WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.to_location)), '') <> '' AND ml.CODE IS NULL)
-                UNION ALL SELECT 9 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x LEFT JOIN MASTER_ITEM mi ON mi.ITEM_CODE = LTRIM(RTRIM(x.item_code)) AND ISNULL(mi.IS_ACTIVE, '0') = '1' WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.item_code)), '') <> '' AND mi.ITEM_CODE IS NULL)
-                UNION ALL SELECT 10 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.description)), '') = '')
-                UNION ALL SELECT 11 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND x.quantity IS NULL)
+                UNION ALL SELECT 9 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.from_branch)), '') <> '' AND ISNULL(LTRIM(RTRIM(x.from_location)), '') <> '' AND ISNULL(LTRIM(RTRIM(x.to_branch)), '') <> '' AND ISNULL(LTRIM(RTRIM(x.to_location)), '') <> '' AND LTRIM(RTRIM(x.from_branch)) = LTRIM(RTRIM(x.to_branch)) AND LTRIM(RTRIM(x.from_location)) = LTRIM(RTRIM(x.to_location)))
+                UNION ALL SELECT 10 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x LEFT JOIN MASTER_ITEM mi ON mi.ITEM_CODE = LTRIM(RTRIM(x.item_code)) AND ISNULL(mi.IS_ACTIVE, '0') = '1' WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.item_code)), '') <> '' AND mi.ITEM_CODE IS NULL)
+                UNION ALL SELECT 11 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND ISNULL(LTRIM(RTRIM(x.description)), '') = '')
+                UNION ALL SELECT 12 WHERE EXISTS (SELECT 1 FROM inv_mutation_upload_staging x WHERE x.upload_id = @p_upload_id AND x.row_number = err.row_number AND x.process_flag IS NULL AND x.quantity IS NULL)
             ) p
         )
     )

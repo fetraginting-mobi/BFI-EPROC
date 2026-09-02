@@ -38,7 +38,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             ddltoBranch.Items.Insert(0, new ListItem("ALL", ""));
             ddlToBranch1.Items.Insert(0, new ListItem("ALL", ""));
             Shared.BindGeneralLocationByBranch(ddltoLocation, "");
-            ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+            ddltoLocation.Items.Insert(0, new ListItem("ALL", "ALL"));
 
 
             BindData();
@@ -99,7 +99,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _htupload["p_branch_code"] = "KPO";
             _htupload["p_from_location"] = ddlFromLocation.SelectedValue;
             _htupload["p_to_branch"] = ddltoBranch.SelectedValue;
-            _htupload["p_to_location"] = ddltoLocation.SelectedValue;
+            _htupload["p_to_location"] = ddltoLocation.SelectedValue == "ALL" ? "" : ddltoLocation.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -477,8 +477,11 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
             Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
 
-            string url = string.Format("../../approval/genericapplication.aspx?code=AP000013&nexturl={0}",
-                Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx"));
+            string url = string.Format(
+                "../../approval/genericapplication.aspx?code=AP000013&nexturl={0}&post_error_process_name={1}&post_error_raw_data={2}",
+                Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx"),
+                Server.UrlEncode("POST_INVENTORY_MUTATION_ERROR"),
+                Server.UrlEncode("Bulk POST Inventory Mutation"));
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
             ScriptManager.RegisterStartupScript(this, this.GetType(), "OPEN_APPROVAL", script, true);
@@ -616,7 +619,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         string selectedBranch = ddltoBranch.SelectedValue;
         Shared.BindGeneralLocationByBranch(ddltoLocation, selectedBranch);
-        ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+        ddltoLocation.Items.Insert(0, new ListItem("ALL", "ALL"));
         BindData();
     }
     protected void ddlFromLocation_SelectedIndexChanged(object sender, EventArgs e)
