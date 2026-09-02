@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_fa_sale_insert_from_source]  
+﻿ALTER PROCEDURE [dbo].[xsp_fa_sale_insert_from_source]  
 (  
     @p_barcode          NVARCHAR(20),  
     @p_fa_sale_code     NVARCHAR(15),  

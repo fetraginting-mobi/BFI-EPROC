@@ -1,0 +1,59 @@
+﻿CREATE procedure [dbo].[xsp_fa_grouping_asset_history_getrows]
+(
+ @p_keywords   nvarchar(50)
+ ,@p_fa_group_asset_code nvarchar(18)
+)as
+begin
+declare @v_search_date date = try_convert(date, @p_keywords, 103)
+
+select
+ fgah.id 'historyid'
+ ,fgah.barcode 'barcode'
+ ,fgad.fa_ga_code 'group_asset_code'
+ ,fgad.name_asset 'item_name'
+ ,fc.cat_name   'asset_category'
+ ,isnull(emp.EMP_NAME,'-') 'pic_asset'
+ ,isnull(emp2.EMP_NAME,'-') 'mod_by'
+ ,doc_reff_no 'doc_reff_no'
+ ,CASE
+            WHEN fgah.action = 'create' THEN 'New Grouping'
+            WHEN fgah.action = 'delete' THEN 'Remove From Grouping'
+            WHEN fgah.action = 'move out'   THEN 'Move Grouping Out'
+   WHEN fgah.action = 'move in'   THEN 'Move Grouping In'
+            ELSE fgah.action
+        END AS 'action'
+ ,CASE
+  WHEN fgah.action = 'move out' THEN concat(fgad.FA_GA_CODE,' - ',fga1.FA_GROUP_ASSET_NAME )
+  ELSE '-'
+  END AS 'from_group'
+ ,CASE
+  WHEN fgah.action = 'move out' THEN concat(fgah.MOVE_TO ,' - ',fga2.FA_GROUP_ASSET_NAME)
+  ELSE '-'
+  END AS 'to_group'
+ ,convert(nvarchar(20), fgah.cre_date, 103) 'cre_date'
+ ,convert(nvarchar(20), fgah.MOD_DATE, 103) 'mod_date'
+from fa_grouping_asset_history fgah with (nolock)
+inner join fa_grouping_asset_detail fgad with (nolock) on fgah.fa_ga_detail_id = fgad.id and fgah.barcode = fgad.barcode
+left join fa_grouping_asset fga1  with (nolock) on fgad.FA_GA_CODE = fga1.FA_GROUP_ASSET_CODE
+left join fa_grouping_asset fga2  with (nolock) on fgah.MOVE_TO = fga2.FA_GROUP_ASSET_CODE
+left join fa_asset fa with (nolock) on (fgad.code_asset = fa.ast_code and fgad.fa_asset_id = fa.id and fgad.barcode =fa.barcode)
+left join dbo.fa_category fc with (nolock) on (fc.cat_code = fa.cat_code)
+left join EMPLOYEE_MAIN emp with (nolock) on fa.PIC_USE = emp.emp_code
+left join EMPLOYEE_MAIN emp2 with (nolock) on fgah.MOD_BY = emp2.emp_code
+where fgad.fa_ga_code = @p_fa_group_asset_code
+and
+  (
+     fgad.code_asset        like '%'+ @p_keywords +'%'
+     or fgad.name_asset     like '%'+ @p_keywords +'%'
+     or fc.cat_name         like '%'+ @p_keywords +'%'
+     or fgah.barcode        like '%'+ @p_keywords +'%'
+     or convert(nvarchar(20), fgah.CRE_DATE, 103) like '%'+ @p_keywords +'%'
+     or convert(nvarchar(20), fgah.MOD_DATE, 103) like '%'+ @p_keywords +'%'
+     or (@v_search_date is not null and convert(date, fgah.CRE_DATE) = @v_search_date)
+     or (@v_search_date is not null and convert(date, fgah.MOD_DATE) = @v_search_date)
+     or doc_reff_no         like '%'+ @p_keywords +'%'
+     or emp2.EMP_NAME       like '%'+ @p_keywords +'%'
+   )
+order by fgah.MOD_DATE desc
+end
+

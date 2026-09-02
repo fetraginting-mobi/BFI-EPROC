@@ -1,0 +1,42 @@
+﻿CREATE PROCEDURE [dbo].[xsp_fa_mutation_getrows_subsciption]
+(
+	@p_keywords			nvarchar(50)
+	,@p_ir_code			NVARCHAR(14)
+)as
+begin
+	select  ird.ITEM_CODE			'code'
+			,ast_name + ' - ' + fl.LOC_NAME + ' (' + mb.DESCRIPTION + ')' 'description'
+			,isnull(ga.is_parent,'No') 'parent'
+			,isnull(mu.DESCRIPTION,'') 'owner'
+			,isnull(ga.fa_group_asset_name,'') 'Group Asset Name'
+	from	fa_request_mutation_detail ird
+	join fa_asset fa with (nolock) on ird.ITEM_CODE = fa.BARCODE
+	INNER JOIN dbo.FA_LOCATION fl with (nolock) ON (fl.LOC_CODE = CURRENT_BRANCH)
+	left JOIN dbo.MASTER_BRANCH mb with (nolock) ON (mb.CODE = fa.BRANCH_CODE)
+	INNER JOIN dbo.MASTER_ITEM mi with (nolock) ON (mi.ITEM_CODE = fa.AST_CODE)
+	left join master_units mu with (nolock) on mi.owner = mu.code and mu.IS_ACTIVE = 1 and mu.IS_OWNER = 1
+	left join (
+				select fgad.BARCODE, 
+				case when fgad.IS_PARENT = '1' then 'Yes'
+					else 'No'
+					end as 'is_parent',
+				fga.fa_group_asset_code,
+				fga.fa_group_asset_name,
+				fga.branch_code,
+				fga.fa_location
+				from fa_grouping_asset fga with (nolock)
+				inner join fa_grouping_asset_detail fgad with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
+				where fgad.IS_ACTIVE = 1 
+	) ga on fa.barcode =ga.barcode  and fl.LOC_CODE =ga.fa_location
+	where(
+				ird.ITEM_CODE		like '%'+ @p_keywords +'%'
+			or	ast_name			like '%'+ @p_keywords +'%'
+			or	ird.ITEM_CODE		like '%'+ @p_keywords +'%'
+			or	mu.DESCRIPTION		like '%'+ @p_keywords +'%'
+			or	isnull(ga.is_parent,'No') like '%'+ @p_keywords +'%'
+			or	isnull(ga.fa_group_asset_name,'') like '%'+ @p_keywords +'%'
+		 )
+	and		ird.IR_CODE = @p_ir_code 	
+end
+
+

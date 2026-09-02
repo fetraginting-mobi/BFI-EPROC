@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[xsp_fa_asset_getrows_for_subscription]
+﻿CREATE PROCEDURE [dbo].[xsp_fa_asset_getrows_for_subscription]
 (
 	@p_keywords			nvarchar(50)
 	,@p_location		nvarchar(20)
@@ -64,6 +64,8 @@ begin
 			or	ast_name			like '%'+ @p_keywords +'%'
 			or	orig_price			like '%'+ @p_keywords +'%'
 			or	net_book_value		like '%'+ @p_keywords +'%'
+			or	isnull(ga.is_parent,'No') like '%'+ @p_keywords +'%'
+			or	isnull(ga.fa_group_asset_name,'') like '%'+ @p_keywords +'%'
 			)
 
 	union all 
@@ -89,7 +91,7 @@ begin
 						from fa_grouping_asset fga with (nolock)
 						inner join fa_grouping_asset_detail fgad with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
 						where fgad.IS_ACTIVE = 1 and fga.branch_code = @p_branch_code and (fga.FA_LOCATION = @p_location or @p_location = 'ALL')
-					) ga on ib.barcode =ga.barcode				
+					) ga on ib.barcode =ga.barcode and ga.is_parent='Yes'			
 		where	ib.barcode_status = 'AVAILABLE' and mi.RENT_FLAG = 1
 		AND NOT EXISTS (
 			SELECT 1
@@ -135,8 +137,11 @@ begin
 					or  ib.ITEM_CODE				like '%' + @p_keywords + '%'
 					or	mi.item_name					like '%' + @p_keywords + '%'
 					or	ml.description					like '%' + @p_keywords + '%'
+					or	isnull(ga.is_parent,'No') like '%' + @p_keywords + '%'
+					or	isnull(ga.fa_group_asset_name,'') like '%' + @p_keywords + '%'
 				)	
 end
 GO
+
 
 
