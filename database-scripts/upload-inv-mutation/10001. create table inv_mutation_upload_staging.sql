@@ -1,6 +1,7 @@
-CREATE TABLE [dbo].[inv_mutation_upload_staging](
+﻿CREATE TABLE [dbo].[inv_mutation_upload_staging](
 	[upload_id] [uniqueidentifier] NULL,
 	[file_name] [nvarchar](255) NULL,
+	[upload_by] [nvarchar](50) NULL,
 	[row_number] [int] NULL,
 	[from_branch] [nvarchar](50) NULL,
 	[from_location] [nvarchar](50) NULL,
@@ -16,8 +17,4 @@ CREATE TABLE [dbo].[inv_mutation_upload_staging](
 	[im_code] [nvarchar](36) NULL
 ) ON [PRIMARY]
 GO
-
-ALTER TABLE [dbo].[inv_mutation_upload_staging] ADD  DEFAULT (getdate()) FOR [upload_date]
-GO
-
-
+`r`n

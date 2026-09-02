@@ -88,11 +88,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label class="col-sm-2">Branch</label>
+                                            <label class="col-sm-3">From Branch</label>
                                             <div class="col-sm-5">
-                                                <cc1:XUIDropDownList ID="ddlBranch" runat="server"
+                                                <cc1:XUIDropDownList ID="ddlBranch" Width="200px" runat="server"
                                                     CssClass="form-control" AutoPostBack="true"
                                                     OnSelectedIndexChanged="ddlBranch_SelectedIndexChanged" />
                                             </div>
@@ -100,9 +100,19 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
+                                            <label class="col-sm-3">To Branch</label>
+                                            <div class="col-sm-5">
+                                                <cc1:XUIDropDownList ID="ddlToBranch1" Width="200px" runat="server"
+                                                    CssClass="form-control" AutoPostBack="true"
+                                                    OnSelectedIndexChanged="ddlToBranch1_SelectedIndexChanged" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
                                             <label class="col-sm-3">Process</label>
                                             <div class="col-sm-5">
-                                                <cc1:XUIDropDownList ID="ddlProcess" Width="200px" runat="server"
+                                                <cc1:XUIDropDownList ID="ddlProcess" Width="100px" runat="server"
                                                     CssClass="form-control" SPParameterName="p_process"
                                                     DataType="String" BindType="Both" AutoPostBack="true"
                                                     OnSelectedIndexChanged="ddlProcess_SelectedIndexChanged">
@@ -149,6 +159,7 @@
                                                 <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch" />
                                                 <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch" />
                                                 <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status" />
+                                                <asp:BoundField DataField="PROCESS" HeaderText="Process" />
                                                 <asp:CommandField ShowSelectButton="true" />
                                             </Columns>
                                         </asp:GridView>
@@ -220,8 +231,11 @@
                                                 <asp:BoundField DataField="upload_id" HeaderText="Upload ID">
                                                     <ItemStyle Width="22%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
+                                                <asp:BoundField DataField="upload_by" HeaderText="Upload By">
+                                                    <ItemStyle Width="10%" HorizontalAlign="Left" />
+                                                </asp:BoundField>
                                                 <asp:BoundField DataField="file_name" HeaderText="File Name">
-                                                    <ItemStyle Width="28%" HorizontalAlign="Left" />
+                                                    <ItemStyle Width="25%" HorizontalAlign="Left" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="total_rows" HeaderText="Total Upload Data">
                                                     <ItemStyle Width="10%" HorizontalAlign="Center" />
@@ -331,7 +345,7 @@
                                 </div>
                                 <asp:UpdatePanel ID="updUpload" runat="server">
                                     <ContentTemplate>
-                                        <asp:GridView ID="gvwListUpload" runat="server" AutoGenerateColumns=" false"
+                                        <asp:GridView ID="gvwListUpload" runat="server" AutoGenerateColumns="false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
                                             PageSize="10" DataKeyNames="CODE_BARCODE"
                                             OnPageIndexChanging="gvwListUpload_PageIndexChanging"
@@ -345,6 +359,8 @@
                                                     <ItemTemplate>
                                                         <%# Container.DataItemIndex + 1 %>
                                                     </ItemTemplate>
+                                                    <HeaderStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:TemplateField>
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
@@ -355,33 +371,46 @@
                                                         <asp:CheckBox ID="chbSelectUpload" runat="server"
                                                             onclick="Check_Click" />
                                                     </ItemTemplate>
+                                                    <HeaderStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:TemplateField>
                                                 <asp:BoundField DataField="CODE" HeaderText="Inventory Mutation No.">
-                                                    <ItemStyle Width="25%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="18%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="18%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="MUTATION_DATE" HeaderText="Date"
                                                     DataFormatString="{0:dd/MM/yyyy}">
-                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="9%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="9%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="12%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="12%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="FROM_LOCATION" HeaderText="From Location">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="16%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="16%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="12%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="12%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TO_LOCATION" HeaderText="To Location">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="14%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="14%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">
-                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="5%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="5%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status">
-                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
-                                                <asp:CommandField ShowSelectButton="true" />
+                                                <asp:CommandField ShowSelectButton="true">
+                                                    <HeaderStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
+                                                </asp:CommandField>
                                             </Columns>
                                         </asp:GridView>
                                     </ContentTemplate>
