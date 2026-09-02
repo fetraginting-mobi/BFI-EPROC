@@ -89,7 +89,6 @@ public partial class module_fa_fagroupingasset : BasePage
         btnSaveDetail.Enabled = false;
         btnDelete.Enabled = false;
         btnSearch.Enabled = false;
-        btnSearchHistory.Enabled = false;
 
         btnMove.Attributes["class"] = (btnMove.Attributes["class"] + " disabled").Trim();
         btnMove.Attributes["onclick"] = "return false;";
@@ -98,7 +97,6 @@ public partial class module_fa_fagroupingasset : BasePage
         txtAssetGroupName.Enabled = false;
         txtRemarks.Enabled = false;
         txtSearch.Enabled = false;
-        txtSearchHistory.Enabled = false;
         txtAssetGroupDate.Enabled = false;
         ddlBranch.Enabled = false;
         ddlLocation.Enabled = false;

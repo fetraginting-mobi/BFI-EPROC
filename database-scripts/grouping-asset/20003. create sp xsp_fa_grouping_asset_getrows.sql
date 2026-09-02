@@ -6,6 +6,7 @@ CREATE PROCEDURE [dbo].[XSP_FA_GROUPING_ASSET_GETROWS]
 	@p_location NVARCHAR(20)
 )AS
 BEGIN
+	DECLARE @v_search_date DATE = TRY_CONVERT(DATE, @p_keywords, 103)
 	
 		SELECT 
 		FGA.FA_GROUP_ASSET_CODE AS ASSET_GROUP_CODE,
@@ -53,6 +54,8 @@ BEGIN
 			OR FGA.FA_GROUP_ASSET_NAME LIKE '%'+ @P_KEYWORDS +'%'
 			OR  convert(nvarchar(20), FGA.CRE_DATE, 103) LIKE '%'+ @P_KEYWORDS +'%'
 			OR  convert(nvarchar(20), FGA.MOD_DATE, 103) LIKE '%'+ @P_KEYWORDS +'%'
+			OR  (@v_search_date IS NOT NULL AND CONVERT(DATE, FGA.CRE_DATE) = @v_search_date)
+			OR  (@v_search_date IS NOT NULL AND CONVERT(DATE, FGA.MOD_DATE) = @v_search_date)
 		)
 	ORDER BY 
 		CASE WHEN FGA.IS_ACTIVE = 1 THEN 0 ELSE 1 END,

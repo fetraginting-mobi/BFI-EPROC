@@ -4,16 +4,6 @@
 
         <asp:Content ID="Content1" ContentPlaceHolderID="cph" Runat="Server">
             <style>
-                .grid-auto {
-                    table-layout: auto !important;
-                    width: 100% !important;
-                }
-
-                .grid-auto th,
-                .grid-auto td {
-                    white-space: nowrap;
-                }
-
                 .btn-purple {
                     background-color: #6f42c1 !important;
                     border-color: #6f42c1 !important;
@@ -80,7 +70,7 @@
                     }
                 }
 
-                function handleMovePopup() {                    
+                function handleMovePopup() {
                     var groupCode = '<%= lblGroupAssetCode.Text %>';
                     var gaCode = document.getElementById('<%= lblGroupAssetCode.ClientID %>');
                     var grid = document.getElementById('<%= gvwList.ClientID %>');
@@ -164,8 +154,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <cc1:XUILinkButton ID="btnSave" RoleCode="R90000070E" runat="server"
-                                CssClass="btn btn-primary" OnClick="btnSave_Click"><i
-                                    class="icon-save"></i> Save</cc1:XUILinkButton>
+                                CssClass="btn btn-primary" OnClick="btnSave_Click"><i class="icon-save"></i> Save
+                            </cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnCancel" RoleCode="R90000070O" runat="server"
                                 CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i
                                     class="icon-arrow-left"></i> Cancel</cc1:XUILinkButton>
@@ -203,9 +193,6 @@
                                                     <cc1:XUILabel ID="lblbranch" runat="server"
                                                         DBColumnName="cost_center" DataType="String"
                                                         BindType="DBToUIOnly" Text="--" style="display:none;">
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     </cc1:XUILabel>
                                                 </ContentTemplate>
                                             </asp:UpdatePanel>
@@ -220,8 +207,9 @@
                                         <div class="col-sm-6">
                                             <cc1:XUITextBox ID="txtAssetGroupName" runat="server"
                                                 CssClass="form-control" placeholder="Asset Group Name"
-                                                DBColumnName="FA_GROUP_ASSET_NAME" SPParameterName="p_fa_group_asset_name"
-                                                DataType="String" BindType="Both" MaxLength="255"></cc1:XUITextBox>
+                                                DBColumnName="FA_GROUP_ASSET_NAME"
+                                                SPParameterName="p_fa_group_asset_name" DataType="String"
+                                                BindType="Both" MaxLength="255"></cc1:XUITextBox>
                                             <asp:RequiredFieldValidator ID="rfvAssetGroupName" runat="server"
                                                 ErrorMessage="Required Field!" ControlToValidate="txtAssetGroupName"
                                                 Display="Dynamic"></asp:RequiredFieldValidator>
@@ -241,9 +229,11 @@
                                                     <cc1:XUILabel ID="lblLocation" runat="server"
                                                         DBColumnName="FA_LOCATION" DataType="String"
                                                         BindType="DBToUIOnly" Text="--" style="display:none;">
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     </cc1:XUILabel>
                                                     <asp:RequiredFieldValidator ID="rvfLocation" runat="server"
                                                         ErrorMessage="Required Field!" ControlToValidate="ddlLocation"
@@ -289,8 +279,8 @@
                                         <div class="col-sm-6">
                                             <cc1:XUITextBox ID="txtRemarks" runat="server" CssClass="form-control"
                                                 placeholder="Remark" DBColumnName="REMARKS" SPParameterName="p_remarks"
-                                                MaxLength="400" DataType="String" BindType="Both"
-                                                TextMode="MultiLine"></cc1:XUITextBox>
+                                                MaxLength="400" DataType="String" BindType="Both" TextMode="MultiLine">
+                                            </cc1:XUITextBox>
                                             <asp:RegularExpressionValidator runat="server" ID="revRemark"
                                                 ControlToValidate="txtRemarks" ValidationExpression="^[\s\S]{0,400}$"
                                                 ErrorMessage="Exceed maximum length 400" Display="Dynamic">
@@ -311,7 +301,8 @@
                                                 DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss">
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -327,7 +318,8 @@
                                                 DataType="DateTime" BindType="DBToUIOnly" Format="dd/MM/yyyy HH:mm:ss">
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             </cc1:XUILabel>
                                         </div>
                                     </div>
@@ -349,8 +341,9 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#MovementHistory" id="movementhistory" onclick="javascript:fnSetTab('movementhistory');"
-                                style="padding-bottom:28px" data-toggle="tab">
+                            <a href="#MovementHistory" id="movementhistory"
+                                onclick="javascript:fnSetTab('movementhistory');" style="padding-bottom:28px"
+                                data-toggle="tab">
                                 Movement History
                             </a>
                         </li>
@@ -371,9 +364,10 @@
                                                     CssClass="btn btn-primary" OnClick="btnAdd_Click"
                                                     CausesValidation="false"><i class="icon-plus"></i> Create
                                                 </cc1:XUILinkButton>
-                                                <cc1:XUILinkButton ID="btnSaveDetail" RoleCode="R90000070E" runat="server"
-                                                    CssClass="btn btn-primary" OnClick="btnSaveDetail_Click" 
-                                                    CausesValidation="false"><i class="icon-save"></i> Save
+                                                <cc1:XUILinkButton ID="btnSaveDetail" RoleCode="R90000070E"
+                                                    runat="server" CssClass="btn btn-primary"
+                                                    OnClick="btnSaveDetail_Click" CausesValidation="false"><i
+                                                        class="icon-save"></i> Save
                                                 </cc1:XUILinkButton>
                                                 <cc1:XUILinkButton ID="btnDelete" RoleCode="R90000070E" runat="server"
                                                     CssClass="btn btn-danger" OnClick="btnDelete_Click"
@@ -404,7 +398,7 @@
                                             <ContentTemplate>
                                                 <asp:HiddenField ID="hdnSelectedParentID" runat="server" />
                                                 <asp:GridView ID="gvwList" runat="server"
-                                                    CssClass="display table table-bordered table-striped grid-auto"
+                                                    CssClass="display table table-bordered table-striped"
                                                     AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
                                                     DataKeyNames="ID,is_parent"
                                                     onselectedindexchanged="gvwList_SelectedIndexChanged"
@@ -416,7 +410,8 @@
                                                                 <span>No</span>
                                                             </HeaderTemplate>
                                                             <ItemTemplate>
-                                                                <%# (gvwList.PageIndex * gvwList.PageSize) + Container.DataItemIndex + 1 %>
+                                                                <%# (gvwList.PageIndex * gvwList.PageSize) +
+                                                                    Container.DataItemIndex + 1 %>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
                                                         <asp:TemplateField>
@@ -433,7 +428,8 @@
                                                         </asp:BoundField>
                                                         <asp:BoundField DataField="ITEM_NAME" HeaderText="Asset Name">
                                                         </asp:BoundField>
-                                                        <asp:BoundField DataField="category" HeaderText="Asset category">
+                                                        <asp:BoundField DataField="category"
+                                                            HeaderText="Asset category">
                                                         </asp:BoundField>
                                                         <asp:BoundField DataField="owner" HeaderText="Owner">
                                                         </asp:BoundField>
@@ -491,7 +487,7 @@
                                         <asp:UpdatePanel ID="updpnlMovementHistory" runat="server">
                                             <ContentTemplate>
                                                 <asp:GridView ID="gvwMovementHistory" runat="server"
-                                                    CssClass="display table table-bordered table-striped grid-auto"
+                                                    CssClass="display table table-bordered table-striped"
                                                     AutoGenerateColumns="false" AllowPaging="true" PageSize="10"
                                                     DataKeyNames="historyid"
                                                     onselectedindexchanged="gvwMovementHistory_SelectedIndexChanged"
@@ -502,13 +498,15 @@
                                                             HeaderStyle-HorizontalAlign="Center">
                                                             <HeaderTemplate><span>No</span></HeaderTemplate>
                                                             <ItemTemplate>
-                                                                <%# (gvwMovementHistory.PageIndex * gvwMovementHistory.PageSize) + Container.DataItemIndex + 1 %>
+                                                                <%# (gvwMovementHistory.PageIndex *
+                                                                    gvwMovementHistory.PageSize) +
+                                                                    Container.DataItemIndex + 1 %>
                                                             </ItemTemplate>
-                                                        </asp:TemplateField>                                                        
-                                                        <asp:BoundField DataField="barcode"
-                                                            HeaderText="Asset Code"></asp:BoundField>
-                                                        <asp:BoundField DataField="item_name"
-                                                            HeaderText="Asset Item"></asp:BoundField>
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="barcode" HeaderText="Asset Code">
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="item_name" HeaderText="Asset Item">
+                                                        </asp:BoundField>
                                                         <asp:BoundField DataField="asset_category"
                                                             HeaderText="Asset Category"></asp:BoundField>
                                                         <asp:BoundField DataField="cre_date" HeaderText="Date"
@@ -521,11 +519,11 @@
                                                         <asp:BoundField DataField="doc_reff_no"
                                                             HeaderText="Doc. Reff No" NullDisplayText="-">
                                                         </asp:BoundField>
-                                                        <asp:BoundField DataField="from_group"
-                                                            HeaderText="From Group" NullDisplayText="-">
+                                                        <asp:BoundField DataField="from_group" HeaderText="From Group"
+                                                            NullDisplayText="-">
                                                         </asp:BoundField>
-                                                        <asp:BoundField DataField="to_group"
-                                                            HeaderText="to Group" NullDisplayText="-">
+                                                        <asp:BoundField DataField="to_group" HeaderText="to Group"
+                                                            NullDisplayText="-">
                                                         </asp:BoundField>
 
 
@@ -540,7 +538,8 @@
                                                                     <hr
                                                                         style="margin: 3px 0; border-top: 1px solid #000;" />
                                                                     <strong>
-                                                                        <%# Eval("mod_date") %>
+                                                                        <%# Eval("mod_date", "{0:dd/MM/yyyy HH:mm:ss}" )
+                                                                            %>
                                                                     </strong>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>

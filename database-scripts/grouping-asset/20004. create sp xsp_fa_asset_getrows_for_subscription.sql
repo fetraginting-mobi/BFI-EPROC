@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[xsp_fa_asset_getrows_for_subscription]
+﻿CREATE PROCEDURE [dbo].[xsp_fa_asset_getrows_for_subscription]
 (
 	@p_keywords			nvarchar(50)
 	,@p_location		nvarchar(20)
@@ -64,6 +64,8 @@ begin
 			or	ast_name			like '%'+ @p_keywords +'%'
 			or	orig_price			like '%'+ @p_keywords +'%'
 			or	net_book_value		like '%'+ @p_keywords +'%'
+			or	isnull(ga.is_parent,'No') like '%'+ @p_keywords +'%'
+			or	isnull(ga.fa_group_asset_name,'') like '%'+ @p_keywords +'%'
 			)
 
 	union all 
@@ -135,8 +137,11 @@ begin
 					or  ib.ITEM_CODE				like '%' + @p_keywords + '%'
 					or	mi.item_name					like '%' + @p_keywords + '%'
 					or	ml.description					like '%' + @p_keywords + '%'
+					or	isnull(ga.is_parent,'No') like '%' + @p_keywords + '%'
+					or	isnull(ga.fa_group_asset_name,'') like '%' + @p_keywords + '%'
 				)	
 end
 GO
+
 
 
