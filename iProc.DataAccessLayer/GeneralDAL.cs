@@ -343,6 +343,11 @@ namespace iProc.DataAccessLayer
                     bulk.BatchSize = 5000;
                     bulk.BulkCopyTimeout = 600;
 
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        bulk.ColumnMappings.Add(column.ColumnName, column.ColumnName);
+                    }
+
                     bulk.WriteToServer(dt);
                 }
             }

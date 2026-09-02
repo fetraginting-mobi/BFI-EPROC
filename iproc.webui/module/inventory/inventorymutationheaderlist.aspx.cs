@@ -239,7 +239,18 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 row["to_location"] = GetStringSafe(excelReader, 4);
                 row["description"] = GetStringSafe(excelReader, 5);
                 row["item_code"] = GetStringSafe(excelReader, 6);
-                row["quantity"] = IsEmpty(excelReader, 7) ? (object)DBNull.Value : GetStringSafe(excelReader, 7);
+                if (IsEmpty(excelReader, 7))
+                {
+                    row["quantity"] = DBNull.Value;
+                }
+                else
+                {
+                    int quantity;
+                    if (!TryConvertToInt(excelReader.GetValue(7), out quantity))
+                        throw new Exception("Upload failed. Quantity at row " + (excelRowIndex - 1) + " must be a valid integer.");
+
+                    row["quantity"] = quantity;
+                }
 
                 dt.Rows.Add(row);
             }
@@ -358,11 +369,31 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private bool TryConvertToInt(object value, out int result)
     {
         result = 0;
-        if (value == null) return false;
+        if (value == null || value == DBNull.Value) return false;
+
+        if (value is int)
+        {
+            result = (int)value;
+            return true;
+        }
 
         if (value is double)
         {
-            result = Convert.ToInt32((double)value);
+            double doubleValue = (double)value;
+            if (doubleValue % 1 != 0)
+                return false;
+
+            result = Convert.ToInt32(doubleValue);
+            return true;
+        }
+
+        if (value is decimal)
+        {
+            decimal decimalValue = (decimal)value;
+            if (decimalValue % 1 != 0)
+                return false;
+
+            result = Convert.ToInt32(decimalValue);
             return true;
         }
 
