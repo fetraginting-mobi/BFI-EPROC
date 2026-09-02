@@ -23,6 +23,10 @@ begin
                 left join dbo.master_branch mb1 on (mb1.code = im.to_branch)
         where   im.branch_code = @p_branch_code
         and     (
+                    isnull(im.is_upload, 0) <> 1
+                    or im.trans_flag_code = 'POST'
+                )
+        and     (
                     isnull(@p_to_branch_code, '') = ''
                     or @p_to_branch_code = 'ALL'
                     or im.to_branch = @p_to_branch_code
@@ -59,6 +63,10 @@ begin
                 left join dbo.master_branch mb1 on (mb1.code = im.to_branch)
         where   mgs.code = @p_status
         and     im.branch_code = @p_branch_code
+        and     (
+                    isnull(im.is_upload, 0) <> 1
+                    or im.trans_flag_code = 'POST'
+                )
         and     (
                     isnull(@p_to_branch_code, '') = ''
                     or @p_to_branch_code = 'ALL'
