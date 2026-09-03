@@ -17,4 +17,3 @@
 	[im_code] [nvarchar](36) NULL
 ) ON [PRIMARY]
 GO
-`r`n
