@@ -78,7 +78,6 @@ public partial class module_inventory_inventorymutationheader : BasePage
                     //btnReject.Visible = false;
                     btnApprovalTiered.Visible = false;
                     txtRemarks.Enabled = false;
-                    txtExpeditionDescription.Enabled = false;
                     ddlToBranch.Enabled = false;
                     txtToLocationCode.Enabled = false;
                     btnToLocation.Visible = false;

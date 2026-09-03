@@ -38,7 +38,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             ddltoBranch.Items.Insert(0, new ListItem("ALL", ""));
             ddlToBranch1.Items.Insert(0, new ListItem("ALL", ""));
             Shared.BindGeneralLocationByBranch(ddltoLocation, "");
-            ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+            ddltoLocation.Items.Insert(0, new ListItem("ALL", "ALL"));
 
 
             BindData();
@@ -75,7 +75,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         if (!hasError)
             return;
 
-        Shared.ShowErrorDialog(this, new Exception("ERROR, silahkan check log error pada tab POST Upload Mutation History di Inventory Mutation."));
+        Shared.ShowErrorDialog(this, new Exception("Upload failed. Please review the error details in the “Error Upload Mutation History” tab under Inventory Mutation."));
     }
     private void BindData()
     {
@@ -99,7 +99,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             _htupload["p_branch_code"] = "KPO";
             _htupload["p_from_location"] = ddlFromLocation.SelectedValue;
             _htupload["p_to_branch"] = ddltoBranch.SelectedValue;
-            _htupload["p_to_location"] = ddltoLocation.SelectedValue;
+            _htupload["p_to_location"] = ddltoLocation.SelectedValue == "ALL" ? "" : ddltoLocation.SelectedValue;
 
             Shared.ApplyDefaultProp(_ht);
 
@@ -239,7 +239,19 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 row["to_location"] = GetStringSafe(excelReader, 4);
                 row["description"] = GetStringSafe(excelReader, 5);
                 row["item_code"] = GetStringSafe(excelReader, 6);
-                row["quantity"] = IsEmpty(excelReader, 7) ? (object)DBNull.Value : GetStringSafe(excelReader, 7);
+                int quantity;
+                if (IsEmpty(excelReader, 7))
+                {
+                    row["quantity"] = DBNull.Value;
+                }
+                else if (TryConvertToInt(excelReader.GetValue(7), out quantity))
+                {
+                    row["quantity"] = quantity;
+                }
+                else
+                {
+                    throw new Exception("Quantity must be numeric");
+                }
 
                 dt.Rows.Add(row);
             }
@@ -358,14 +370,12 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     private bool TryConvertToInt(object value, out int result)
     {
         result = 0;
-        if (value == null) return false;
-
+        if (value == null || value == DBNull.Value) return false;
         if (value is double)
         {
             result = Convert.ToInt32((double)value);
             return true;
         }
-
         return int.TryParse(value.ToString().Trim(), out result);
     }
     protected void btnDownload_Click(object sender, EventArgs e)
@@ -446,8 +456,11 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
             Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
 
-            string url = string.Format("../../approval/genericapplication.aspx?code=AP000013&nexturl={0}",
-                Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx"));
+            string url = string.Format(
+                "../../approval/genericapplication.aspx?code=AP000013&nexturl={0}&post_error_process_name={1}&post_error_raw_data={2}",
+                Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx"),
+                Server.UrlEncode("POST_INVENTORY_MUTATION_ERROR"),
+                Server.UrlEncode("Bulk POST Inventory Mutation"));
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
             ScriptManager.RegisterStartupScript(this, this.GetType(), "OPEN_APPROVAL", script, true);
@@ -585,7 +598,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
     {
         string selectedBranch = ddltoBranch.SelectedValue;
         Shared.BindGeneralLocationByBranch(ddltoLocation, selectedBranch);
-        ddltoLocation.Items.Insert(0, new ListItem("ALL", ""));
+        ddltoLocation.Items.Insert(0, new ListItem("ALL", "ALL"));
         BindData();
     }
     protected void ddlFromLocation_SelectedIndexChanged(object sender, EventArgs e)

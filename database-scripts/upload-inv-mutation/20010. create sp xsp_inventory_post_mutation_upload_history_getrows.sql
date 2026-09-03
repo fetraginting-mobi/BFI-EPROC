@@ -15,7 +15,7 @@ select
 from app_process_error_log apl
 left join master_item mi on apl.barcode =  mi.item_code
 where code_barcode = @p_im_code
-order by apl.cre_date, apl.barcode desc
+order by apl.cre_date desc
 end 
 
 

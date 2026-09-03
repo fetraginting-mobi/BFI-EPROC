@@ -182,6 +182,8 @@ public partial class approval_genericapplication : System.Web.UI.Page
                     }
                     catch (Exception exItem)
                     {
+                        LogBulkPostError(_dal, codeBarcode, exItem);
+
                         PostMutationResult r = new PostMutationResult();
                         r.CodeBarcode = codeBarcode;
                         r.IsSuccess = false;
@@ -286,6 +288,50 @@ public partial class approval_genericapplication : System.Web.UI.Page
                 this, GetType(), "err", script, true
             );
         }
+    }
+
+    private void LogBulkPostError(GeneralDAL dal, string codeBarcode, Exception ex)
+    {
+        try
+        {
+            Hashtable htLog = new Hashtable();
+            htLog["p_process_name"] = GetRequestValue("post_error_process_name", "POST_UPLOAD_ERROR");
+            htLog["p_file_name"] = "";
+            htLog["p_row_number"] = 0;
+            htLog["p_error_message"] = GetExceptionMessage(ex);
+            htLog["p_raw_data"] = GetRequestValue("post_error_raw_data", "Bulk POST Upload");
+            htLog["p_cre_by"] = Shared.CurrentUID;
+            htLog["p_cre_ip_address"] = Shared.CurrentIPAddress;
+            htLog["p_code_barcode"] = codeBarcode;
+            htLog["p_barcode"] = "";
+            htLog["p_quantity"] = DBNull.Value;
+
+            dal.InsertProcessErrorLog(htLog);
+        }
+        catch
+        {
+        }
+    }
+
+    private string GetExceptionMessage(Exception ex)
+    {
+        if (ex == null)
+            return "";
+
+        if (ex.InnerException != null && !string.IsNullOrEmpty(ex.InnerException.Message))
+            return ex.InnerException.Message;
+
+        return ex.Message;
+    }
+
+    private string GetRequestValue(string key, string defaultValue)
+    {
+        string value = Request.Params[key];
+
+        if (string.IsNullOrEmpty(value))
+            return defaultValue;
+
+        return value;
     }
 
 }

@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[xsp_app_process_error_log_upload]
+ALTER PROCEDURE [dbo].[xsp_app_process_error_log_upload]
 (
     @p_process_name      NVARCHAR(100),
     @p_file_name         NVARCHAR(255),
@@ -45,5 +45,3 @@ BEGIN
     );
 END
 GO
-
-

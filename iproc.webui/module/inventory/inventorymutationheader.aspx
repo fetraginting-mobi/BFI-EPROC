@@ -594,7 +594,7 @@
                                 <a href="#mutationuploadlog" id="lnkMutationUploadLog"
                                     onclick="javascript:fnSetTab('mutationuploadlog');" data-toggle="tab"
                                     style="padding-bottom:28px">
-                                    Post Upload Mutation History
+                                    Error Upload Mutation History
                                 </a>
                             </li>
                         </ul>
