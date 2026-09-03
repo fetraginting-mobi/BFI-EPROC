@@ -13,7 +13,7 @@ public partial class module_fa_farequestmutationheader : BasePage
 {
     private static string TABLE_NAME_DETAIL = "FA_REQUEST_MUTATION_DETAIL";
     private static string TABLE_NAME_HEADER = "FA_REQUEST_MUTATION_HEADER";
-    private static string TABLE_NAME_POST_HISTORY = "INVENTORY_POST_MUTATION_UPLOAD_HISTORY";
+    private static string TABLE_NAME_POST_HISTORY = "FA_POST_MUTATION_UPLOAD_HISTORY";
     private static Boolean EMPLOYEE_HO = false;
     protected void Page_Load(object sender, EventArgs e)
     {

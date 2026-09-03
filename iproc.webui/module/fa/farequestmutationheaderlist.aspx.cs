@@ -35,35 +35,40 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             {
                 ddlFromBranch.Items[0].Text = "ALL";
                 ddlFromBranch.Items[0].Value = "";
-                ddlFromBranch.Items[1].Text = "HEAD OFFICE";
-                ddlFromBranch.Items[1].Value = "KPO";
+                if (ddlFromBranch.Items.Count > 1)
+                {
+                    ddlFromBranch.Items[1].Text = "HEAD OFFICE";
+                    ddlFromBranch.Items[1].Value = "KPO";
+                }
             }
-            Shared.BindFaLocationAllMut(ddlFromLocation, ddlFromBranch.SelectedValue);
-            if (ddlFromLocation.Items.Count > 0)
-            {
-                ddlFromLocation.Items[0].Text = "ALL";
-                ddlFromLocation.Items[0].Value = "";
-            }
+            BindFaMutationLocation(ddlFromLocation, ddlFromBranch.SelectedValue);
             Shared.BindBranchEmployeeAll1(ddltoBranch);
             if (ddltoBranch.Items.Count > 0)
             {
                 ddltoBranch.Items[0].Text = "ALL";
                 ddltoBranch.Items[0].Value = "";
-                ddltoBranch.Items[1].Text = "HEAD OFFICE";
-                ddltoBranch.Items[1].Value = "KPO";
+                if (ddltoBranch.Items.Count > 1)
+                {
+                    ddltoBranch.Items[1].Text = "HEAD OFFICE";
+                    ddltoBranch.Items[1].Value = "KPO";
+                }
             }
-            Shared.BindFaLocationAllMut(ddltoLocation, ddltoBranch.SelectedValue);
-            if (ddltoLocation.Items.Count > 0)
-            {
-                ddltoLocation.Items[0].Text = "ALL";
-                ddltoLocation.Items[0].Value = "";
-            }
+            BindFaMutationLocation(ddltoLocation, ddltoBranch.SelectedValue);
 
             BindData();
             BindUploadData();
+            ShowPostMutationResult();
             btnDelete.OnClientClick = "return confirm('Delete selected data?');";
         }
         LoadAfterInit();
+    }
+
+    private void ShowPostMutationResult()
+    {
+        if (!"1".Equals(Request.Params["posterror"]))
+            return;
+
+        Shared.ShowErrorDialog(this, new Exception("ERROR, silahkan check log error pada tab Error Upload Mutation History di FA Mutation."));
     }
 
     private void BindData()
@@ -236,9 +241,8 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             string realFirstBarcode = selectedCodes[0].ToString().Trim();
             lblTempBarcode.Text = realFirstBarcode;
 
-            // 3. Simpan ke Session dan buka Approval
-            Session[SessionKey.POST_MUTATION_FA_LIST] = selectedCodes;
-            Session[SessionKey.POST_MUTATION_FA_RESULTS] = new List<PostMutationResult>();
+            Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
+            Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
 
             string nextUrlRaw = "../module/fa/farequestmutationheaderlist.aspx";
 
@@ -251,7 +255,9 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
              "&parc_object_amount={4}" +
              "&parc_branch_code={5}" +
              "&parc_object_description={6}" +
-             "&parc_object_code={7}",
+             "&parc_object_code={7}" +
+             "&post_error_process_name={8}" +
+             "&post_error_raw_data={9}",
              lblTempBarcode.ClientID,
              Server.UrlEncode(nextUrlRaw),
              "POST",
@@ -259,7 +265,9 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
              lblTempAmount.ClientID,
              lblTempBranch.ClientID,
              lblTempRemarks.ClientID,
-             lblTempCode.ClientID
+             lblTempCode.ClientID,
+             Server.UrlEncode("POST_FA_MUTATION_ERROR"),
+             Server.UrlEncode("Bulk POST FA Mutation")
          );
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
@@ -317,22 +325,12 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     }
     protected void ddlFromBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
-        Shared.BindFaLocationAllMut(ddlFromLocation, ddlFromBranch.SelectedValue);
-        if (ddlFromLocation.Items.Count > 0)
-        {
-            ddlFromLocation.Items[0].Text = "ALL";
-            ddlFromLocation.Items[0].Value = "";
-        }
+        BindFaMutationLocation(ddlFromLocation, ddlFromBranch.SelectedValue);
         BindData();
     }
     protected void ddlToBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
-        Shared.BindFaLocationAllMut(ddltoLocation, ddltoBranch.SelectedValue);
-        if (ddltoLocation.Items.Count > 0)
-        {
-            ddltoLocation.Items[0].Text = "ALL";
-            ddltoLocation.Items[0].Value = "";
-        }
+        BindFaMutationLocation(ddltoLocation, ddltoBranch.SelectedValue);
         BindData();
     }
     protected void ddlFromLocation_SelectedIndexChanged(object sender, EventArgs e)
@@ -342,6 +340,18 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
     protected void ddlToLocation_SelectedIndexChanged(object sender, EventArgs e)
     {
         BindData();
+    }
+
+    private void BindFaMutationLocation(DropDownList ddl, string branchCode)
+    {
+        Shared.BindFaLocationAllMut(ddl, branchCode);
+        if (ddl.Items.Count == 0)
+            ddl.Items.Insert(0, new ListItem("ALL", ""));
+        else
+        {
+            ddl.Items[0].Text = "ALL";
+            ddl.Items[0].Value = "";
+        }
     }
 
     protected void btnUploadRowFormat_Click(object sender, EventArgs e)
@@ -358,14 +368,18 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
             Stream excelStream = FileUploadControlMutation.PostedFile.InputStream;
             string ext = Path.GetExtension(fileName).ToLower();
 
-            if (ext == ".xls")
-                excelReader = ExcelReaderFactory.CreateBinaryReader(excelStream);
-            else if (ext == ".xlsx")
-                excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
-            else
-                throw new Exception("The uploaded file must be in .xlsx or .xls format.");
+            if (fileName.Length > 100)
+            {
+                throw new Exception("Upload failed. File name cannot exceed 100 characters.");
+            }
+            if (ext != ".xlsx")
+                throw new Exception("The uploaded file must be in .xlsx format.");
+
+            excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelStream);
 
             DataTable dt = BuildStagingTable();
+            Hashtable htDefault = new Hashtable();
+            Shared.ApplyDefaultProp(htDefault);
             int excelRowIndex = 0;
 
             while (excelReader.Read())
@@ -388,6 +402,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 DataRow row = dt.NewRow();
                 row["upload_id"] = uploadId;
                 row["file_name"] = fileName;
+                row["upload_by"] = htDefault["p_cre_by"];
                 row["row_number"] = excelRowIndex - 1;
                 row["from_cost_center"] = GetStringSafe(excelReader, 1);
                 row["from_location"] = GetStringSafe(excelReader, 2);
@@ -504,6 +519,7 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
         dt.Columns.Add("owner", typeof(string));
         dt.Columns.Add("asset_code", typeof(string));
         dt.Columns.Add("description", typeof(string));
+        dt.Columns.Add("upload_by", typeof(string));
 
         return dt;
     }
