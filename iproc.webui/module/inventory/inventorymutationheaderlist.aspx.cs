@@ -75,7 +75,7 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
         if (!hasError)
             return;
 
-        Shared.ShowErrorDialog(this, new Exception("ERROR, silahkan check log error pada tab POST Upload Mutation History di Inventory Mutation."));
+        Shared.ShowErrorDialog(this, new Exception("Upload failed. Please review the error details in the “Error Upload Mutation History” tab under Inventory Mutation."));
     }
     private void BindData()
     {
@@ -239,7 +239,19 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
                 row["to_location"] = GetStringSafe(excelReader, 4);
                 row["description"] = GetStringSafe(excelReader, 5);
                 row["item_code"] = GetStringSafe(excelReader, 6);
-                row["quantity"] = IsEmpty(excelReader, 7) ? (object)DBNull.Value : GetStringSafe(excelReader, 7);             
+                int quantity;
+                if (IsEmpty(excelReader, 7))
+                {
+                    row["quantity"] = DBNull.Value;
+                }
+                else if (TryConvertToInt(excelReader.GetValue(7), out quantity))
+                {
+                    row["quantity"] = quantity;
+                }
+                else
+                {
+                    throw new Exception("Quantity must be numeric");
+                }
 
                 dt.Rows.Add(row);
             }
