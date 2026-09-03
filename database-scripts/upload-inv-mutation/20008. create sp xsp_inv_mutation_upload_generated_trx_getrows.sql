@@ -1,0 +1,33 @@
+CREATE PROCEDURE [dbo].[xsp_inv_mutation_upload_generated_trx_getrows]  
+( 
+    @p_upload_id UNIQUEIDENTIFIER,  
+    @p_file_name NVARCHAR(255) = '',  
+    @p_keywords NVARCHAR(100) = ''  
+)  
+AS  
+BEGIN  
+    SET NOCOUNT ON;  
+  
+    SET @p_file_name = ISNULL(@p_file_name, '');  
+    SET @p_keywords = ISNULL(@p_keywords, '');  
+  
+    SELECT  
+        ROW_NUMBER() OVER (ORDER BY x.code) AS row_number,  
+        x.code AS BARCODE,  
+        CAST(x.item_name AS NVARCHAR(255)) AS item_name,  
+        x.trans_flag_code AS process_flag,  
+        CAST('' AS NVARCHAR(500)) AS ERROR_MESSAGE  
+    FROM (  
+        SELECT DISTINCT  
+            h.code,  
+            h.trans_flag_code,  
+		   concat(mi.item_code,'-', mi.item_name) as item_name  
+				FROM inv_mutation_upload_staging s  
+				JOIN inventory_mutation_header h ON h.code = s.IM_CODE  
+				join MASTER_ITEM mi on s.ITEM_CODE = mi.ITEM_CODE  				
+				WHERE s.upload_id = @p_upload_id  
+					AND (@p_file_name = '' OR s.file_name = @p_file_name)  
+					AND s.process_flag = 's' 
+    ) x  
+    ORDER BY x.code;  
+END  

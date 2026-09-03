@@ -1,0 +1,91 @@
+ALTER PROCEDURE [dbo].[xsp_inventory_mutation_header_getrow]
+(
+	@p_code_barcode			nvarchar(14)
+)as
+begin
+
+	select	im.code_barcode
+			,im.code
+			,im.mutation_date
+			,im.from_location
+			,im.to_location
+			,im.expedition_description
+			,im.remarks
+			,im.cre_by
+			,im.cre_date
+			,im.mod_by
+			,im.mod_date
+			,im.branch_code
+			,im.division_code
+			,im.department_code
+			,im.units_code
+			,im.sub_department_code
+			,im.TO_BRANCH
+			,im.FROM_LOCATION
+			,im.TO_LOCATION
+			,im.FROM_LOT
+			,im.TO_LOT
+			,im.FROM_RAK
+			,im.TO_RAK
+			,im.FROM_SLOT
+			,im.TO_SLOT
+			,em.emp_name		'emp_cre'
+			,em2.emp_name		'emp_mod'
+			,ml.description		'from_location_desc'
+			,ml2.description	'to_location_desc'
+			,mgs.description	'trans_flag_desc'
+			,im.from_lot
+			,mlo.description	'from_lot_name'
+			,im.from_rak
+			,mra.description	'from_rak_name'
+			,im.from_slot
+			,msl.description	'from_slot_name'
+			,im.to_lot
+			,mlo2.description	'to_lot_name'
+			,im.to_rak
+			,mra2.description	'to_rak_name'
+			,im.to_slot
+			,msl2.description	'to_slot_name'
+			,mb.DESCRIPTION 'branch_desc'
+			,mb1.DESCRIPTION 'to_branch_desc'
+			,im.REQUESTOR 
+			,em3.EMP_NAME 'REQUESTOR_DESC'
+			,CASE 
+				WHEN im.REQ_TYPE = 'MAN' THEN 'MANUAL' 
+				WHEN im.REQ_TYPE ='UPL' THEN 'UPLOAD'
+				ELSE 'GENERATE' 
+			END 'process'
+			,upload_data.upload_id
+			,upload_data.file_name
+			,art.id				'approval_request_target_id'
+			,100000.00 'object_amount'
+	from	inventory_mutation_header im
+			left join master_location			ml		on (im.from_location	= ml.code)
+			left join master_location			ml2		on (im.to_location		= ml2.code )
+			inner join master_general_subcode	mgs		on (im.trans_flag_code		= mgs.code)
+			inner join employee_main			em		on (im.cre_by				= em.emp_code)
+			inner join employee_main			em2		on (im.mod_by				= em2.emp_code)
+			left join dbo.master_lot			mlo		on (im.from_lot		= mlo.lot_code)
+			left join dbo.master_rak			mra		on (im.from_rak		= mra.rak_code)
+			left join dbo.master_slot			msl		on (im.from_slot		= msl.slot_code)
+			left join dbo.master_lot			mlo2	on (im.to_lot			= mlo2.lot_code)
+			left join dbo.master_rak			mra2	on (im.to_rak			= mra2.rak_code)
+			left join dbo.master_slot			msl2	on (im.to_slot			= msl2.slot_code)
+			LEFT JOIN dbo.EMPLOYEE_MAIN			em3		ON (im.REQUESTOR			= em3.EMP_CODE)
+			left join dbo.approval_request ar on (ar.object_id = im.CODE_BARCODE)
+			left join dbo.approval_request_target art on (art.ar_id = ar.id)
+			INNER JOIN dbo.MASTER_BRANCH mb		ON (mb.CODE = im.BRANCH_CODE)
+			LEFT  JOIN dbo.MASTER_BRANCH mb1	ON (mb1.CODE = im.TO_BRANCH)
+			OUTER APPLY (
+				SELECT TOP 1
+					CONVERT(NVARCHAR(36), s.upload_id) AS upload_id,
+					s.file_name
+				FROM dbo.inv_mutation_upload_staging s
+				WHERE s.im_code = im.code
+				ORDER BY s.process_date DESC, s.upload_date DESC
+			) upload_data
+	where	im.code_barcode	= @p_code_barcode
+
+end
+
+
