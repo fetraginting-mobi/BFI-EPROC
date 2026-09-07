@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="col-sm-3">Branch</label>
+                                            <label class="col-sm-3">From Branch</label>
                                             <div class="col-sm-5">
                                                 <cc1:XUIDropDownList ID="ddlBranch" runat="server"
                                                     CssClass="form-control" DBColumnName="BRANCH_CODE"
