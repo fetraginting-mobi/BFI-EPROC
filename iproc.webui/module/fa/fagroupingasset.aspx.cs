@@ -74,6 +74,7 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_fa_group_asset_code"] = Request.Params["faGroupingAssetCode"];
             DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
             DBToUI.Map(this.Controls, _dr);
+            BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
             chbIsActive.Checked = IsCheckedValue(GetDataRowValue(_dr, "IS_ACTIVE"));
         }
         catch (Exception ex)
