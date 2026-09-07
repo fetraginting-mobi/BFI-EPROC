@@ -1,4 +1,4 @@
-ALTER PROCEDURE [dbo].[xsp_inventory_mutation_upload_staging_log_getrows]
+Create PROCEDURE [dbo].[xsp_inventory_mutation_upload_staging_log_getrows]
 AS
 BEGIN
     SET NOCOUNT ON;
