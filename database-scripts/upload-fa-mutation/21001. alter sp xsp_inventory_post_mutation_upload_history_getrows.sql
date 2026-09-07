@@ -15,13 +15,5 @@ select
 from app_process_error_log apl
 left join master_item mi on apl.barcode =  mi.item_code
 where code_barcode = @p_im_code
-<<<<<<<< HEAD:database-scripts/upload-inv-mutation/20010. create sp xsp_inventory_post_mutation_upload_history_getrows.sql
 order by apl.cre_date desc
-end 
-
-
-========
-order by apl.cre_date, apl.barcode desc
 end
-GO
->>>>>>>> aa53e3ef8014d9b41a8bcb7e5c9008f736873c0b:database-scripts/upload-fa-mutation/21001. alter sp xsp_inventory_post_mutation_upload_history_getrows.sql

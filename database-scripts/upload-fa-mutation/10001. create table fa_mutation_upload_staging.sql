@@ -13,7 +13,8 @@ CREATE TABLE [dbo].[fa_mutation_upload_staging](
 	[upload_date] [datetime] NULL,
 	[error_message] [nvarchar](500) NULL,
 	[process_flag] [char](1) NULL,
-	[process_date] [datetime] NULL
+	[process_date] [datetime] NULL,
+	[fm_code] [nvarchar](36) NULL
 ) ON [PRIMARY]
 GO
 
