@@ -1,7 +1,3 @@
-IF OBJECT_ID('[dbo].[xsp_fa_request_mutation_upload_id_getrow]', 'P') IS NOT NULL
-    DROP PROCEDURE [dbo].[xsp_fa_request_mutation_upload_id_getrow]
-GO
-
 CREATE PROCEDURE [dbo].[xsp_fa_request_mutation_upload_id_getrow]
 (
     @p_code_barcode NVARCHAR(50)
@@ -25,7 +21,6 @@ BEGIN
     WHERE h.code_barcode = @p_code_barcode
         AND s.process_flag = 's'
         AND h.FLAG_PROCESS = 'UPL'
-        AND h.REMARKS = 'bulk upload mutation'
     ORDER BY s.process_date DESC;
 END
 GO
