@@ -3,16 +3,16 @@ declare
 select @p_id = ID from master_menu where NAME = 'Master' and PARENT_ID is null and IS_ACTIVE_FLAG = 1 and MODULE_CODE = 'FIX'
 
 
-if not exists(select 1 from master_role_sec where code = 'R90000160' and NAME = 'FA ITEM GROUP' and APPLICATION_CODE = 'PR')
+if not exists(select 1 from master_role_sec where code = 'R90000160' and NAME = 'FA GROUPING ASSET' and APPLICATION_CODE = 'PR')
 begin 
 	insert into master_role_sec
-		select 'R90000160','FA ITEM GROUP','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		select 'R90000160','FA GROUPING ASSET','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
 		union 
-		select 'R90000160C','FA ITEM GROUP CREATE','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		select 'R90000160C','FA GROUPING ASSET CREATE','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
 		union
-		select 'R90000160D','FA ITEM GROUP DELETE','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		select 'R90000160D','FA GROUPING ASSET DELETE','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
 		union
-		select 'R90000160E','FA ITEM GROUP FA ITEM GROUP EDIT','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
+		select 'R90000160E','FA GROUPING ASSET FA GROUPING ASSET EDIT','PR',getdate(),'ADMIN','127.0.0.1',getdate(),'ADMIN','127.0.0.1'
 end 
 ELSE 
 BEGIN 
