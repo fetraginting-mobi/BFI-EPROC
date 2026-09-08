@@ -317,7 +317,7 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_branch_code"] = Branch;
 
 
-            ddl.DataSource = _dal.GetRows("", "dbo.xsp_fa_location_mut_ddl_getrows", _ht);
+            ddl.DataSource = _dal.GetRows("", "dbo.xsp_fa_location_ddl_getrows", _ht);
             ddl.DataTextField = "LOC_NAME";
             ddl.DataValueField = "LOC_CODE";
             ddl.DataBind();
