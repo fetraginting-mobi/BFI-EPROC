@@ -377,12 +377,12 @@
                                 </div>
                                 <asp:UpdatePanel ID="updUpload" runat="server">
                                     <ContentTemplate>
-                                        <asp:GridView ID="gvwListUpload" runat="server" AutoGenerateColumns=" false"
+                                        <asp:GridView ID="gvwListUpload" runat="server" AutoGenerateColumns="false"
                                             CssClass="display table table-bordered table-striped" AllowPaging="true"
                                             PageSize="10" DataKeyNames="CODE_BARCODE"
                                             OnPageIndexChanging="gvwListUpload_PageIndexChanging"
                                             onselectedindexchanged="SelectedUploadIndexChanged"
-                                            EmptyDataText="There Is No Data">
+                                            EmptyDataText="There Is No Data" Width="100%">
                                             <Columns>
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
@@ -391,6 +391,8 @@
                                                     <ItemTemplate>
                                                         <%# Container.DataItemIndex + 1 %>
                                                     </ItemTemplate>
+                                                    <HeaderStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:TemplateField>
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
@@ -401,35 +403,48 @@
                                                         <asp:CheckBox ID="chbSelectUpload" runat="server"
                                                             onclick="Check_Click" />
                                                     </ItemTemplate>
+                                                    <HeaderStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="3%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:TemplateField>
                                                 <asp:BoundField DataField="CODE" HeaderText="FA Mutation Request No.">
-                                                    <ItemStyle Width="25%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="18%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="18%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="CODE_BARCODE" Visible="false">
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="MUTATION_DATE" HeaderText="Date"
                                                     DataFormatString="{0:dd/MM/yyyy}">
-                                                    <ItemStyle Width="15%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="9%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="9%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="FROM_BRANCH" HeaderText="From Branch">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="12%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="12%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="FROM_LOCATION" HeaderText="From Location">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="16%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="16%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TO_BRANCH" HeaderText="To Branch">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="12%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="12%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TO_LOCATION" HeaderText="To Location">
-                                                    <ItemStyle Width="20%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="14%" HorizontalAlign="Center" />
+                                                    <ItemStyle Width="14%" HorizontalAlign="Center" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="IS_UPLOAD" HeaderText="Process">
-                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="5%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="5%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
                                                 <asp:BoundField DataField="TRANS_FLAG_DESC" HeaderText="Status">
-                                                    <ItemStyle Width="10%" HorizontalAlign="Center" />
+                                                    <HeaderStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
                                                 </asp:BoundField>
-                                                <asp:CommandField ShowSelectButton="true" HeaderText="Action" />
+                                                <asp:CommandField ShowSelectButton="true" HeaderText="Action">
+                                                    <HeaderStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
+                                                    <ItemStyle Width="4%" HorizontalAlign="Center" Wrap="false" />
+                                                </asp:CommandField>
                                             </Columns>
                                         </asp:GridView>
                                     </ContentTemplate>
