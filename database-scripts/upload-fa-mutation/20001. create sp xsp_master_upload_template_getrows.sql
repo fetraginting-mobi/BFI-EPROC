@@ -1,7 +1,3 @@
-IF OBJECT_ID('[dbo].[xsp_master_upload_template_getrows]', 'P') IS NOT NULL
-    DROP PROCEDURE [dbo].[xsp_master_upload_template_getrows]
-GO
-
 CREATE PROCEDURE [dbo].[xsp_master_upload_template_getrows]
 (
     @p_code NVARCHAR(50)

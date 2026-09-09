@@ -1,7 +1,3 @@
-IF OBJECT_ID('[dbo].[xsp_app_process_error_log_upload]', 'P') IS NULL
-    EXEC('CREATE PROCEDURE [dbo].[xsp_app_process_error_log_upload] AS BEGIN SET NOCOUNT ON; END')
-GO
-
 ALTER PROCEDURE [dbo].[xsp_app_process_error_log_upload]
 (
     @p_process_name      NVARCHAR(100),
