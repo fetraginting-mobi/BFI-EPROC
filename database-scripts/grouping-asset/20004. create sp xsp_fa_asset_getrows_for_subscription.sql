@@ -29,7 +29,7 @@ begin
 				from fa_grouping_asset fga with (nolock)
 				inner join fa_grouping_asset_detail fgad with (nolock) on fga.fa_group_asset_code = fgad.fa_ga_code
 				where fgad.IS_ACTIVE = 1 
-	) ga on fa.barcode =ga.barcode  and fl.LOC_CODE =ga.fa_location
+	) ga on fa.barcode =ga.barcode  and (fl.LOC_CODE =ga.fa_location or ga.fa_location = 'ALL')
 	OUTER APPLY(
 				select		fsd.BARCODE 
 				from		dbo.fa_sale_detail fsd with (nolock)
