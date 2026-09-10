@@ -40,8 +40,8 @@
                             </cc1:XUILinkButton>
 
                             <cc1:XUILinkButton ID="btnReject" RoleCode="R90000080O" runat="server"
-                                CssClass="btn btn-danger" CausesValidation="false" style="display:none"><i
-                                    class="icon-remove" style="display:none"></i> Cancel</cc1:XUILinkButton>
+                                CssClass="btn btn-danger" OnClick="btnReject_Click" CausesValidation="false"><i
+                                    class="icon-remove"></i> Cancel</cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnCancel" RoleCode="R90000080O" runat="server"
                                 CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i
                                     class="icon-remove"></i> Cancel</cc1:XUILinkButton>
