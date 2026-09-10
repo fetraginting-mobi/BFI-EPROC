@@ -35,7 +35,7 @@ BEGIN
             AND (@p_file_name = '' OR s.file_name = @p_file_name)
             AND s.process_flag = 's'
             AND h.FLAG_PROCESS = 'UPL'
-            AND h.REMARKS = 'bulk upload mutation'
+            AND h.TRANS_FLAG_CODE = 'NEW'
             AND (
                 @p_keywords = ''
                 OR h.code LIKE '%' + @p_keywords + '%'

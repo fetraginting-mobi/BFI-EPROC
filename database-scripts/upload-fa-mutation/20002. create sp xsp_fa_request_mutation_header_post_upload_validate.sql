@@ -1,20 +1,9 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-IF OBJECT_ID('[dbo].[xsp_fa_request_mutation_header_post_upload_validate]', 'P') IS NULL
-    EXEC('CREATE PROCEDURE [dbo].[xsp_fa_request_mutation_header_post_upload_validate] AS BEGIN SET NOCOUNT ON; END')
-GO
-
-ALTER PROCEDURE [dbo].[xsp_fa_request_mutation_header_post_upload_validate]
+CREATE PROCEDURE [dbo].[xsp_fa_request_mutation_header_post_upload_validate]
 (
     @p_code_barcode NVARCHAR(50)
 )
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     DECLARE @ErrorMessage NVARCHAR(MAX)
            ,@missing_asset NVARCHAR(MAX)
            ,@invalid_child_assets NVARCHAR(MAX)

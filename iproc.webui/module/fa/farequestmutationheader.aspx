@@ -534,15 +534,6 @@
                                                     <asp:BoundField DataField="process_name" HeaderText="Process">
                                                         <ItemStyle Width="5%" HorizontalAlign="Center" />
                                                     </asp:BoundField>
-                                                    <asp:BoundField DataField="item_code" HeaderText="Item Code">
-                                                        <ItemStyle Width="10%" HorizontalAlign="Center" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="item_name" HeaderText="Item">
-                                                        <ItemStyle Width="17%" HorizontalAlign="Center" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="quantity" HeaderText="Quantity">
-                                                        <ItemStyle Width="5%" HorizontalAlign="Center" />
-                                                    </asp:BoundField>
                                                     <asp:BoundField DataField="error_message"
                                                         HeaderText="Error message">
                                                     </asp:BoundField>

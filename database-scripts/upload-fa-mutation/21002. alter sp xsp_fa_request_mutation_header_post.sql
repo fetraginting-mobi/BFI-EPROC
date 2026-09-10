@@ -1,8 +1,3 @@
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 ALTER PROCEDURE [dbo].[xsp_fa_request_mutation_header_post]
     @p_code_barcode VARCHAR(50),
     @p_mod_by VARCHAR(50),
@@ -107,7 +102,7 @@ BEGIN
         END
 
         UPDATE dbo.FA_REQUEST_MUTATION_HEADER
-        SET    TRANS_FLAG_CODE  = 'POST'
+        SET    TRANS_FLAG_CODE  = 'PENDING'
               ,MOD_BY           = @p_mod_by
               ,MOD_DATE         = @p_mod_date
               ,MOD_IP_ADDRESS   = @p_mod_ip_address
