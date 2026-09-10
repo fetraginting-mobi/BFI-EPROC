@@ -53,6 +53,7 @@ public partial class module_fa_farequestmutationheader : BasePage
                 SetMutationUploadLogVisibility();
 
                 btnDeleteRequestDetail.OnClientClick = "return confirm('Delete selected data?');";
+                btnReject.OnClientClick = "return confirm('Cancel selected data?');";
                 txtRequestDate.Enabled = false;
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
@@ -117,7 +118,7 @@ public partial class module_fa_farequestmutationheader : BasePage
         Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY] = "../module/fa/farequestmutationheaderlist.aspx";
 
         btnPost.Attributes.Remove("href");
-        btnReject.Attributes["href"] = String.Format("javascript:fnShowApprovalWithCommentDialog('../../approval/genericapplication.aspx?code=APP0068&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}');", lblCodeBarcode.ClientID, Session[SessionKey.CURRENT_NEXT_URL_SESSION_KEY], "CANCEL", lblbranch.ClientID);
+        btnReject.Attributes.Remove("href");
 
         if (Request.Params["action"] != null && Request.Params["action"].Equals("edit"))
         {
@@ -125,7 +126,7 @@ public partial class module_fa_farequestmutationheader : BasePage
             {
                 //btnSave.Visible = false;
                 btnPost.Visible = false;
-                btnReject.Visible = false;
+                btnReject.Visible = lblTransFlagCode.Text == "NEW";
                 btnAddRequestDetail.Visible = false;
                 btnDeleteRequestDetail.Visible = false;
                 //txtRemarks.Enabled = false;
@@ -253,9 +254,38 @@ public partial class module_fa_farequestmutationheader : BasePage
         }
     }
 
+    private void RejectData()
+    {
+        GeneralDAL _dal = null;
+        Hashtable _ht = null;
+
+        try
+        {
+            _dal = new GeneralDAL();
+            _ht = new Hashtable();
+
+            _ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+            Shared.ApplyDefaultProp(_ht);
+
+            _dal.ExecRawSP("xsp_fa_request_mutation_header_cancel", _ht);
+
+            Shared.ShowSuccessGritter(this, string.Format("farequestmutationheaderlist.aspx"));
+        }
+        catch (Exception ex)
+        {
+            Shared.ShowErrorDialog(this, ex);
+        }
+    }
+
     protected void btnSave_Click(object sender, EventArgs e)
     {
         SaveData();
+    }
+
+    protected void btnReject_Click(object sender, EventArgs e)
+    {
+        RejectData();
     }
 
     protected void btnCancel_Click(object sender, EventArgs e)

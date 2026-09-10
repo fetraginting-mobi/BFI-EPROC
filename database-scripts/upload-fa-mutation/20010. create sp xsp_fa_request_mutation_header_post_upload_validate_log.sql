@@ -1,8 +1,4 @@
-IF OBJECT_ID('[dbo].[xsp_fa_request_mutation_header_post_upload_validate_log]', 'P') IS NULL
-    EXEC('CREATE PROCEDURE [dbo].[xsp_fa_request_mutation_header_post_upload_validate_log] AS BEGIN SET NOCOUNT ON; END')
-GO
-
-ALTER PROCEDURE [dbo].[xsp_fa_request_mutation_header_post_upload_validate_log]
+CREATE PROCEDURE [dbo].[xsp_fa_request_mutation_header_post_upload_validate_log]
 (
     @p_code_barcode      NVARCHAR(28),
     @p_mod_by            NVARCHAR(50),

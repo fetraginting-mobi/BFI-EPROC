@@ -1,8 +1,4 @@
-IF OBJECT_ID('[dbo].[xsp_fa_post_mutation_upload_history_getrows]', 'P') IS NULL
-    EXEC('CREATE PROCEDURE [dbo].[xsp_fa_post_mutation_upload_history_getrows] AS BEGIN SET NOCOUNT ON; END')
-GO
-
-ALTER PROCEDURE [dbo].[xsp_fa_post_mutation_upload_history_getrows]
+CREATE PROCEDURE [dbo].[xsp_fa_post_mutation_upload_history_getrows]
 (
     @p_im_code NVARCHAR(56)
 )

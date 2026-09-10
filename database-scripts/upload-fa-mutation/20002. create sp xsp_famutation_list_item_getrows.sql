@@ -1,7 +1,3 @@
-IF OBJECT_ID('[dbo].[xsp_famutation_list_item_getrows]', 'P') IS NOT NULL
-    DROP PROCEDURE [dbo].[xsp_famutation_list_item_getrows]
-GO
-
 CREATE PROCEDURE [dbo].[xsp_famutation_list_item_getrows]
 (
     @p_code NVARCHAR(50) = N'FA_MUTATION_UPLOAD'
