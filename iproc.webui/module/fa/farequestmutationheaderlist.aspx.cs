@@ -65,10 +65,31 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
 
     private void ShowPostMutationResult()
     {
-        if (!"1".Equals(Request.Params["posterror"]))
+        object sessionResults = Session[SessionKey.POST_MUTATION_RESULTS];
+        if (sessionResults == null)
             return;
 
-        Shared.ShowErrorDialog(this, new Exception("ERROR, silahkan check log error pada tab Error Upload Mutation History di FA Mutation."));
+        Session.Remove(SessionKey.POST_MUTATION_RESULTS);
+
+        bool hasError = false;
+        IEnumerable postResults = sessionResults as IEnumerable;
+        if (postResults == null)
+            return;
+
+        foreach (object item in postResults)
+        {
+            PostMutationResult result = item as PostMutationResult;
+            if (result != null && !result.IsSuccess)
+            {
+                hasError = true;
+                break;
+            }
+        }
+
+        if (!hasError)
+            return;
+
+        Shared.ShowErrorDialog(this, new Exception("Upload failed. Please review the error details in the \"Error Upload Mutation History\" tab under FA Mutation."));
     }
 
     private void BindData()
@@ -238,37 +259,14 @@ public partial class module_fa_farequestmutationheaderlist : BasePageList
                 return;
             }
 
-            string realFirstBarcode = selectedCodes[0].ToString().Trim();
-            lblTempBarcode.Text = realFirstBarcode;
-
             Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
             Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
 
-            string nextUrlRaw = "../module/fa/farequestmutationheaderlist.aspx";
-
             string url = string.Format(
-             "../../approval/genericapplication.aspx?code=APP0067" +
-             "&parc_object_id={0}" +
-             "&nexturl={1}" +
-             "&status={2}" +
-             "&parc_object_branch={3}" +
-             "&parc_object_amount={4}" +
-             "&parc_branch_code={5}" +
-             "&parc_object_description={6}" +
-             "&parc_object_code={7}" +
-             "&post_error_process_name={8}" +
-             "&post_error_raw_data={9}",
-             lblTempBarcode.ClientID,
-             Server.UrlEncode(nextUrlRaw),
-             "POST",
-             lblTempBranch.ClientID,
-             lblTempAmount.ClientID,
-             lblTempBranch.ClientID,
-             lblTempRemarks.ClientID,
-             lblTempCode.ClientID,
-             Server.UrlEncode("POST_FA_MUTATION_ERROR"),
-             Server.UrlEncode("Bulk POST FA Mutation")
-         );
+                "../../approval/genericapplication.aspx?code=APP0067&nexturl={0}&post_error_process_name={1}&post_error_raw_data={2}",
+                Server.UrlEncode("../module/fa/farequestmutationheaderlist.aspx"),
+                Server.UrlEncode("POST_FA_MUTATION_ERROR"),
+                Server.UrlEncode("Bulk POST FA Mutation"));
 
             string script = "fnShowApprovalWithCommentDialog('" + url + "');";
 
