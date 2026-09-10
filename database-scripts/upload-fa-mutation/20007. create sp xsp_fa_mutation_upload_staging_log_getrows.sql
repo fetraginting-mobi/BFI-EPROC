@@ -1,4 +1,4 @@
-ALTER PROCEDURE [dbo].[xsp_fa_mutation_upload_staging_log_getrows]
+CREATE PROCEDURE [dbo].[xsp_fa_mutation_upload_staging_log_getrows]
 AS
 BEGIN
     SELECT 
