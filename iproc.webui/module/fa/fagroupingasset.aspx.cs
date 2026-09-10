@@ -74,6 +74,7 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_fa_group_asset_code"] = Request.Params["faGroupingAssetCode"];
             DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
             DBToUI.Map(this.Controls, _dr);
+            BindFaLocationAll(ddlLocation, ddlBranch.SelectedValue);
             chbIsActive.Checked = IsCheckedValue(GetDataRowValue(_dr, "IS_ACTIVE"));
         }
         catch (Exception ex)
@@ -316,7 +317,7 @@ public partial class module_fa_fagroupingasset : BasePage
             _ht["p_branch_code"] = Branch;
 
 
-            ddl.DataSource = _dal.GetRows("", "dbo.xsp_fa_location_mut_ddl_getrows", _ht);
+            ddl.DataSource = _dal.GetRows("", "dbo.xsp_fa_location_ddl_getrows", _ht);
             ddl.DataTextField = "LOC_NAME";
             ddl.DataValueField = "LOC_CODE";
             ddl.DataBind();
