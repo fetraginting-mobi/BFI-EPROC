@@ -99,6 +99,7 @@ BEGIN
         BEGIN
             UPDATE dbo.term_of_payment
             SET
+                percentage = @p_percentage,
                 amount = @p_amount,
                 ppn_amount = @ppn_amt,
                 pph_amount = @pph_amt,
