@@ -36,11 +36,12 @@
                                 CssClass="btn btn-primary" OnClick="btnSave_Click"><i class="icon-save"></i> Save
                             </cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnPost" RoleCode="R90000080O" runat="server"
-                                CssClass="btn btn-success" OnClick="btnPost_Click"><i class="icon-envelope"></i> Post</cc1:XUILinkButton>
+                                CssClass="btn btn-success" OnClick="btnPost_Click"><i class="icon-envelope"></i> Post
+                            </cc1:XUILinkButton>
 
                             <cc1:XUILinkButton ID="btnReject" RoleCode="R90000080O" runat="server"
-                                CssClass="btn btn-danger" CausesValidation="false" style="display:none"><i
-                                    class="icon-remove" style="display:none"></i> Cancel</cc1:XUILinkButton>
+                                CssClass="btn btn-danger" OnClick="btnReject_Click" CausesValidation="false"><i
+                                    class="icon-remove"></i> Cancel</cc1:XUILinkButton>
                             <cc1:XUILinkButton ID="btnCancel" RoleCode="R90000080O" runat="server"
                                 CssClass="btn btn-danger" OnClick="btnCancel_Click" CausesValidation="false"><i
                                     class="icon-remove"></i> Cancel</cc1:XUILinkButton>
@@ -56,7 +57,9 @@
                                         <cc1:XUILabel ID="lblCodeBarcode" runat="server" DBColumnName="CODE_BARCODE"
                                             SPParameterName="p_code_barcode" DataType="String" style="display:none"
                                             BindType="Both"></cc1:XUILabel>
-                                            <cc1:XUITextBox ID="txtBarcode" runat="server" DBColumnName="CODE_BARCODE" SPParameterName="p_code_barcode" MaxLength="14" DataType="String" BindType="Both" style="display:none;" ></cc1:XUITextBox>
+                                        <cc1:XUITextBox ID="txtBarcode" runat="server" DBColumnName="CODE_BARCODE"
+                                            SPParameterName="p_code_barcode" MaxLength="14" DataType="String"
+                                            BindType="Both" style="display:none;"></cc1:XUITextBox>
                                         <%--requestor--%>
                                             <cc1:XUILabel ID="lblApprovalRequestTargetID" runat="server"
                                                 DBColumnName="APPROVAL_REQUEST_TARGET_ID" DataType="Integer"
@@ -407,7 +410,7 @@
                                 <a href="#mutationuploadlog" id="lnkMutationUploadLog"
                                     onclick="return fnShowFaMutationUploadLogTab();" data-toggle="tab"
                                     style="padding-bottom:28px">
-                                    Post Upload Mutation History
+                                    Error Upload Mutation History
                                 </a>
                             </li>
                         </ul>
@@ -421,12 +424,16 @@
                                             <%--<cc1:XUILinkButton ID="btnAddRequestDetail" RoleCode="R90000080E"
                                                 runat="server" CssClass="btn btn-primary"
                                                 OnClick="btnAddRequestDetail_Click"><i class="icon-plus"></i> Create
-                                            </cc1:XUILinkButton>--%>
-                                            <cc1:XUILinkButton ID="btnAddRequestDetail" RoleCode="R90000080E" runat="server" CssClass="btn btn-primary"  data-toggle="modal" CausesValidation="false"><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
-                                            <cc1:XUILinkButton ID="btnDeleteRequestDetail" RoleCode="R90000080E"
-                                                runat="server" CssClass="btn btn-danger"
-                                                OnClick="btnDeleteRequestDetail_Click"><i class="icon-trash"></i> Delete
-                                            </cc1:XUILinkButton>
+                                                </cc1:XUILinkButton>--%>
+                                                <cc1:XUILinkButton ID="btnAddRequestDetail" RoleCode="R90000080E"
+                                                    runat="server" CssClass="btn btn-primary" data-toggle="modal"
+                                                    CausesValidation="false"><i class="icon-plus"></i> Create
+                                                </cc1:XUILinkButton>
+                                                <cc1:XUILinkButton ID="btnDeleteRequestDetail" RoleCode="R90000080E"
+                                                    runat="server" CssClass="btn btn-danger"
+                                                    OnClick="btnDeleteRequestDetail_Click"><i class="icon-trash"></i>
+                                                    Delete
+                                                </cc1:XUILinkButton>
                                         </div>
                                         <div class="col-sm-4">
                                             <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearch"
@@ -525,15 +532,6 @@
                                                     <asp:BoundField DataField="code_barcode" HeaderText="code_barcode"
                                                         Visible="false"></asp:BoundField>
                                                     <asp:BoundField DataField="process_name" HeaderText="Process">
-                                                        <ItemStyle Width="5%" HorizontalAlign="Center" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="item_code" HeaderText="Item Code">
-                                                        <ItemStyle Width="10%" HorizontalAlign="Center" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="item_name" HeaderText="Item">
-                                                        <ItemStyle Width="17%" HorizontalAlign="Center" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="quantity" HeaderText="Quantity">
                                                         <ItemStyle Width="5%" HorizontalAlign="Center" />
                                                     </asp:BoundField>
                                                     <asp:BoundField DataField="error_message"

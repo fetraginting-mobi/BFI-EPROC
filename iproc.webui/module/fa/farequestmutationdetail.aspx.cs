@@ -29,7 +29,13 @@ public partial class module_fa_farequestmutationdetail : BasePage
             if (Request.Params["action"].Equals("edit"))
             {
                 LoadData();
-                btnLookUpInventoryRequestItem.Enabled = false;
+
+                if (!lblIRStatus.Text.Equals("NEW"))
+                {
+                    btnSave.Visible = false;
+                    btnLookUpInventoryRequestItem.Enabled = false;
+                    txtDescription.Enabled = false;
+                }
             }
             else
             {

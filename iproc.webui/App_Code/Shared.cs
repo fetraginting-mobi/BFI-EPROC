@@ -2804,10 +2804,16 @@ public class Shared
             _ht = new Hashtable();
 
             _ht["p_keywords"] = "";
-            _ht["p_branch_code"] = Branch;
 
-
-            ddl.DataSource = _dal.GetRows("", "xsp_fa_location_mut_ddl_getrows", _ht);
+            if (Branch == "ALL" || string.IsNullOrEmpty(Branch))
+            {
+                ddl.DataSource = _dal.GetRows("FA_LOCATION", _ht);
+            }
+            else
+            {
+                _ht["p_branch_code"] = Branch;
+                ddl.DataSource = _dal.GetRows("", "xsp_fa_location_mut_ddl_getrows", _ht);
+            }
             ddl.DataTextField = "LOC_NAME";
             ddl.DataValueField = "LOC_CODE";
             ddl.DataBind();
