@@ -125,6 +125,8 @@ public partial class module_shared_myapproval : BasePage
             Response.Redirect(string.Format("../fa/faentryheader.aspx?action=edit&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
         else if (gvwList.SelectedDataKey["TYPE"].ToString().Equals("AP000053"))
             Response.Redirect(string.Format("../apadvanceanddeposit/apdepositregistration.aspx?action=edit&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
+        else if (gvwList.SelectedDataKey["TYPE"].ToString().Equals("AP000054"))
+            Response.Redirect(string.Format("../apadvanceanddeposit/apdepositrefundheader.aspx?action=edit&type=approval&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
         else if (gvwList.SelectedDataKey["TYPE"].ToString().Equals("APP0070"))
             Response.Redirect(string.Format("../accounting/accallocprepaidexpense.aspx?action=edit&type=approval&codebarcode={0}&idartarget={1}", gvwList.SelectedDataKey["OBJECT_ID"].ToString(), gvwList.SelectedDataKey["ID"].ToString()));
         else if (gvwList.SelectedDataKey["TYPE"].ToString().Equals("APP0071"))

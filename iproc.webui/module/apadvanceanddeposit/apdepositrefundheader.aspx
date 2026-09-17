@@ -32,6 +32,7 @@
                             <cc1:XUILabel ID="lblCode" runat="server" DBColumnName="CODE" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
                             <cc1:XUILabel ID="lblBranch" runat="server" DBColumnName="BRANCH" DataType="String" BindType="DBToUIOnly" Text="--"></cc1:XUILabel>
                              <cc1:XUITextBox ID="txtBranch" runat="server" CssClass="form-control" placeholder="Reference No" DBColumnName="REFERENCE_NO" SPParameterName="p_reference_no" style="display:none;" MaxLength="10" DataType="String" BindType="None" ></cc1:XUITextBox>
+                            <cc1:XUILinkButton ID="btnViewHistory" runat="server" CausesValidation="false" Text="Approval History"></cc1:XUILinkButton>
                         </div>
                     </div>                            
                 </div>
