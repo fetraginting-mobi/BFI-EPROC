@@ -456,9 +456,18 @@ public partial class module_inventory_inventorymutationheaderlist : BasePageList
             Session[SessionKey.POST_MUTATION_LIST] = selectedCodes;
             Session[SessionKey.POST_MUTATION_RESULTS] = new List<PostMutationResult>();
 
+            string firstCodeBarcode = selectedCodes[0].ToString();
+
             string url = string.Format(
-                "../../approval/genericapplication.aspx?code=AP000013&nexturl={0}&post_error_process_name={1}&post_error_raw_data={2}",
+                "../../approval/genericapplication.aspx?code=AP000013&parc_object_id={0}&nexturl={1}&status={2}&parc_object_branch={3}&parc_object_amount={4}&parc_branch_code={5}&parc_object_description={6}&parc_object_code={7}&post_error_process_name={8}&post_error_raw_data={9}",
+                Server.UrlEncode(firstCodeBarcode),
                 Server.UrlEncode("../module/inventory/inventorymutationheaderlist.aspx"),
+                Server.UrlEncode("POST"),
+                Server.UrlEncode("KPO"),
+                Server.UrlEncode("100"),
+                Server.UrlEncode("KPO"),
+                Server.UrlEncode("Bulk POST Inventory Mutation"),
+                Server.UrlEncode(firstCodeBarcode),
                 Server.UrlEncode("POST_INVENTORY_MUTATION_ERROR"),
                 Server.UrlEncode("Bulk POST Inventory Mutation"));
 
