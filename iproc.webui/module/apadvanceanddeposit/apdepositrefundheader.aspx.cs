@@ -18,6 +18,9 @@ public partial class module_apadvanceanddeposit_apdepositrefundheader : BasePage
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
+        LinkButton btn = btnViewHistory as LinkButton;
+        btn.Attributes["href"] = String.Format("javascript:fnShowGenericScreen('../purchaseorder/approvelreviewapplication.aspx?action=edit&codebarcode={0}');", Request.Params["codebarcode"]);
+
         if (!Page.IsPostBack)
         {
             Shared.BindCurrencyCode(ddlCurrencyCode);
@@ -34,7 +37,8 @@ public partial class module_apadvanceanddeposit_apdepositrefundheader : BasePage
                 btnCancel.Text = "Back";
 
                 BindData();
-                 
+                lblApprovalRequestTargetID.Text = Request.Params["idartarget"];
+                  
                 btnPost.OnClientClick = "return confirm('Post selected data?');";
                 btnReject.OnClientClick = "return confirm('Cancel selected data?');";
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
@@ -43,6 +47,7 @@ public partial class module_apadvanceanddeposit_apdepositrefundheader : BasePage
                 txtRefundDate.Enabled = false;
                 btnLookUpSupplier.Enabled = false;
                 btnReject.Visible = false;
+                btnPost.Visible = lblTransFlagCode.Text == "NEW";
 
 
                 if (lblTransFlagCode.Text == "POST" || lblTransFlagCode.Text == "CANCEL" || lblTransFlagCode.Text == "PAID")
@@ -78,7 +83,23 @@ public partial class module_apadvanceanddeposit_apdepositrefundheader : BasePage
                    
                 }
 
-              
+                else if (lblTransFlagCode.Text == "ON-PROGRESS" || lblTransFlagCode.Text == "ONPROGRESS")
+                {
+                    btnSave.Visible = btnPost.Visible = btnReject.Visible = false;
+                    txtRefundDate.Enabled = false;
+                    btnLookUpSupplier.Enabled = false;
+                    txtDescription.Enabled = false;
+                    txtRemarks.Enabled = false;
+                    ddlCurrencyCode.Enabled = false;
+                    ddlBankCode.Enabled = false;
+                    rblPaymentMethodCode.Enabled = false;
+                    btnLookUpUserRequest.Enabled = false;
+
+                    if (!lblApprovalRequestTargetID.Text.Equals(""))
+                        btnApprovalTiered.Visible = true;
+                }
+
+               
             }
             else
             {
