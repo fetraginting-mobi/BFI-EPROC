@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
+using System.Text.RegularExpressions;
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
 
@@ -22,7 +22,7 @@ public partial class module_commonmst_masterorderdocument : BasePage
         {
 
             lblPoCode.Text = Request.Params["code"];
-            
+
 
             if (Request.Params["action"].Equals("edit"))
             {
@@ -71,7 +71,7 @@ public partial class module_commonmst_masterorderdocument : BasePage
             _ht = new Hashtable();
 
             _ht["p_id"] = Request.Params["id"];
-            
+
             DataRow _dr = _dal.GetRow(TABLE_NAME, _ht);
 
             DBToUI.Map(this.Controls, _dr);
@@ -121,30 +121,43 @@ public partial class module_commonmst_masterorderdocument : BasePage
 
 
             sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["code"]));
-            string sFileType = System.IO.Path.GetExtension(fupFilename.FileName); // (+) Ari 13-09-2022
+            sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
+            string sFileType = System.IO.Path.GetExtension(fupFilename.FileName);  // (+) Ari 13-09-2022 ket : validasi extension
+            Regex regexFileName = new Regex(@"^[A-Za-z0-9._-]+\.[A-Za-z0-9]+$");
+
+            if (sfullname.Length > 100)
+            {
+                throw new Exception("Upload failed. File name cannot exceed 100 characters.");
+            }
+
+            if (!regexFileName.IsMatch(sfullname))
+            {
+                throw new Exception(
+                    "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), and the following symbols are allowed: (.),(_),(-)"
+                );
+            }
+
 
             if (fupFilename.HasFile)
             {
                 if ( // (+) Ari 13-09-2022 ket : validasi extension
                     sFileType == ".xls" || sFileType == ".xlsx"     // EXCEL
                     || sFileType == ".doc" || sFileType == ".docx"     // WORD
-                    //|| sFileType == ".ppt" || sFileType == ".pptx"     // Powepoint
-                    //|| sFileType == ".one" || sFileType == ".txt"      // OneNote & Notepad
+                    || sFileType == ".ppt" || sFileType == ".pptx"     // Powepoint
+                                                                       //|| sFileType == ".one" || sFileType == ".txt"      // OneNote & Notepad
                     || sFileType == ".jpeg" || sFileType == ".jpg"      // Image
                     || sFileType == ".png" //|| sFileType == ".gif"
                     || sFileType == ".pdf" //|| sFileType == ".csv"      // PDF
-                    || sFileType == ".zip" || sFileType == ".rar"      // File
-                    || sFileType == ".7z"
+                                           // || sFileType == ".zip" || sFileType == ".rar"      // File
+                                           // || sFileType == ".7z"
                     )
                 {
-                    sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
-
                     sFilePath = Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["code"]) + sfullname;
 
                 }
                 else
                 {
-                    Shared.ShowValidationError(this, "Please upload file with format type (.pdf .zip .doc .xlx .png .jpg .jpeg). Max file size allowed is 3 mb.");
+                    Shared.ShowValidationError(this, "Invalid file format. Allowed file types are Excel, PDF, DOC, PowerPoint, JPEG, and JPG. Max file size allowed is 3 mb.");
                     return;
                 }
             }
@@ -233,7 +246,7 @@ public partial class module_commonmst_masterorderdocument : BasePage
         {
 
             //Shared.ShowSuccessGritter(this, string.Format("../purchaseorder/purchaseorderheader.aspx?action=edit&type=approval&codebarcode={0}&idartarget={1}", Request.Params["codebarcode"], idTarget));
-            Response.Redirect("../purchaseorder/purchaseorderheader.aspx?action=edit&type=approval&codebarcode="+ Request.Params["codebarcode"]+"&idartarget="+ idTarget);
+            Response.Redirect("../purchaseorder/purchaseorderheader.aspx?action=edit&type=approval&codebarcode=" + Request.Params["codebarcode"] + "&idartarget=" + idTarget);
         }
         else
         {

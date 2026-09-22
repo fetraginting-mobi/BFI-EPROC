@@ -48,7 +48,7 @@
                                 <label class="col-sm-2">Document Code *</label>
                                 <div class="col-sm-2">
                                     <cc1:XUITextBox ID="txtDocumentCode" runat="server" CssClass="form-control" placeholder="Document Code" DBColumnName="DOCUMENT_CODE" SPParameterName="p_document_code" MaxLength="2" DataType="String" BindType="Both" ></cc1:XUITextBox>
-                                    <asp:RegularExpressionValidator ID="revDocumentCode" runat="server" ErrorMessage="Format Invalid!" ControlToValidate="txtDocumentCode" ValidationExpression="[0-9 -.,/()+]*[0-9 -.,/()+]" Display="Dynamic" ></asp:RegularExpressionValidator> 
+                                    <asp:RegularExpressionValidator ID="revDocumentCode" runat="server" ErrorMessage="Format Invalid!" ControlToValidate="txtDocumentCode" ValidationExpression="[a-zA-Z0-9._-]*[a-zA-Z0-9._-]" Display="Dynamic" ></asp:RegularExpressionValidator> 
                                     <asp:RequiredFieldValidator ID="rfvDocumentCode" runat="server" ErrorMessage="Required Field!" ControlToValidate="txtDocumentCode" Display="Dynamic"></asp:RequiredFieldValidator>
                                 </div>
                             </div>                            
