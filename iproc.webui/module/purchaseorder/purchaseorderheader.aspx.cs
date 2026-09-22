@@ -5,15 +5,16 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
 
 public partial class module_purchaseorder_purchaseorderheader : BasePage
 {
-    private static string TABLE_NAME_HEADER     = "PURCHASE_ORDER_HEADER";
-    private static string TABLE_NAME_DETAIL     = "PURCHASE_ORDER_DETAIL";
-    private static string TABLE_NAME_DETAIL_2   = "TERM_OF_PAYMENT";
+    private static string TABLE_NAME_HEADER = "PURCHASE_ORDER_HEADER";
+    private static string TABLE_NAME_DETAIL = "PURCHASE_ORDER_DETAIL";
+    private static string TABLE_NAME_DETAIL_2 = "TERM_OF_PAYMENT";
     private static string TABLE_NAME_DETAIL_FEE = "PURCHASE_ORDER_FEE";
     private static string TABLE_NAME_DOC_DETAIL = "ORDER_DOCUMENT";
     private static string GET_MULTIPLE_BRANCH = "GET_IS_AGAS"; // (+) Ari 04-07-2022 ket : enhancement 2022
@@ -26,7 +27,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
     protected void Page_Load(object sender, EventArgs e)
     {
         LoadInit();
-       
+
         LinkButton btn = btnViewHistory as LinkButton;
         btn.Attributes["href"] = String.Format("javascript:fnShowGenericScreen('../purchaseorder/approvelreviewapplication.aspx?action=edit&codebarcode={0}');", Request.Params["codebarcode"]);
 
@@ -69,11 +70,11 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
             if (Request.Params["action"].Equals("edit"))
             {
-               
+
                 LoadData();
                 btnCancel.Text = "<i class=\"icon-arrow-left\"></i> Back";
                 btnCancel.CssClass = "btn btn-custome";
-               
+
                 txtOrderDate.Enabled = false;
 
                 lblCodeBarcode.Enabled = false;
@@ -83,7 +84,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                 ddlDepartment.Enabled = false;
                 ddlSubDepartment.Enabled = false;
                 ddlUnits.Enabled = false;
-             
+
 
                 BindOrderDetail();
                 BindTOP();
@@ -98,7 +99,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                     ToRekNo.Visible = true;
                     rfvToBank.Enabled = true;
                     btnLookUpToBank.Enabled = true;
-                  
+
                 }
                 else
                 {
@@ -107,9 +108,9 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                     ToRekNo.Visible = true;
                     rfvToBank.Enabled = false;
                     btnLookUpToBank.Enabled = true;
-                 
+
                 }
-               
+
                 if (chbIsDefaultFlag.Checked)
                 {
                     txtRentFlag.Text = "1";
@@ -181,7 +182,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                 //    btnDeleteTOP.Visible = false;
                 //    gvwListFee.Columns[1].Visible = false;
 
-                   
+
 
                 //}
 
@@ -447,11 +448,11 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
                     }
                 }
-              
+
 
                 else
                 {
-                    
+
                     if (lblFlagProcess.Text == "GNR")
                     {
                         btnAdd.Visible = false;
@@ -465,7 +466,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                             ToRekName.Visible = true;
                             ToRekNo.Visible = true;
                             rfvToBank.Enabled = true;
-                           
+
                         }
                         else
                         {
@@ -473,13 +474,13 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                             ToRekName.Visible = true;
                             ToRekNo.Visible = true;
                             rfvToBank.Enabled = false;
-                          
+
                         }
-               
+
                     }
 
 
-                   
+
 
                 }
 
@@ -516,7 +517,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                 Shared.BindDepartment(ddlDepartment, ddlDivision.SelectedValue);
                 Shared.BindSubDepartment(ddlSubDepartment, ddlDepartment.SelectedValue);
                 Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
-                 
+
                 txtOrderDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 txtOrderDate.Enabled = false;
 
@@ -581,6 +582,21 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
             DataRow _dr = _dal.GetRow(TABLE_NAME_HEADER, _ht);
 
+            //(+) fetra 2060406 ket : Iproc Phase III
+            if (_dr != null && _dr.Table.Columns.Contains("is_termin"))
+            {
+                string isTermin = _dr["is_termin"].ToString();
+                if (isTermin == "0" || isTermin.ToLower() == "false")
+                {
+                    liTermin.Visible = false;
+                }
+                else
+                {
+                    liTermin.Visible = true;
+                }
+            }
+
+
             DBToUI.Map(this.Controls, _dr);
 
             Shared.BindDivision(ddlDivision);
@@ -589,7 +605,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
             Shared.BindUnits(ddlUnits, ddlSubDepartment.SelectedValue);
             Shared.BindBranchEmployee(ddlBranch);
             btnLookUpToBank.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=BRBPV&acol_0={0}&bcol_1={1}&ccol_2={2}&dcol_3={3}&parc_code={4}&par_code_barcode={5}&par_type={6}');", txtToBank.ClientID, lblBankName.ClientID, txtToRekName.ClientID, txtToRekNo.ClientID, ddlBranch.ClientID, Request.Params["codebarcode"], ddlPaymentBy.SelectedValue);
-          
+
         }
         catch (Exception ex)
         {
@@ -629,7 +645,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
         GeneralDAL _dal = null;
         Hashtable _ht = null;
         string sNextBarcode = "";
-        
+
         try
         {
             _dal = new GeneralDAL();
@@ -658,10 +674,10 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
     }
 
     private void PostData()
-    { 
+    {
         GeneralDAL _dal = null;
         Hashtable _ht = null;
-        
+
         try
         {
             _dal = new GeneralDAL();
@@ -786,7 +802,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
             txtToRekName.Text = "--";
             txtToRekNo.Text = "--";
             lblBankName.Text = "--";
-            b="BRANCH";
+            b = "BRANCH";
         }
         else
         {
@@ -799,7 +815,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
             txtToRekName.Text = "--";
             txtToRekNo.Text = "--";
             lblBankName.Text = "--";
-            b="HO";
+            b = "HO";
         }
         btnLookUpToBank.Attributes["href"] = String.Format("javascript:fnShowDialog('../../lookup/genericwithparameter.aspx?code=BRBPV&acol_0={0}&bcol_1={1}&ccol_2={2}&dcol_3={3}&parc_code={4}&par_code_barcode={5}&par_type={6}');", txtToBank.ClientID, lblBankName.ClientID, txtToRekName.ClientID, txtToRekNo.ClientID, ddlBranch.ClientID, Request.Params["codebarcode"], b);
     }
@@ -807,7 +823,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
     protected void ddlBranch_SelectedIndexChanged(object sender, EventArgs e)
     {
 
-       
+
 
         //updDep.Update();
     }
@@ -829,7 +845,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
     //{ 
     //    GeneralDAL _dal = null;
     //    Hashtable _ht = null;
-        
+
     //    try
     //    {
     //        _dal = new GeneralDAL();
@@ -855,7 +871,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
     protected void btnCancel_Click(object sender, EventArgs e)
     {
-       // DeleteBack();
+        // DeleteBack();
         Response.Redirect("purchaseorderheaderlist.aspx");
     }
 
@@ -880,7 +896,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
     protected void btnPrint_Click(object sender, EventArgs e)
     {
-         
+
         Hashtable htParams = new Hashtable();
         htParams["p_user_id"] = Shared.CurrentUID;
         htParams["p_code_barcode"] = lblCodeBarcode.Text;
@@ -901,7 +917,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
     protected void btnPrintPDF_Click(object sender, EventArgs e)
     {
-         
+
         Hashtable htParams = new Hashtable();
         htParams["p_user_id"] = Shared.CurrentUID;
         htParams["p_code_barcode"] = lblCodeBarcode.Text;
@@ -1037,7 +1053,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
     protected void gvwList_OnRowDataBound(object sender, GridViewRowEventArgs e)
     {
 
-      
+
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
             //dUnitPrice = dUnitPrice + decimal.Parse(e.Row.Cells[5].Text);
@@ -1053,7 +1069,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
             e.Row.Cells[6].Text = dSubTotal.ToString("N2");
         }
 
-            }
+    }
     #endregion
 
     # region term of payment
@@ -1101,6 +1117,28 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
         }
     }
 
+    private class TopDeleteItem
+    {
+        public string ID { get; set; }
+        public string TrxCode { get; set; }
+    }
+
+    private int GetNumberFromText(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return 0;
+        System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(input, @"\d+");
+
+        if (match.Success)
+        {
+            int result;
+            if (int.TryParse(match.Value, out result))
+            {
+                return result;
+            }
+        }
+        return 0;
+    }
+
     protected void gvwListTOP_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gvwListTOP.PageIndex = e.NewPageIndex;
@@ -1115,13 +1153,32 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
     protected void btnDeleteTOP_Click(object sender, EventArgs e)
     {
+        List<TopDeleteItem> selectedItems = new List<TopDeleteItem>();
+
         foreach (GridViewRow row in gvwListTOP.Rows)
         {
             CheckBox chb = (CheckBox)row.Cells[1].Controls[1];
             if (chb.Checked)
             {
-                DeleteDataTOP(gvwListTOP.DataKeys[row.RowIndex][0].ToString());
+                selectedItems.Add(new TopDeleteItem
+                {
+                    ID = gvwListTOP.DataKeys[row.RowIndex][0].ToString(),
+                    TrxCode = gvwListTOP.DataKeys[row.RowIndex][1].ToString()
+                });
             }
+        }
+
+        if (selectedItems.Count == gvwListTOP.Rows.Count)
+        {
+            selectedItems = selectedItems
+                .OrderByDescending(item => GetNumberFromText(item.TrxCode))
+                .ThenByDescending(item => item.TrxCode)
+                .ToList();
+        }
+
+        foreach (TopDeleteItem item in selectedItems)
+        {
+            DeleteDataTOP(item.ID);
         }
 
         BindTOP();
@@ -1211,8 +1268,8 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
             Session[SessionKey.CURRENT_TAB_INDEX_SESSION_KEY] = txtTabCode.Text;
 
             Shared.ShowSuccessGritter(this, string.Format("purchaseorderheader.aspx?action=edit&codebarcode={0}", lblCodeBarcode.Text));
-           
-          
+
+
         }
         catch (Exception ex)
         {
@@ -1247,7 +1304,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
                     DropDownList ChargedTo = ((DropDownList)row.Cells[4].Controls[1]);
                     DropDownList Currency = ((DropDownList)row.Cells[3].Controls[1]);
                     string AmountFee = ((TextBox)row.Cells[5].Controls[1]).Text;
-                     
+
                     _ht["p_id"] = gvwListFee.DataKeys[row.RowIndex][0].ToString();
                     _ht["p_currency_code"] = Currency.SelectedValue;
                     _ht["p_charged_to"] = ChargedTo.SelectedValue;
@@ -1340,7 +1397,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
     #region doc detail
     private void BindDataDocRequest()
     {
-        
+
         GeneralDAL _dal = null;
         Hashtable _ht = null;
         DataView dvQUOTATIONDOC = null;
@@ -1352,7 +1409,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
             _ht["p_keywords"] = txtSearchDocReq.Text;
             _ht["p_po_code"] = lblCodeBarcode.Text;
-            
+
 
             dvQUOTATIONDOC = _dal.GetRows(TABLE_NAME_DOC_DETAIL, _ht).DefaultView;
 
@@ -1438,7 +1495,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
         }
     }
 
-   protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
+    protected void btnSaveDocumentDetail_Click(object sender, EventArgs e)
     {
         Hashtable _ht;
         FileUpload fupFile;
@@ -1553,7 +1610,7 @@ public partial class module_purchaseorder_purchaseorderheader : BasePage
 
             if (FileName.Length != 0)
             {
-                 
+
                 LinkButton btnPreview = (LinkButton)e.Row.Cells[3].Controls[1];
                 LinkButton btnDelete = (LinkButton)e.Row.Cells[4].Controls[1];
 

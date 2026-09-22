@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -14,6 +15,8 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
 {
 
     private static string TABLE_NAME = "PURCHASE_ORDER_DETAIL";
+    private static string TABLE_NAME_HEADER = "PURCHASE_ORDER_HEADER";
+    private static string TABLE_NAME_DETAIL_2 = "TERM_OF_PAYMENT";
     private static string GET_MULTIPLE_BRANCH = "GET_IS_AGAS"; // (+) Ari 04-07-2022 ket : enhancement 2022
 
     protected void Page_Load(object sender, EventArgs e)
@@ -514,7 +517,17 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
                 lblID.Text = iNextID.ToString();
             }
             else
+            {
+                string changedTerminFields = GetTerminLockedChangedFields(_dal);
+                if (IsPurchaseOrderTermin(_dal) && !String.IsNullOrEmpty(changedTerminFields) && IsTermOfPaymentExist(_dal))
+                {
+                    Shared.ShowValidationError(this, changedTerminFields + " tidak dapat diubah karena data Term of Payment sudah ada. Silahkan hapus data pada tab termin terlebih dahulu.");
+                    LoadData();
+                    return;
+                }
+
                 _dal.Update(TABLE_NAME, _ht);
+            }
 
             Shared.ShowSuccessGritter(this, string.Format("purchaseorderdetail.aspx?action=edit&id={0}&codebarcode={1}&currency_code={2}&currency_desc={3}&flagrent={4}", lblID.Text, lblBarcode.Text , lblCurrencyUI.Text , lblCurrency.Text, Request.Params["flagrent"]));
         }
@@ -522,6 +535,120 @@ public partial class module_purchaseorder_purchaseorderdetail : BasePage
         {
             Shared.ShowErrorDialog(this, ex);
         }
+    }
+
+    private bool IsPurchaseOrderTermin(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_code_barcode"] = Request.Params["codebarcode"];
+        ht["p_user_id"] = Shared.CurrentUID;
+
+        DataRow dr = dal.GetRow(TABLE_NAME_HEADER, ht);
+        if (dr == null || !dr.Table.Columns.Contains("IS_TERMIN"))
+            return false;
+
+        string isTermin = dr["IS_TERMIN"].ToString();
+        return isTermin == "1" || isTermin.ToLower() == "true";
+    }
+
+    private string GetTerminLockedChangedFields(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_id"] = Request.Params["id"];
+
+        DataRow dr = dal.GetRow(TABLE_NAME, ht);
+        if (dr == null)
+            return String.Empty;
+
+        ArrayList changedFields = new ArrayList();
+
+        if (IsTaxTypeChanged(dr))
+            changedFields.Add("Tax");
+
+        if (IsDecimalColumnChanged(dr, "UNIT_PRICE", txtUnitPrice.Text))
+            changedFields.Add("Unit Price");
+
+        if (IsDecimalColumnChanged(dr, "ADDITIONAL_AMOUNT", txtAdditionalAmount.Text))
+            changedFields.Add("Additional Amount");
+
+        return String.Join(", ", (string[])changedFields.ToArray(typeof(string)));
+    }
+
+    private bool IsTaxTypeChanged(DataRow dr)
+    {
+        if (dr == null || !dr.Table.Columns.Contains("TAX_CODE"))
+            return false;
+
+        return dr["TAX_CODE"].ToString() != ddlTaxType.SelectedValue;
+    }
+
+    private bool IsDecimalColumnChanged(DataRow dr, string columnName, string currentValue)
+    {
+        if (dr == null || !dr.Table.Columns.Contains(columnName))
+            return false;
+
+        decimal originalValue = ToDecimal(dr[columnName]);
+        decimal newValue = ToDecimal(currentValue);
+
+        return originalValue != newValue;
+    }
+
+    private decimal ToDecimal(object value)
+    {
+        if (value == null || value == DBNull.Value)
+            return 0;
+
+        decimal result;
+        string text = value.ToString().Trim();
+        if (String.IsNullOrEmpty(text))
+            return 0;
+
+        if (Decimal.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out result))
+            return result;
+
+        if (Decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
+            return result;
+
+        text = NormalizeDecimalText(text);
+        if (Decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
+            return result;
+
+        return 0;
+    }
+
+    private string NormalizeDecimalText(string text)
+    {
+        int commaIndex = text.LastIndexOf(",");
+        int dotIndex = text.LastIndexOf(".");
+
+        if (commaIndex >= 0 && dotIndex >= 0)
+        {
+            if (commaIndex > dotIndex)
+                return text.Replace(".", String.Empty).Replace(",", ".");
+
+            return text.Replace(",", String.Empty);
+        }
+
+        if (commaIndex >= 0)
+        {
+            int decimalLength = text.Length - commaIndex - 1;
+            if (decimalLength <= 2)
+                return text.Replace(",", ".");
+
+            return text.Replace(",", String.Empty);
+        }
+
+        return text;
+    }
+
+    private bool IsTermOfPaymentExist(GeneralDAL dal)
+    {
+        Hashtable ht = new Hashtable();
+        ht["p_keywords"] = string.Empty;
+        ht["p_code_barcode"] = Request.Params["codebarcode"];
+
+        DataTable dt = dal.GetRows(TABLE_NAME_DETAIL_2, ht);
+        return dt != null && dt.Rows.Count > 0;
     }
 
     protected void btnSave_Click(object sender, EventArgs e)
