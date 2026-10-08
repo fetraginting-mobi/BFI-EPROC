@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-sm-8">
                     <cc1:XUILinkButton ID="btnAddAPInvoiceRegHeader" RoleCode="R80000010C" runat="server" CssClass="btn btn-primary" OnClick="btnAddAPInvoiceRegHeader_Click" ><i class="icon-plus"></i>  Create</cc1:XUILinkButton>
-                    <cc1:XUILinkButton ID="btnDeleteAPInvoiceRegHeader" RoleCode="R80000010D" runat="server" CssClass="btn btn-danger" OnClick="btnDeleteAPInvoiceRegHeader_Click" ><i class="icon-trash"></i>  Delete</cc1:XUILinkButton>
+                    <cc1:XUILinkButton ID="btnDeleteAPInvoiceRegHeader" RoleCode="R80000010D" runat="server" CssClass="btn btn-danger" OnClick="btnDeleteAPInvoiceRegHeader_Click" Visible="false" ><i class="icon-trash"></i>  Delete</cc1:XUILinkButton>
                 </div>
                 <div class="col-sm-4"> 
                      <asp:Panel ID="pnlSearch" runat="server" DefaultButton="btnSearch" class="input-group">     
