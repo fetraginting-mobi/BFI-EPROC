@@ -23,10 +23,10 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-sm-8">
-                            <cc1:XUILinkButton RoleCode="R30000120C" ID="btnAddFaGroup" runat="server"
+                            <cc1:XUILinkButton RoleCode="R90000160C" ID="btnAddFaGroup" runat="server"
                                 CssClass="btn btn-primary" onclick="btnAddFaGroup_Click"><i class="icon-plus"></i>Create
                             </cc1:XUILinkButton>
-                            <cc1:XUILinkButton RoleCode="R30000120D" ID="btnDeleteFaGroup" runat="server"
+                            <cc1:XUILinkButton RoleCode="R90000160D" ID="btnDeleteFaGroup" runat="server"
                                 CssClass="btn btn-danger" onclick="btnDeleteFaGroup_Click"><i
                                     class="icon-trash"></i>Delete</cc1:XUILinkButton>
 
