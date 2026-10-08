@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
 
 using iProc.DataAccessLayer;
 using MPF23.Shared.Mapper;
@@ -1782,6 +1783,19 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
 
                 if (fupFile.HasFile)
                 {
+                    Regex regexFileName = new Regex(@"^[A-Za-z0-9_\-\s.]+\.[A-Za-z0-9]+$");
+
+                    if (sFileName.Length > 100)
+                    {
+                        Shared.ShowValidationError(this, "Upload failed. File name cannot exceed 100 characters.");
+                        return;
+                    }
+
+                    if (!regexFileName.IsMatch(sFileName))
+                    {
+                        Shared.ShowValidationError(this, "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), spaces, and the following symbols are allowed: (.),(_),(-)");
+                        return;
+                    }
                     string sFullPath = filePath + '/' + sFileName;
 
                     string sFileType = System.IO.Path.GetExtension(fupFile.FileName);  // (+) Ari 13-09-2022 ket : validasi extension
@@ -2004,3 +2018,6 @@ public partial class module_apinvoice_apinvoiceregistrationheader : BasePage
     }
     #endregion
 }
+
+
+

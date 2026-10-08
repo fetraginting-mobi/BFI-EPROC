@@ -111,7 +111,7 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
             sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ADD_DOCUMENT/" + Request.Params["codebarcode"]));
             sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
             string sFileType = System.IO.Path.GetExtension(fupFilename.FileName);  // (+) Ari 13-09-2022 ket : validasi extension
-            Regex regexFileName = new Regex(@"^[A-Za-z0-9._-]+\.[A-Za-z0-9]+$");
+            Regex regexFileName = new Regex(@"^[A-Za-z0-9_\-\s.]+\.[A-Za-z0-9]+$");
 
             if (sfullname.Length > 100)
             {
@@ -121,7 +121,7 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
             if (!regexFileName.IsMatch(sfullname))
             {
                 throw new Exception(
-                    "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), and the following symbols are allowed: (.),(_),(-)"
+                    "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), spaces, and the following symbols are allowed: (.),(_),(-)"
                 );
             }
 
@@ -221,5 +221,6 @@ public partial class module_purchaseorder_purchaserequestdocument : BasePage
     }
 
 }
+
 
 
