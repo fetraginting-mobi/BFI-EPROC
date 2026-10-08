@@ -65,7 +65,7 @@ public partial class module_commonmst_masteritemdocument : BasePage
 
             sFileDirectorys = Server.MapPath("~/" + Shared.GetUploadPath("ITEM_UPLOAD_MEMO/" + Request.Params["code"]));
             string sfullname = System.IO.Path.GetFileName(fupFilename.FileName);
-            Regex regexFileName = new Regex(@"^[A-Za-z0-9._-]+\.[A-Za-z0-9]+$");
+            Regex regexFileName = new Regex(@"^[A-Za-z0-9_\-\s.]+\.[A-Za-z0-9]+$");
 
             if (sfullname.Length > 100)
             {
@@ -75,7 +75,7 @@ public partial class module_commonmst_masteritemdocument : BasePage
             if (!regexFileName.IsMatch(sfullname))
             {
                 throw new Exception(
-                    "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), and the following symbols are allowed: (.),(_),(-)"
+                    "File name contains invalid characters. Only letters (A-Z, a-z), numbers (0-9), spaces, and the following symbols are allowed: (.),(_),(-)"
                 );
             }
 
@@ -181,3 +181,4 @@ public partial class module_commonmst_masteritemdocument : BasePage
         }
     }
 }
+
